@@ -2,11 +2,9 @@
 
 // internal
 #include "common.hpp"
-#include "salmon.hpp"
-#include "turtle.hpp"
-#include "fish.hpp"
-#include "water.hpp"
-#include "pebbles.hpp"
+#include "brick.hpp"
+#include "robot.hpp"
+#include "background.hpp"
 
 // stlib
 #include <vector>
@@ -67,10 +65,8 @@ private:
 	unsigned int m_points;
 
 	// Game entities
-	Salmon m_salmon;
-	std::vector<Turtle> m_turtles;
-	std::vector<Fish> m_fish;
-	Pebbles m_pebbles_emitter;
+	std::vector<Brick> m_turtles;
+	std::vector<Robot> m_fish;
 
 	float m_current_speed;
 	float m_next_turtle_spawn;
