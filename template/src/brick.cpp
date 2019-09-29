@@ -10,9 +10,9 @@ bool Brick::init()
 	// Load shared texture
 	if (!brick_texture.is_valid())
 	{
-		if (!brick_texture.load_from_file(textures_path("turtle.png")))
+		if (!brick_texture.load_from_file(textures_path("brick.png")))
 		{
-			fprintf(stderr, "Failed to load turtle texture!");
+			fprintf(stderr, "Failed to load brick texture!");
 			return false;
 		}
 	}
@@ -144,7 +144,7 @@ void Brick::set_position(vec2 position)
 
 vec2 Brick::get_bounding_box() const
 {
-	// Returns the local bounding coordinates scaled by the current size of the turtle 
+	// Returns the local bounding coordinates scaled by the current size of the brick
 	// fabs is to avoid negative scale due to the facing direction.
 	return {std::fabs(physics.scale.x) * brick_texture.width, std::fabs(physics.scale.y) * brick_texture.height };
 }

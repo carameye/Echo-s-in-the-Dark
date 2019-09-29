@@ -12,7 +12,7 @@ bool Robot::init()
 	{
 		if (!robot_texture.load_from_file(textures_path("robot.png")))
 		{
-			fprintf(stderr, "Failed to load turtle texture!");
+			fprintf(stderr, "Failed to load brick texture!");
 			return false;
 		}
 	}
