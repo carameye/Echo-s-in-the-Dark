@@ -122,6 +122,60 @@ EITD/fast:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/build
 .PHONY : EITD/fast
 
+src/background.obj: src/background.cpp.obj
+
+.PHONY : src/background.obj
+
+# target to build an object file
+src/background.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/background.cpp.obj
+.PHONY : src/background.cpp.obj
+
+src/background.i: src/background.cpp.i
+
+.PHONY : src/background.i
+
+# target to preprocess a source file
+src/background.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/background.cpp.i
+.PHONY : src/background.cpp.i
+
+src/background.s: src/background.cpp.s
+
+.PHONY : src/background.s
+
+# target to generate assembly for a file
+src/background.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/background.cpp.s
+.PHONY : src/background.cpp.s
+
+src/brick.obj: src/brick.cpp.obj
+
+.PHONY : src/brick.obj
+
+# target to build an object file
+src/brick.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/brick.cpp.obj
+.PHONY : src/brick.cpp.obj
+
+src/brick.i: src/brick.cpp.i
+
+.PHONY : src/brick.i
+
+# target to preprocess a source file
+src/brick.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/brick.cpp.i
+.PHONY : src/brick.cpp.i
+
+src/brick.s: src/brick.cpp.s
+
+.PHONY : src/brick.s
+
+# target to generate assembly for a file
+src/brick.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/brick.cpp.s
+.PHONY : src/brick.cpp.s
+
 src/common.obj: src/common.cpp.obj
 
 .PHONY : src/common.obj
@@ -148,33 +202,6 @@ src/common.s: src/common.cpp.s
 src/common.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/common.cpp.s
 .PHONY : src/common.cpp.s
-
-src/fish.obj: src/fish.cpp.obj
-
-.PHONY : src/fish.obj
-
-# target to build an object file
-src/fish.cpp.obj:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/fish.cpp.obj
-.PHONY : src/fish.cpp.obj
-
-src/fish.i: src/fish.cpp.i
-
-.PHONY : src/fish.i
-
-# target to preprocess a source file
-src/fish.cpp.i:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/fish.cpp.i
-.PHONY : src/fish.cpp.i
-
-src/fish.s: src/fish.cpp.s
-
-.PHONY : src/fish.s
-
-# target to generate assembly for a file
-src/fish.cpp.s:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/fish.cpp.s
-.PHONY : src/fish.cpp.s
 
 src/main.obj: src/main.cpp.obj
 
@@ -203,113 +230,32 @@ src/main.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
-src/pebbles.obj: src/pebbles.cpp.obj
+src/robot.obj: src/robot.cpp.obj
 
-.PHONY : src/pebbles.obj
-
-# target to build an object file
-src/pebbles.cpp.obj:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/pebbles.cpp.obj
-.PHONY : src/pebbles.cpp.obj
-
-src/pebbles.i: src/pebbles.cpp.i
-
-.PHONY : src/pebbles.i
-
-# target to preprocess a source file
-src/pebbles.cpp.i:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/pebbles.cpp.i
-.PHONY : src/pebbles.cpp.i
-
-src/pebbles.s: src/pebbles.cpp.s
-
-.PHONY : src/pebbles.s
-
-# target to generate assembly for a file
-src/pebbles.cpp.s:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/pebbles.cpp.s
-.PHONY : src/pebbles.cpp.s
-
-src/salmon.obj: src/salmon.cpp.obj
-
-.PHONY : src/salmon.obj
+.PHONY : src/robot.obj
 
 # target to build an object file
-src/salmon.cpp.obj:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/salmon.cpp.obj
-.PHONY : src/salmon.cpp.obj
+src/robot.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/robot.cpp.obj
+.PHONY : src/robot.cpp.obj
 
-src/salmon.i: src/salmon.cpp.i
+src/robot.i: src/robot.cpp.i
 
-.PHONY : src/salmon.i
-
-# target to preprocess a source file
-src/salmon.cpp.i:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/salmon.cpp.i
-.PHONY : src/salmon.cpp.i
-
-src/salmon.s: src/salmon.cpp.s
-
-.PHONY : src/salmon.s
-
-# target to generate assembly for a file
-src/salmon.cpp.s:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/salmon.cpp.s
-.PHONY : src/salmon.cpp.s
-
-src/turtle.obj: src/turtle.cpp.obj
-
-.PHONY : src/turtle.obj
-
-# target to build an object file
-src/turtle.cpp.obj:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/turtle.cpp.obj
-.PHONY : src/turtle.cpp.obj
-
-src/turtle.i: src/turtle.cpp.i
-
-.PHONY : src/turtle.i
+.PHONY : src/robot.i
 
 # target to preprocess a source file
-src/turtle.cpp.i:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/turtle.cpp.i
-.PHONY : src/turtle.cpp.i
+src/robot.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/robot.cpp.i
+.PHONY : src/robot.cpp.i
 
-src/turtle.s: src/turtle.cpp.s
+src/robot.s: src/robot.cpp.s
 
-.PHONY : src/turtle.s
-
-# target to generate assembly for a file
-src/turtle.cpp.s:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/turtle.cpp.s
-.PHONY : src/turtle.cpp.s
-
-src/water.obj: src/water.cpp.obj
-
-.PHONY : src/water.obj
-
-# target to build an object file
-src/water.cpp.obj:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/water.cpp.obj
-.PHONY : src/water.cpp.obj
-
-src/water.i: src/water.cpp.i
-
-.PHONY : src/water.i
-
-# target to preprocess a source file
-src/water.cpp.i:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/water.cpp.i
-.PHONY : src/water.cpp.i
-
-src/water.s: src/water.cpp.s
-
-.PHONY : src/water.s
+.PHONY : src/robot.s
 
 # target to generate assembly for a file
-src/water.cpp.s:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/water.cpp.s
-.PHONY : src/water.cpp.s
+src/robot.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/robot.cpp.s
+.PHONY : src/robot.cpp.s
 
 src/world.obj: src/world.cpp.obj
 
@@ -347,27 +293,21 @@ help:
 	@echo ... EITD
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... src/background.obj
+	@echo ... src/background.i
+	@echo ... src/background.s
+	@echo ... src/brick.obj
+	@echo ... src/brick.i
+	@echo ... src/brick.s
 	@echo ... src/common.obj
 	@echo ... src/common.i
 	@echo ... src/common.s
-	@echo ... src/fish.obj
-	@echo ... src/fish.i
-	@echo ... src/fish.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s
-	@echo ... src/pebbles.obj
-	@echo ... src/pebbles.i
-	@echo ... src/pebbles.s
-	@echo ... src/salmon.obj
-	@echo ... src/salmon.i
-	@echo ... src/salmon.s
-	@echo ... src/turtle.obj
-	@echo ... src/turtle.i
-	@echo ... src/turtle.s
-	@echo ... src/water.obj
-	@echo ... src/water.i
-	@echo ... src/water.s
+	@echo ... src/robot.obj
+	@echo ... src/robot.i
+	@echo ... src/robot.s
 	@echo ... src/world.obj
 	@echo ... src/world.i
 	@echo ... src/world.s

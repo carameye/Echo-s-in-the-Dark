@@ -57,11 +57,11 @@ bool Brick::init()
 		return false;
 
 	motion.radians = 0.f;
-	motion.speed = 200.f;
+	// TODO: leaving this in as well. I can see times when we might want to have moving bricks
+	motion.speed = 0.f;
 
-	// Setting initial values, scale is negative to make it face the opposite way
-	// 1.0 would be as big as the original texture.
-	physics.scale = { -0.4f, 0.4f };
+	// TODO : this will have to change, just not sure what size is good for now
+	physics.scale = { 0.4f, 0.4f };
 
 	return true;
 }
@@ -139,6 +139,7 @@ vec2 Brick::get_position()const
 
 void Brick::set_position(vec2 position)
 {
+    // TODO: not really sure if we will aver need something like this but for now I am going to leave it
 	motion.position = position;
 }
 

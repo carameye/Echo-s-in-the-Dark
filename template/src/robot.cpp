@@ -82,7 +82,7 @@ void Robot::update(float ms)
 {
 	float step = motion.speed * (ms / 1000);
 
-	// TODO: hand key strokes from world
+	// TODO: handle  key strokes from world
 
 	motion.position.x += step;
 }
