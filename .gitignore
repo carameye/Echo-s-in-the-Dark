@@ -41,3 +41,7 @@ ZERO_CHECK*
 ALL_BUILD*
 x64*
 *.cmake
+cmake-build-debug
+
+# Idea
+.idea
