@@ -38,12 +38,6 @@ public:
 	bool is_over()const;
 
 private:
-	// Generates a new turtle
-	bool spawn_turtle();
-
-	// Generates a new fish
-	bool spawn_fish();
-
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
@@ -65,16 +59,10 @@ private:
 	unsigned int m_points;
 
 	// Game entities
-	std::vector<Brick> m_turtles;
-	std::vector<Robot> m_fish;
-
-	float m_current_speed;
-	float m_next_turtle_spawn;
-	float m_next_fish_spawn;
+	std::vector<Brick> m_bricks;
+	Robot m_robot;
 	
 	Mix_Music* m_background_music;
-	Mix_Chunk* m_salmon_dead_sound;
-	Mix_Chunk* m_salmon_eat_sound;
 
 	// C++ rng
 	std::default_random_engine m_rng;

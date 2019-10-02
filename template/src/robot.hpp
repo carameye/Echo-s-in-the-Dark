@@ -14,18 +14,18 @@ public:
 	// Releases all the associated resources
 	void destroy();
 	
-	// Update robot
+	// Update m_robot
 	// ms represents the number of milliseconds elapsed from the previous update() call
 	void update(float ms);
 
-	// Renders the robot
+	// Renders the m_robot
 	// projection is the 2D orthographic projection matrix
 	void draw(const mat3& projection) override;
 
-	// Returns the current robot position
+	// Returns the current m_robot position
 	vec2 get_position() const;
 
-	// Sets the new robot position
+	// Sets the new m_robot position
 	void set_position(vec2 position);
 
 	// Returns the robots bounding box for collision detection, called by collides_with()

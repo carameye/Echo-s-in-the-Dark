@@ -142,12 +142,12 @@ void World::destroy()
 
 	Mix_CloseAudio();
 
-	for (auto& turtle : m_turtles)
+	for (auto& turtle : m_bricks)
 		turtle.destroy();
-	for (auto& fish : m_fish)
+	for (auto& fish : m_robot)
 		fish.destroy();
-	m_turtles.clear();
-	m_fish.clear();
+	m_bricks.clear();
+	m_robot.clear();
 	glfwDestroyWindow(m_window);
 }
 
@@ -201,9 +201,9 @@ void World::draw()
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
 	// Drawing entities
-	for (auto& turtle : m_turtles)
+	for (auto& turtle : m_bricks)
 		turtle.draw(projection_2D);
-	for (auto& fish : m_fish)
+	for (auto& fish : m_robot)
 		fish.draw(projection_2D);
 
 	/////////////////////
@@ -240,7 +240,7 @@ bool World::spawn_turtle()
 	Brick turtle;
 	if (turtle.init())
 	{
-		m_turtles.emplace_back(turtle);
+		m_bricks.emplace_back(turtle);
 		return true;
 	}
 	fprintf(stderr, "Failed to spawn turtle");
@@ -253,7 +253,7 @@ bool World::spawn_fish()
 	Robot fish;
 	if (fish.init())
 	{
-		m_fish.emplace_back(fish);
+		m_robot.emplace_back(fish);
 		return true;
 	}
 	fprintf(stderr, "Failed to spawn fish");
