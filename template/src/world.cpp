@@ -25,8 +25,6 @@ namespace
 
 World::World() : 
 m_points(0),
-m_next_turtle_spawn(0.f),
-m_next_fish_spawn(0.f)
 {
 	// Seeding rng with random device
 	m_rng = std::default_random_engine(std::random_device()());
@@ -106,10 +104,8 @@ bool World::init(vec2 screen)
 	}
 
 	m_background_music = Mix_LoadMUS(audio_path("music.wav"));
-	m_salmon_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav"));
-	m_salmon_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav"));
 
-	if (m_background_music == nullptr || m_salmon_dead_sound == nullptr || m_salmon_eat_sound == nullptr)
+	if (m_background_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
 			audio_path("music.wav"),
@@ -123,8 +119,6 @@ bool World::init(vec2 screen)
 	
 	fprintf(stderr, "Loaded music\n");
 
-	m_current_speed = 1.f;
-
 	return m_water.init();
 }
 
@@ -135,19 +129,13 @@ void World::destroy()
 
 	if (m_background_music != nullptr)
 		Mix_FreeMusic(m_background_music);
-	if (m_salmon_dead_sound != nullptr)
-		Mix_FreeChunk(m_salmon_dead_sound);
-	if (m_salmon_eat_sound != nullptr)
-		Mix_FreeChunk(m_salmon_eat_sound);
 
 	Mix_CloseAudio();
 
-	for (auto& turtle : m_bricks)
-		turtle.destroy();
-	for (auto& fish : m_robot)
-		fish.destroy();
+	for (auto& brick : m_bricks)
+		brick.destroy();
+	m_robot.destroy();
 	m_bricks.clear();
-	m_robot.clear();
 	glfwDestroyWindow(m_window);
 }
 
@@ -203,8 +191,7 @@ void World::draw()
 	// Drawing entities
 	for (auto& turtle : m_bricks)
 		turtle.draw(projection_2D);
-	for (auto& fish : m_robot)
-		fish.draw(projection_2D);
+	m_robot.draw(projection_2D);
 
 	/////////////////////
 	// Truely render to the screen
@@ -232,32 +219,6 @@ void World::draw()
 bool World::is_over() const
 {
 	return glfwWindowShouldClose(m_window);
-}
-
-// Creates a new turtle and if successfull adds it to the list of turtles
-bool World::spawn_turtle()
-{
-	Brick turtle;
-	if (turtle.init())
-	{
-		m_bricks.emplace_back(turtle);
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn turtle");
-	return false;
-}
-
-// Creates a new fish and if successfull adds it to the list of fish
-bool World::spawn_fish()
-{
-	Robot fish;
-	if (fish.init())
-	{
-		m_robot.emplace_back(fish);
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn fish");
-	return false;
 }
 
 // On key callback
