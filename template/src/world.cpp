@@ -24,7 +24,7 @@ namespace
 }
 
 World::World() : 
-m_points(0),
+m_points(0)
 {
 	// Seeding rng with random device
 	m_rng = std::default_random_engine(std::random_device()());
