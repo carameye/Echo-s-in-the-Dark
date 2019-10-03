@@ -56,8 +56,11 @@ bool Robot::init()
 	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
 
+	motion.position = { 0.f, 0.f };
+	motion.velocity = { 0.f, 0.f };
+	// TODO: determine global gravity constant and apply to the Y acceleration
+	motion.acceleration = { 0.f , 0.f };
 	motion.radians = 0.f;
-	motion.speed = 380.f;
 
 	// Setting initial values, scale is negative to make it face the opposite way
 	// 1.0 would be as big as the original texture.

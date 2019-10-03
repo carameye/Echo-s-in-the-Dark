@@ -56,9 +56,10 @@ bool Brick::init()
 	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
 
+	motion.position = { 0.f, 0.f };
+	motion.velocity = { 0.f, 0.f };
+	motion.acceleration = { 0.f , 0.f };
 	motion.radians = 0.f;
-	// TODO: leaving this in as well. I can see times when we might want to have moving bricks
-	motion.speed = 0.f;
 
 	// TODO : this will have to change, just not sure what size is good for now
 	physics.scale = { 1.0f, 1.0f };

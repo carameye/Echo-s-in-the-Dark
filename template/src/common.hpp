@@ -110,8 +110,9 @@ protected:
 	// All data relevant to the motion of the salmon.
 	struct Motion {
 		vec2 position;
+		vec2 velocity;
+		vec2 acceleration;
 		float radians;
-		float speed;
 	} motion;
 
 	// Scale is used in the bounding box calculations, 
