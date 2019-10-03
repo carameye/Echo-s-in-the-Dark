@@ -13,7 +13,7 @@ public:
 	void destroy();
 
 	// Renders the water
-	void draw(const mat3& projection)override;
+	void draw(const mat3& projection, const vec2& camera_shift)override;
 
 	// Salmon dead time getters and setters
 	void set_salmon_dead();

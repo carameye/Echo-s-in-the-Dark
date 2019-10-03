@@ -5,6 +5,8 @@
 #include <string.h>
 #include <cassert>
 #include <sstream>
+#include <iostream>
+#include <fstream>
 
 // Same as static in c, local to compilation unit
 namespace
@@ -119,7 +121,7 @@ bool World::init(vec2 screen)
 	
 	fprintf(stderr, "Loaded music\n");
 
-	return m_robot.init() && m_water.init();
+	return parse_level("demo") && m_water.init();
 }
 
 // Releases all the associated resources
@@ -189,10 +191,13 @@ void World::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
+	vec2 centre_pos = m_robot.get_position();
+	vec2 camera_shift = { w / 2 - centre_pos.x, h / 2 - centre_pos.y };
+
 	// Drawing entities
-	for (auto& turtle : m_bricks)
-		turtle.draw(projection_2D);
-	m_robot.draw(projection_2D);
+	for (auto& brick : m_bricks)
+		brick.draw(projection_2D, camera_shift);
+	m_robot.draw(projection_2D, camera_shift);
 
 	/////////////////////
 	// Truely render to the screen
@@ -209,7 +214,7 @@ void World::draw()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_screen_tex.id);
 
-	m_water.draw(projection_2D);
+	m_water.draw(projection_2D, camera_shift);
 
 	//////////////////
 	// Presenting
@@ -231,4 +236,72 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
 
+}
+
+bool World::parse_level(std::string level)
+{
+	std::string filename = level_path;
+	filename.append(level);
+	filename.append(".txt");
+	std::ifstream file;
+	file.open(filename);
+	if (file.is_open())
+	{
+		fprintf(stderr, "Opened level file\n");
+
+		m_bricks.clear();
+
+		float x = 0.f;
+		float y = 0.f;
+		std::string line;
+		while (getline(file, line))
+		{
+			for (x = 0.f; x < line.length(); x++)
+			{
+				vec2 position;
+				position.x = x * brick_size.x;
+				position.y = y * brick_size.y;
+				switch (line[x])
+				{
+				case 'B':
+					if (!add_brick(position))
+						return false;
+					break;
+				case 'R':
+					if (!spawn_robot(position))
+						return false;
+					break;
+				}
+			}
+			y++;
+		}
+	}
+	else
+		return false;
+
+	return true;
+}
+
+bool World::spawn_robot(vec2 position)
+{
+	if (m_robot.init())
+	{
+		m_robot.set_position(position);
+		return true;
+	}
+	fprintf(stderr, "Robot spawn failed\n");
+	return false;
+}
+
+bool World::add_brick(vec2 position)
+{
+	Brick brick;
+	if (brick.init())
+	{
+		brick.set_position(position);
+		m_bricks.push_back(brick);
+		return true;
+	}
+	fprintf(stderr, "Brick spawn failed\n");
+	return false;
 }

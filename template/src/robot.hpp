@@ -20,7 +20,7 @@ public:
 
 	// Renders the robot
 	// projection is the 2D orthographic projection matrix
-	void draw(const mat3& projection) override;
+	void draw(const mat3& projection, const vec2& camera_shift) override;
 
 	// Returns the current robot position
 	vec2 get_position() const;

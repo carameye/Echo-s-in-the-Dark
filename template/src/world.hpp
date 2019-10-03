@@ -37,10 +37,16 @@ public:
 	// Should the game be over ?
 	bool is_over()const;
 
+	// Generate a level from a text file
+	bool parse_level(std::string level);
+
 private:
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
+
+	bool spawn_robot(vec2 position);
+	bool add_brick(vec2 position);
 
 private:
 	// Window handle
