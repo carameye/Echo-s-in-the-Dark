@@ -56,7 +56,7 @@ float Water::get_salmon_dead_time() const {
 	return glfwGetTime() - m_dead_time;
 }
 
-void Water::draw(const mat3& projection) {
+void Water::draw(const mat3& projection, const vec2& camera_shift) {
 	// Enabling alpha channel for textures
 	glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);

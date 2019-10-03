@@ -12,7 +12,7 @@ bool Robot::init()
 	{
 		if (!robot_texture.load_from_file(textures_path("robot.png")))
 		{
-			fprintf(stderr, "Failed to load brick texture!");
+			fprintf(stderr, "Failed to load robot texture!");
 			return false;
 		}
 	}
@@ -61,7 +61,7 @@ bool Robot::init()
 
 	// Setting initial values, scale is negative to make it face the opposite way
 	// 1.0 would be as big as the original texture.
-	physics.scale = { -0.4f, 0.4f };
+	physics.scale = { 1.0f, 1.0f };
 
 	return true;
 }
@@ -87,14 +87,16 @@ void Robot::update(float ms)
 	motion.position.x += step;
 }
 
-void Robot::draw(const mat3& projection)
+void Robot::draw(const mat3& projection, const vec2& camera_shift)
 {
 	// Transformation code, see Rendering and Transformation in the template specification for more info
 	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
 	transform.begin();
+	transform.translate(camera_shift);
 	transform.translate(motion.position);
 	transform.rotate(motion.radians);
-	transform.scale(physics.scale);
+	vec2 tex_scale = { brick_size.x / robot_texture.width, brick_size.y / robot_texture.height };
+	transform.scale(tex_scale);
 	transform.end();
 
 	// Setting shaders

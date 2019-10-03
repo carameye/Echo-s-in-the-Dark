@@ -40,6 +40,7 @@ vec2 to_vec2(vec3 v);
 float sq_len(vec2 a);
 float len(vec2 a);
 
+static const vec2 brick_size = { 64, 64 };
 
 
 // OpenGL utilities
@@ -83,7 +84,7 @@ struct Texture
 struct Entity {
 	// projection contains the orthographic projection matrix. As every Entity::draw()
 	// renders itself it needs it to correctly bind it to its shader.
-	virtual void draw(const mat3& projection) = 0;
+	virtual void draw(const mat3& projection, const vec2& camera_shift) = 0;
 
 protected:
 	// A Mesh is a collection of a VertexBuffer and an IndexBuffer. A VAO

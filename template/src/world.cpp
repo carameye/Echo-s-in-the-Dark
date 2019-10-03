@@ -121,7 +121,7 @@ bool World::init(vec2 screen)
 	
 	fprintf(stderr, "Loaded music\n");
 
-	return m_robot.init() && m_water.init();
+	return parse_level("demo") && m_water.init();
 }
 
 // Releases all the associated resources
@@ -191,10 +191,13 @@ void World::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
+	vec2 centre_pos = m_robot.get_position();
+	vec2 camera_shift = { w / 2 - centre_pos.x, h / 2 - centre_pos.y };
+
 	// Drawing entities
 	for (auto& brick : m_bricks)
-		brick.draw(projection_2D);
-	m_robot.draw(projection_2D);
+		brick.draw(projection_2D, camera_shift);
+	m_robot.draw(projection_2D, camera_shift);
 
 	/////////////////////
 	// Truely render to the screen
@@ -211,7 +214,7 @@ void World::draw()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_screen_tex.id);
 
-	//m_water.draw(projection_2D);
+	m_water.draw(projection_2D, camera_shift);
 
 	//////////////////
 	// Presenting
@@ -256,8 +259,8 @@ bool World::parse_level(std::string level)
 			for (x = 0.f; x < line.length(); x++)
 			{
 				vec2 position;
-				position.x = x * brick_width;
-				position.y = y * brick_width;
+				position.x = x * brick_size.x;
+				position.y = y * brick_size.y;
 				switch (line[x])
 				{
 				case 'B':
@@ -265,8 +268,8 @@ bool World::parse_level(std::string level)
 						return false;
 					break;
 				case 'R':
-					//if (!spawn_robot(position))
-					//	return false;
+					if (!spawn_robot(position))
+						return false;
 					break;
 				}
 			}

@@ -61,7 +61,7 @@ bool Brick::init()
 	motion.speed = 0.f;
 
 	// TODO : this will have to change, just not sure what size is good for now
-	physics.scale = { 0.4f, 0.4f };
+	physics.scale = { 1.0f, 1.0f };
 
 	return true;
 }
@@ -83,14 +83,16 @@ void Brick::update(float ms)
 	// probably don't really need much here...
 }
 
-void Brick::draw(const mat3& projection)
+void Brick::draw(const mat3& projection, const vec2& camera_shift)
 {
 	// Transformation code, see Rendering and Transformation in the template specification for more info
 	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
 	transform.begin();
+	transform.translate(camera_shift);
 	transform.translate(motion.position);
 	transform.rotate(motion.radians);
-	transform.scale(physics.scale);
+	vec2 tex_scale = { brick_size.x / brick_texture.width, brick_size.y / brick_texture.height };
+	transform.scale(tex_scale);
 	transform.end();
 
 	// Setting shaders
