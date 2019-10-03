@@ -2,6 +2,8 @@
 
 #include "common.hpp"
 
+static const float brick_width = 16;
+
 class Brick : public Entity
 {
 	// Shared between all turtles, no need to load one for each instance

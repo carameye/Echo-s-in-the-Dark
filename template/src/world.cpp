@@ -5,6 +5,8 @@
 #include <string.h>
 #include <cassert>
 #include <sstream>
+#include <iostream>
+#include <fstream>
 
 // Same as static in c, local to compilation unit
 namespace
@@ -190,8 +192,8 @@ void World::draw()
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
 	// Drawing entities
-	for (auto& turtle : m_bricks)
-		turtle.draw(projection_2D);
+	for (auto& brick : m_bricks)
+		brick.draw(projection_2D);
 	m_robot.draw(projection_2D);
 
 	/////////////////////
@@ -209,7 +211,7 @@ void World::draw()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_screen_tex.id);
 
-	m_water.draw(projection_2D);
+	//m_water.draw(projection_2D);
 
 	//////////////////
 	// Presenting
@@ -231,4 +233,72 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
 
+}
+
+bool World::parse_level(std::string level)
+{
+	std::string filename = level_path;
+	filename.append(level);
+	filename.append(".txt");
+	std::ifstream file;
+	file.open(filename);
+	if (file.is_open())
+	{
+		fprintf(stderr, "Opened level file\n");
+
+		m_bricks.clear();
+
+		float x = 0.f;
+		float y = 0.f;
+		std::string line;
+		while (getline(file, line))
+		{
+			for (x = 0.f; x < line.length(); x++)
+			{
+				vec2 position;
+				position.x = x * brick_width;
+				position.y = y * brick_width;
+				switch (line[x])
+				{
+				case 'B':
+					if (!add_brick(position))
+						return false;
+					break;
+				case 'R':
+					//if (!spawn_robot(position))
+					//	return false;
+					break;
+				}
+			}
+			y++;
+		}
+	}
+	else
+		return false;
+
+	return true;
+}
+
+bool World::spawn_robot(vec2 position)
+{
+	if (m_robot.init())
+	{
+		m_robot.set_position(position);
+		return true;
+	}
+	fprintf(stderr, "Robot spawn failed\n");
+	return false;
+}
+
+bool World::add_brick(vec2 position)
+{
+	Brick brick;
+	if (brick.init())
+	{
+		brick.set_position(position);
+		m_bricks.push_back(brick);
+		return true;
+	}
+	fprintf(stderr, "Brick spawn failed\n");
+	return false;
 }
