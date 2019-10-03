@@ -147,6 +147,42 @@ bool World::update(float elapsed_ms)
 	int w, h;
 	glfwGetFramebufferSize(m_window, &w, &h);
 	vec2 screen = { (float)w / m_screen_scale, (float)h / m_screen_scale };
+
+	//-------------------------------------------------------------------------
+	// Handle robot physics update
+	// TODO: refactor this to a system for all moving entities when we apply ECS
+
+	// Maximum velocity in absolute value
+	vec2 max_vel = { 400.f, 400.f };
+
+	float time_factor = elapsed_ms / 1000;
+	vec2 robot_pos = m_robot.get_position();
+	vec2 robot_vel = m_robot.get_velocity();
+	vec2 robot_acc = m_robot.get_acceleration();
+
+	// Update velocity
+	vec2 new_robot_vel = { robot_vel.x + robot_acc.x * time_factor, robot_vel.y + robot_acc.y * time_factor};
+	if (new_robot_vel.x > max_vel.x) {
+		new_robot_vel.x = max_vel.x;
+	} else if (new_robot_vel.x < max_vel.x * -1.f) {
+		new_robot_vel.x = max_vel.x * -1.f;
+	}
+	if (new_robot_vel.y > max_vel.y) {
+		new_robot_vel.y = max_vel.y;
+	} else if (new_robot_vel.y < max_vel.y * -1.f) {
+		new_robot_vel.y = max_vel.y * -1.f;
+	}
+	m_robot.set_velocity(new_robot_vel);
+
+	// Update position
+	vec2 new_robot_pos = { robot_pos.x + robot_vel.x * time_factor, robot_pos.y + robot_vel.y * time_factor};
+	bool collision_detected = false;
+	// TODO: check collision
+	if (!collision_detected) {
+		m_robot.set_position(new_robot_pos);
+	} else {
+		// TODO: move to the furthest point possible before collision will happen
+	}
 	return true;
 }
 
@@ -230,7 +266,38 @@ bool World::is_over() const
 // On key callback
 void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 {
+	float acceleration = 500.f;
+	vec2 robot_vel = m_robot.get_velocity();
+	vec2 robot_acc = m_robot.get_acceleration();
+	if (action == GLFW_PRESS && key == GLFW_KEY_UP) {
+		m_robot.set_acceleration({ robot_acc.x, acceleration * -1.f });
+	}
+	if (action == GLFW_PRESS && key == GLFW_KEY_DOWN) {
+		m_robot.set_acceleration({ robot_acc.x, acceleration });
+	}
+	if (action == GLFW_PRESS && key == GLFW_KEY_LEFT) {
+		m_robot.set_acceleration({ acceleration * -1.f, robot_acc.y });
+	}
+	if (action == GLFW_PRESS && key == GLFW_KEY_RIGHT) {
+		m_robot.set_acceleration({ acceleration, robot_acc.y });
+	}
 
+	if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
+		m_robot.set_acceleration({ robot_acc.x, 0.f });
+		m_robot.set_velocity({ robot_vel.x, 0.f });
+	}
+	if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
+		m_robot.set_acceleration({ robot_acc.x, 0.f });
+		m_robot.set_velocity({ robot_vel.x, 0.f });
+	}
+	if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT) {
+		m_robot.set_acceleration({ 0.f, robot_acc.y });
+		m_robot.set_velocity({ 0.f, robot_vel.y });
+	}
+	if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT) {
+		m_robot.set_acceleration({ 0.f, robot_acc.y });
+		m_robot.set_velocity({ 0.f, robot_vel.y });
+	}
 }
 
 void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)

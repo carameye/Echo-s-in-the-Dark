@@ -58,7 +58,6 @@ bool Robot::init()
 
 	motion.position = { 0.f, 0.f };
 	motion.velocity = { 0.f, 0.f };
-	// TODO: determine global gravity constant and apply to the Y acceleration
 	motion.acceleration = { 0.f , 0.f };
 	motion.radians = 0.f;
 
@@ -83,11 +82,7 @@ void Robot::destroy()
 
 void Robot::update(float ms)
 {
-	float step = motion.speed * (ms / 1000);
-
 	// TODO: handle  key strokes from world
-
-	motion.position.x += step;
 }
 
 void Robot::draw(const mat3& projection, const vec2& camera_shift)
@@ -146,9 +141,29 @@ vec2 Robot::get_position() const
 	return motion.position;
 }
 
+vec2 Robot::get_velocity() const
+{
+	return motion.velocity;
+}
+
+vec2 Robot::get_acceleration() const
+{
+	return motion.acceleration;
+}
+
 void Robot::set_position(vec2 position)
 {
 	motion.position = position;
+}
+
+void Robot::set_velocity(vec2 velocity)
+{
+	motion.velocity = velocity;
+}
+
+void Robot::set_acceleration(vec2 acceleration)
+{
+	motion.acceleration = acceleration;
 }
 
 vec2 Robot::get_bounding_box() const

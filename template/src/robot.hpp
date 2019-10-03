@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "hitbox.hpp"
 
 // Salmon food
 class Robot : public Entity
@@ -25,8 +26,20 @@ public:
 	// Returns the current robot position
 	vec2 get_position() const;
 
+	// Returns the current robot velocity
+	vec2 get_velocity() const;
+
+	// Returns the current robot acceleration
+	vec2 get_acceleration() const;
+
 	// Sets the new robot position
 	void set_position(vec2 position);
+
+	// Sets the new robot velocity
+	void set_velocity(vec2 velocity);
+
+	// Sets the new robot acceleration
+	void set_acceleration(vec2 acceleration);
 
 	// Returns the robots bounding box for collision detection, called by collides_with()
 	vec2 get_bounding_box() const;
