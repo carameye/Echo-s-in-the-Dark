@@ -119,7 +119,7 @@ bool World::init(vec2 screen)
 	
 	fprintf(stderr, "Loaded music\n");
 
-	return m_water.init();
+	return m_robot.init() && m_water.init();
 }
 
 // Releases all the associated resources

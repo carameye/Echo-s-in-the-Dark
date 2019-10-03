@@ -10,7 +10,7 @@ bool Robot::init()
 	// Load shared texture
 	if (!robot_texture.is_valid())
 	{
-		if (!robot_texture.load_from_file(textures_path("m_robot.png")))
+		if (!robot_texture.load_from_file(textures_path("robot.png")))
 		{
 			fprintf(stderr, "Failed to load brick texture!");
 			return false;
