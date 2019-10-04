@@ -41,6 +41,6 @@ public:
 	// Sets the new robot acceleration
 	void set_acceleration(vec2 acceleration);
 
-	// Returns the robots bounding box for collision detection, called by collides_with()
-	vec2 get_bounding_box() const;
+	// Returns the robots hitbox for collision detection
+	Hitbox get_hitbox(vec2 translation) const;
 };

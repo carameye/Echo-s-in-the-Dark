@@ -146,9 +146,17 @@ void Brick::set_position(vec2 position)
 	motion.position = position;
 }
 
-vec2 Brick::get_bounding_box() const
+Hitbox Brick::get_hitbox() const
 {
-	// Returns the local bounding coordinates scaled by the current size of the brick
-	// fabs is to avoid negative scale due to the facing direction.
-	return {std::fabs(physics.scale.x) * brick_texture.width, std::fabs(physics.scale.y) * brick_texture.height };
+	std::vector<Square> squares(1);
+	
+	int width = 60;
+	vec2 position = motion.position;
+	position.x -= width / 2;
+	position.y += width / 2;
+	Square square(position, width);
+	squares[0] = square;
+
+	Hitbox hitbox({}, squares);
+	return hitbox;
 }

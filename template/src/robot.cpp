@@ -166,9 +166,21 @@ void Robot::set_acceleration(vec2 acceleration)
 	motion.acceleration = acceleration;
 }
 
-vec2 Robot::get_bounding_box() const
+Hitbox Robot::get_hitbox(vec2 translation) const
 {
-	// Returns the local bounding coordinates scaled by the current size of the fish 
-	// fabs is to avoid negative scale due to the facing direction.
-	return {std::fabs(physics.scale.x) * robot_texture.width, std::fabs(physics.scale.y) * robot_texture.height };
+	std::vector<Circle> circles(1);
+	
+	vec2 position = motion.position;
+
+	position.x += translation.x;
+	position.y += translation.y;
+
+	int radius = 33;
+	Circle circle(position, radius);
+	circles[0] = circle;
+
+	Hitbox hitbox(circles, {});
+	// TODO: figure out why this line is not working
+	// hitbox.translate(translation);
+	return hitbox;
 }

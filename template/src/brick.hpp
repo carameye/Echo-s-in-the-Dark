@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "hitbox.hpp"
 
 class Brick : public Entity
 {
@@ -28,6 +29,6 @@ public:
 	// Sets the new turtle position
 	void set_position(vec2 position);
 
-	// Returns the bricks bounding box for collision detection, called by collides_with()
-	vec2 get_bounding_box() const;
+	// Returns the bricks hitbox for collision detection
+	Hitbox get_hitbox() const;
 };
