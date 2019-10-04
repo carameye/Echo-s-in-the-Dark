@@ -98,16 +98,16 @@ vec2 normalize(vec2 v)
 	return { v.x / m, v.y / m };
 }
 
-float get_closest_point(float last_pos, float hit_center, float width)
+float get_closest_point(float last_pos, float tile_pos, float circle_width, float tile_width)
 {
-	float side = -1.f;
-	if (last_pos > hit_center)
-		side = 1.f;
+	float side = 1.f;
+	if (last_pos < tile_pos)
+		side = -1.f;
 
-	float ret = hit_center + side * width;
+	float ret = tile_pos + side * (circle_width + tile_width);
 
-	if (std::abs(ret) < 0.1f)
-		return 0.f;
+	if (std::abs(last_pos - ret) < 4.f)
+		return last_pos;
 	else
 		return ret;
 }
