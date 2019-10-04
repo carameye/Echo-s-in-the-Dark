@@ -25,7 +25,7 @@ namespace
 	}
 }
 
-World::World() : 
+World::World() :
 m_points(0)
 {
 	// Seeding rng with random device
@@ -118,7 +118,7 @@ bool World::init(vec2 screen)
 
 	// Playing background music indefinitely
 	Mix_PlayMusic(m_background_music, -1);
-	
+
 	fprintf(stderr, "Loaded music\n");
 
 	return parse_level("demo") && m_water.init();
@@ -183,8 +183,8 @@ bool World::update(float elapsed_ms)
 	bool collision_y = false;
 	for (auto& brick : m_bricks) {
 		vec2 translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
-		auto& robot_hitbox_x = m_robot.get_hitbox({ translation.x, 0.f });
-		auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation.y });
+		const auto& robot_hitbox_x = m_robot.get_hitbox({ translation.x, 0.f });
+		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation.y });
 		if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
 			collision_x = true;
 			m_robot.set_velocity({ 0.f, new_robot_vel.y });

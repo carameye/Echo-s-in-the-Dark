@@ -1,4 +1,5 @@
 #include "hitbox.hpp"
+#include <math.h>
 
 Hitbox::Hitbox(std::vector<Circle> circles, std::vector<Square> squares)
 {
@@ -8,11 +9,11 @@ Hitbox::Hitbox(std::vector<Circle> circles, std::vector<Square> squares)
 
 bool Hitbox::collides_with(Hitbox hb)
 {
-	for each (Circle c in this->circles)
+	for (Circle c : this->circles)
 		if (hb.collides_with(c))
 			return true;
 
-	for each (Square s in this->squares)
+	for (Square s : this->squares)
 		if (hb.collides_with(s))
 			return true;
 
@@ -21,12 +22,12 @@ bool Hitbox::collides_with(Hitbox hb)
 
 void Hitbox::translate(vec2 translation)
 {
-	for each (Circle c in this->circles)
+	for (Circle c : this->circles)
 	{
 		c.translate(translation);
 	}
 
-	for each (Square s in this->squares)
+	for (Square s : this->squares)
 	{
 		s.translate(translation);
 	}
@@ -34,11 +35,11 @@ void Hitbox::translate(vec2 translation)
 
 bool Hitbox::collides_with(Circle &circle)
 {
-	for each (Circle c in this->circles)
+	for (Circle c : this->circles)
 		if (circle.collides_with(c))
 			return true;
 
-	for each (Square s in this->squares)
+	for (Square s : this->squares)
 		if (circle.collides_with(s))
 			return true;
 
@@ -47,11 +48,11 @@ bool Hitbox::collides_with(Circle &circle)
 
 bool Hitbox::collides_with(Square& square)
 {
-	for each (Circle c in this->circles)
+	for (Circle c : this->circles)
 		if (square.collides_with(c))
 			return true;
 
-	for each (Square s in this->squares)
+	for (Square s : this->squares)
 		if (square.collides_with(s))
 			return true;
 
