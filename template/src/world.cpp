@@ -150,7 +150,6 @@ bool World::update(float elapsed_ms)
 
 	//-------------------------------------------------------------------------
 	// Handle robot physics update
-	// TODO: refactor this to a system for all moving entities when we apply ECS
 
 	// Maximum velocity in absolute value
 	vec2 max_vel = { 400.f, 400.f };
@@ -175,13 +174,35 @@ bool World::update(float elapsed_ms)
 	m_robot.set_velocity(new_robot_vel);
 
 	// Update position
-	vec2 new_robot_pos = { robot_pos.x + robot_vel.x * time_factor, robot_pos.y + robot_vel.y * time_factor};
-	bool collision_detected = false;
-	// TODO: check collision
-	if (!collision_detected) {
+	vec2 new_robot_pos = { robot_pos.x + new_robot_vel.x * time_factor, robot_pos.y + new_robot_vel.y * time_factor};
+	
+	// Detect collision
+	// If the player will collide with an object next tick with the new velocity,
+	// it will set velocity and acceleration to 0 and not update the position
+	bool collision_x = false;
+	bool collision_y = false;
+	for (auto& brick : m_bricks) {
+		vec2 translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
+		auto& robot_hitbox_x = m_robot.get_hitbox({ translation.x, 0.f });
+		auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation.y });
+		if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
+			collision_x = true;
+			m_robot.set_velocity({ 0.f, new_robot_vel.y });
+			m_robot.set_acceleration({ 0.f, robot_acc.y });
+		}
+		if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
+			collision_y = true;
+			m_robot.set_velocity({ new_robot_vel.x, 0.f });
+			m_robot.set_acceleration({ robot_acc.x, 0.f });
+		}
+		if (collision_x || collision_y ) {
+			break;
+		}
+	}
+	if (!collision_x && !collision_y) {
 		m_robot.set_position(new_robot_pos);
 	} else {
-		// TODO: move to the furthest point possible before collision will happen
+		// TODO: set position to the furthest point before collision
 	}
 	return true;
 }
