@@ -13,6 +13,8 @@ public:
 	// Constructor
 	Circle(vec2 centre, int radius);
 
+	Circle();
+
 	// Return true if this collides with the given circle
 	bool collides_with(Circle &circle);
 
@@ -36,6 +38,8 @@ class Square
 public:
 	// Constructor
 	Square(vec2 bottomLeft, int width);
+
+	Square();
 
 	// Return true if this collides with the given circle
 	bool collides_with(Circle &circle);

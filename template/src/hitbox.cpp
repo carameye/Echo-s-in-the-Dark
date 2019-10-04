@@ -64,6 +64,11 @@ Circle::Circle(vec2 centre, int radius)
 	this->radius = radius;
 }
 
+Circle::Circle()
+{
+
+}
+
 bool Circle::collides_with(Circle &circle)
 {
 	return len(sub(circle.centre, this->centre)) <= circle.radius + this->radius;
@@ -103,6 +108,11 @@ Square::Square(vec2 bottomLeft, int width)
 {
 	this->bottomLeft = bottomLeft;
 	this->width = width;
+}
+
+Square::Square()
+{
+	
 }
 
 bool Square::collides_with(Circle &circle)
