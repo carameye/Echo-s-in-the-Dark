@@ -83,7 +83,10 @@ void Robot::destroy()
 void Robot::update(float ms)
 {
 	// TODO: handle  key strokes from world
-	motion.radians += motion.velocity.x / 1000;
+	if (grounded && std::abs(motion.velocity.x) > TOLERANCE)
+		motion.radians += motion.velocity.x / 1000;
+
+	grounded = false;
 }
 
 void Robot::draw(const mat3& projection, const vec2& camera_shift)
@@ -165,6 +168,11 @@ void Robot::set_velocity(vec2 velocity)
 void Robot::set_acceleration(vec2 acceleration)
 {
 	motion.acceleration = acceleration;
+}
+
+void Robot::set_grounded()
+{
+	grounded = true;
 }
 
 Hitbox Robot::get_hitbox(vec2 translation) const

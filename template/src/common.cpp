@@ -104,7 +104,12 @@ float get_closest_point(float last_pos, float hit_center, float width)
 	if (last_pos > hit_center)
 		side = 1.f;
 
-	return hit_center + side * width;
+	float ret = hit_center + side * width;
+
+	if (std::abs(ret) < 0.1f)
+		return 0.f;
+	else
+		return ret;
 }
 
 Texture::Texture()

@@ -40,6 +40,12 @@ public:
 	// Sets the new robot acceleration
 	void set_acceleration(vec2 acceleration);
 
+	// Sets grounded to true
+	void set_grounded();
+
 	// Returns the robots hitbox for collision detection
 	Hitbox get_hitbox(vec2 translation) const;
+
+private:
+	bool grounded = false;
 };

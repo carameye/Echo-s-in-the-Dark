@@ -72,7 +72,7 @@ Circle::Circle()
 
 bool Circle::collides_with(Circle &circle)
 {
-	return len(sub(circle.centre, this->centre)) <= circle.radius + this->radius;
+	return len(sub(circle.centre, this->centre)) <= circle.radius + this->radius + TOLERANCE;
 }
 
 bool Circle::collides_with(Square &square)
@@ -97,7 +97,7 @@ bool Circle::collides_with(Square &square)
 	float distY = this->centre.y - testY;
 	float distance = sqrt((distX * distX) + (distY * distY));
 
-	return distance <= this->radius;
+	return distance <= this->radius + TOLERANCE;
 }
 
 void Circle::translate(vec2 translation)
@@ -123,10 +123,10 @@ bool Square::collides_with(Circle &circle)
 
 bool Square::collides_with(Square &square)
 {
-	bool xOverlap = this->get_left() <= square.get_right()
-		&& this->get_right() >= square.get_left();
+	bool xOverlap = this->get_left() <= square.get_right() + TOLERANCE
+		&& this->get_right() + TOLERANCE >= square.get_left();
 	bool yOverlap = this->get_top() <= square.get_bottom()
-		&& this->get_bottom() >= square.get_top();
+		&& this->get_bottom() + TOLERANCE >= square.get_top() + TOLERANCE;
 
 	return xOverlap && yOverlap;
 }

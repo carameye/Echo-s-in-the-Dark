@@ -195,6 +195,8 @@ bool World::update(float elapsed_ms)
 			collision_y = true;
 			m_robot.set_velocity({ m_robot.get_velocity().x, 0.f });
 			new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, brick_size.y);
+			if (brick.get_position().y > new_robot_pos.y)
+				m_robot.set_grounded();
 		}
 	}
 
@@ -226,7 +228,7 @@ void World::draw()
 	// Clearing backbuffer
 	glViewport(0, 0, w, h);
 	glDepthRange(0.00001, 10);
-	const float clear_color[3] = { 1.f, 1.f, 1.f };
+	const float clear_color[3] = { 1.f, 1.f, 0.8f };
 	glClearColor(clear_color[0], clear_color[1], clear_color[2], 1.0);
 	glClearDepth(1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

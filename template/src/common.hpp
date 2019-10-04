@@ -41,6 +41,7 @@ float sq_len(vec2 a);
 float len(vec2 a);
 
 static const vec2 brick_size = { 64, 64 };
+static const float TOLERANCE = 0.5f;
 
 float get_closest_point(float last_pos, float hit_center, float width);
 
