@@ -42,6 +42,8 @@ float len(vec2 a);
 
 static const vec2 brick_size = { 64, 64 };
 
+float get_closest_point(float last_pos, float hit_center, float width);
+
 
 // OpenGL utilities
 // cleans error buffer

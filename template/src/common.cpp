@@ -98,6 +98,15 @@ vec2 normalize(vec2 v)
 	return { v.x / m, v.y / m };
 }
 
+float get_closest_point(float last_pos, float hit_center, float width)
+{
+	float side = -1.f;
+	if (last_pos > hit_center)
+		side = 1.f;
+
+	return hit_center + side * width;
+}
+
 Texture::Texture()
 {
 

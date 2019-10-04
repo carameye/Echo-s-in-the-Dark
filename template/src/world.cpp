@@ -152,12 +152,13 @@ bool World::update(float elapsed_ms)
 	// Handle robot physics update
 
 	// Maximum velocity in absolute value
-	vec2 max_vel = { 400.f, 400.f };
+	vec2 max_vel = { 400.f, 600.f };
 
 	float time_factor = elapsed_ms / 1000;
 	vec2 robot_pos = m_robot.get_position();
 	vec2 robot_vel = m_robot.get_velocity();
 	vec2 robot_acc = m_robot.get_acceleration();
+	robot_acc.y += 1000; // gravity
 
 	// Update velocity
 	vec2 new_robot_vel = { robot_vel.x + robot_acc.x * time_factor, robot_vel.y + robot_acc.y * time_factor};
@@ -181,29 +182,23 @@ bool World::update(float elapsed_ms)
 	// it will set velocity and acceleration to 0 and not update the position
 	bool collision_x = false;
 	bool collision_y = false;
+	vec2 translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
+	const auto& robot_hitbox_x = m_robot.get_hitbox({ translation.x, 0.f });
+	const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation.y });
 	for (auto& brick : m_bricks) {
-		vec2 translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
-		const auto& robot_hitbox_x = m_robot.get_hitbox({ translation.x, 0.f });
-		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation.y });
 		if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
 			collision_x = true;
-			m_robot.set_velocity({ 0.f, new_robot_vel.y });
-			m_robot.set_acceleration({ 0.f, robot_acc.y });
+			m_robot.set_velocity({ 0.f, m_robot.get_velocity().y });
+			new_robot_pos.x = get_closest_point(robot_pos.x, brick.get_position().x, brick_size.x);
 		}
 		if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
 			collision_y = true;
-			m_robot.set_velocity({ new_robot_vel.x, 0.f });
-			m_robot.set_acceleration({ robot_acc.x, 0.f });
-		}
-		if (collision_x || collision_y ) {
-			break;
+			m_robot.set_velocity({ m_robot.get_velocity().x, 0.f });
+			new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, brick_size.y);
 		}
 	}
-	if (!collision_x && !collision_y) {
-		m_robot.set_position(new_robot_pos);
-	} else {
-		// TODO: set position to the furthest point before collision
-	}
+
+	m_robot.set_position(new_robot_pos);
 	return true;
 }
 
@@ -287,36 +282,34 @@ bool World::is_over() const
 // On key callback
 void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 {
-	float acceleration = 500.f;
+	float acceleration = 1800.f;
 	vec2 robot_vel = m_robot.get_velocity();
 	vec2 robot_acc = m_robot.get_acceleration();
 	if (action == GLFW_PRESS && key == GLFW_KEY_UP) {
-		m_robot.set_acceleration({ robot_acc.x, acceleration * -1.f });
+		m_robot.set_acceleration({ robot_acc.x, robot_acc.y + acceleration * -1.f });
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_DOWN) {
-		m_robot.set_acceleration({ robot_acc.x, acceleration });
+		m_robot.set_acceleration({ robot_acc.x, robot_acc.y + acceleration });
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_LEFT) {
-		m_robot.set_acceleration({ acceleration * -1.f, robot_acc.y });
+		m_robot.set_acceleration({ robot_acc.x + acceleration * -1.f, robot_acc.y });
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_RIGHT) {
-		m_robot.set_acceleration({ acceleration, robot_acc.y });
+		m_robot.set_acceleration({ robot_acc.x + acceleration, robot_acc.y });
 	}
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
-		m_robot.set_acceleration({ robot_acc.x, 0.f });
-		m_robot.set_velocity({ robot_vel.x, 0.f });
+		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration * -1.f });
 	}
 	if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
-		m_robot.set_acceleration({ robot_acc.x, 0.f });
-		m_robot.set_velocity({ robot_vel.x, 0.f });
+		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration });
 	}
 	if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT) {
-		m_robot.set_acceleration({ 0.f, robot_acc.y });
+		m_robot.set_acceleration({ robot_acc.x - acceleration * -1.f, robot_acc.y });
 		m_robot.set_velocity({ 0.f, robot_vel.y });
 	}
 	if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT) {
-		m_robot.set_acceleration({ 0.f, robot_acc.y });
+		m_robot.set_acceleration({ robot_acc.x - acceleration, robot_acc.y });
 		m_robot.set_velocity({ 0.f, robot_vel.y });
 	}
 }

@@ -3,7 +3,6 @@
 #include "common.hpp"
 #include "hitbox.hpp"
 
-// Salmon food
 class Robot : public Entity
 {
 	static Texture robot_texture;
