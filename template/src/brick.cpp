@@ -10,7 +10,7 @@ bool Brick::init()
 	// Load shared texture
 	if (!brick_texture.is_valid())
 	{
-		if (!brick_texture.load_from_file(textures_path("brick.png")))
+		if (!brick_texture.load_from_file(textures_path("tile_brick.png")))
 		{
 			fprintf(stderr, "Failed to load brick texture!");
 			return false;

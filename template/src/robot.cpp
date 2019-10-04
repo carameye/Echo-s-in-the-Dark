@@ -10,7 +10,7 @@ bool Robot::init()
 	// Load shared texture
 	if (!robot_texture.is_valid())
 	{
-		if (!robot_texture.load_from_file(textures_path("robot.png")))
+		if (!robot_texture.load_from_file(textures_path("body.png")))
 		{
 			fprintf(stderr, "Failed to load robot texture!");
 			return false;
@@ -83,6 +83,7 @@ void Robot::destroy()
 void Robot::update(float ms)
 {
 	// TODO: handle  key strokes from world
+	motion.radians += motion.velocity.x / 1000;
 }
 
 void Robot::draw(const mat3& projection, const vec2& camera_shift)
