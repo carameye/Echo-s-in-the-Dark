@@ -37,13 +37,14 @@ set(SOURCE_FILES
         src/brick.cpp
         src/background.cpp
 	src/world.cpp
-
+  src/hitbox.cpp
         src/project_path.hpp
 	src/common.hpp
         src/robot.hpp
         src/brick.hpp
         src/background.hpp
 	src/world.hpp
+  src/hitbox.hpp
         )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
