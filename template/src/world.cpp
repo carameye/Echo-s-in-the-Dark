@@ -121,7 +121,7 @@ bool World::init(vec2 screen)
 
 	fprintf(stderr, "Loaded music\n");
 
-	return parse_level("demo") && m_water.init();
+	return parse_level("demo") && m_light.init();
 }
 
 // Releases all the associated resources
@@ -137,6 +137,7 @@ void World::destroy()
 	for (auto& brick : m_bricks)
 		brick.destroy();
 	m_robot.destroy();
+	m_light.destroy();
 	m_bricks.clear();
 	glfwDestroyWindow(m_window);
 }
@@ -201,6 +202,9 @@ bool World::update(float elapsed_ms)
 	}
 	if (!collision_x && !collision_y) {
 		m_robot.set_position(new_robot_pos);
+		// TODO: set light to match robot
+        m_light.set_position(new_robot_pos);
+
 	} else {
 		// TODO: set position to the furthest point before collision
 	}
@@ -242,6 +246,7 @@ void World::draw()
 	float right = (float)w / m_screen_scale;// *0.5;
 	float bottom = (float)h / m_screen_scale;// *0.5;
 
+
 	float sx = 2.f / (right - left);
 	float sy = 2.f / (top - bottom);
 	float tx = -(right + left) / (right - left);
@@ -249,7 +254,8 @@ void World::draw()
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
 	vec2 centre_pos = m_robot.get_position();
-	vec2 camera_shift = { w / 2 - centre_pos.x, h / 2 - centre_pos.y };
+	// TODO: to fix lulus screen
+	vec2 camera_shift = { right / 2 - centre_pos.x, bottom / 2 - centre_pos.y };
 
 	// Drawing entities
 	for (auto& brick : m_bricks)
@@ -271,7 +277,7 @@ void World::draw()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_screen_tex.id);
 
-	m_water.draw(projection_2D, camera_shift);
+	m_light.draw(projection_2D, camera_shift);
 
 	//////////////////
 	// Presenting
@@ -375,7 +381,11 @@ bool World::spawn_robot(vec2 position)
 	if (m_robot.init())
 	{
 		m_robot.set_position(position);
+        if(m_light.init()){
+            m_light.set_position(position);
+        }
 		return true;
+		// TODO: init light when robot is spawned
 	}
 	fprintf(stderr, "Robot spawn failed\n");
 	return false;
