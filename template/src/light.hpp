@@ -3,7 +3,7 @@
 #include "common.hpp"
 
 
-class Water : public Entity
+class Light : public Entity
 {
 public:
 	// Creates all the associated render resources and default transform
@@ -15,12 +15,9 @@ public:
 	// Renders the water
 	void draw(const mat3& projection, const vec2& camera_shift)override;
 
-	// Salmon dead time getters and setters
-	void set_salmon_dead();
-	void reset_salmon_dead_time();
-	float get_salmon_dead_time() const;
+    void set_position(vec2 pos);
+
 
 private:
-	// When salmon is alive, the time is set to -1
-	float m_dead_time;
+    vec2 light_position;
 };

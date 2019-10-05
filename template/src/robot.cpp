@@ -10,7 +10,7 @@ bool Robot::init()
 	// Load shared texture
 	if (!robot_texture.is_valid())
 	{
-		if (!robot_texture.load_from_file(textures_path("robot.png")))
+		if (!robot_texture.load_from_file(textures_path("body.png")))
 		{
 			fprintf(stderr, "Failed to load robot texture!");
 			return false;
@@ -56,10 +56,10 @@ bool Robot::init()
 	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
 
-	motion.position = { 0.f, 0.f };
-	motion.velocity = { 0.f, 0.f };
-	motion.acceleration = { 0.f , 0.f };
-	motion.radians = 0.f;
+    motion.position = { 0.f, 0.f };
+    motion.velocity = { 0.f, 0.f };
+    motion.acceleration = { 0.f , 0.f };
+    motion.radians = 0.f;
 
 	// Setting initial values, scale is negative to make it face the opposite way
 	// 1.0 would be as big as the original texture.
@@ -83,6 +83,10 @@ void Robot::destroy()
 void Robot::update(float ms)
 {
 	// TODO: handle  key strokes from world
+	if (grounded && std::abs(motion.velocity.x) > TOLERANCE)
+		motion.radians += motion.velocity.x / 1000;
+
+	grounded = false;
 }
 
 void Robot::draw(const mat3& projection, const vec2& camera_shift)
@@ -166,6 +170,11 @@ void Robot::set_acceleration(vec2 acceleration)
 	motion.acceleration = acceleration;
 }
 
+void Robot::set_grounded()
+{
+	grounded = true;
+}
+
 Hitbox Robot::get_hitbox(vec2 translation) const
 {
 	std::vector<Circle> circles(1);
@@ -175,7 +184,7 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 	position.x += translation.x;
 	position.y += translation.y;
 
-	int radius = 33;
+	int radius = brick_size.x / 2;
 	Circle circle(position, radius);
 	circles[0] = circle;
 

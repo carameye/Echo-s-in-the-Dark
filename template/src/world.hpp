@@ -4,7 +4,7 @@
 #include "common.hpp"
 #include "brick.hpp"
 #include "robot.hpp"
-#include "background.hpp"
+#include "light.hpp"
 
 // stlib
 #include <vector>
@@ -58,8 +58,8 @@ private:
 	GLuint m_frame_buffer;
 	Texture m_screen_tex;
 
-	// Water effect
-	Water m_water;
+	// Light effect
+	Light m_light;
 
 	// Number of fish eaten by the salmon, displayed in the window title
 	unsigned int m_points;

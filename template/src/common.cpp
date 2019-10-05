@@ -98,6 +98,20 @@ vec2 normalize(vec2 v)
 	return { v.x / m, v.y / m };
 }
 
+float get_closest_point(float last_pos, float tile_pos, float circle_width, float tile_width)
+{
+	float side = 1.f;
+	if (last_pos < tile_pos)
+		side = -1.f;
+
+	float ret = tile_pos + side * (circle_width + tile_width + 2.f);
+
+	if (std::abs(last_pos - ret) < 4.f)
+		return last_pos;
+	else
+		return ret;
+}
+
 Texture::Texture()
 {
 

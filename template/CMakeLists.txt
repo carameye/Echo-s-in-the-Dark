@@ -35,16 +35,16 @@ set(SOURCE_FILES
 	src/common.cpp
         src/robot.cpp
         src/brick.cpp
-        src/background.cpp
+        src/light.cpp
 	src/world.cpp
   src/hitbox.cpp
         src/project_path.hpp
 	src/common.hpp
         src/robot.hpp
         src/brick.hpp
-        src/background.hpp
+        src/light.hpp
 	src/world.hpp
-  src/hitbox.hpp
+        src/hitbox.hpp
         )
 
 if (IS_OS_MAC)
