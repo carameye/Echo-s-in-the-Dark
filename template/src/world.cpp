@@ -184,7 +184,7 @@ bool World::update(float elapsed_ms)
 	float translation = new_robot_vel.x * time_factor;
 	for (auto& i_brick : m_bricks) 
 	{
-		auto& robot_hitbox_x = m_robot.get_hitbox({ translation, 0.f });
+		const auto& robot_hitbox_x = m_robot.get_hitbox({ translation, 0.f });
 		Brick brick = i_brick;
 		if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
 			m_robot.set_velocity({ 0.f, m_robot.get_velocity().y });
@@ -208,7 +208,7 @@ bool World::update(float elapsed_ms)
 	translation = new_robot_vel.y * time_factor;
 	for (auto& i_brick : m_bricks)
 	{
-		auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation });
+		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation });
 		Brick brick = i_brick;
 		if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
 			m_robot.set_velocity({ m_robot.get_velocity().x, 0.f });
@@ -321,30 +321,25 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	float acceleration = 1800.f;
 	vec2 robot_vel = m_robot.get_velocity();
 	vec2 robot_acc = m_robot.get_acceleration();
-	if (action == GLFW_PRESS && key == GLFW_KEY_UP) {
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 		m_robot.set_acceleration({ robot_acc.x, robot_acc.y + acceleration * -1.f });
 	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_DOWN) {
-		m_robot.set_acceleration({ robot_acc.x, robot_acc.y + acceleration });
-	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_LEFT) {
+	if (action == GLFW_PRESS && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
 		m_robot.set_acceleration({ robot_acc.x + acceleration * -1.f, robot_acc.y });
 	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_RIGHT) {
+	if (action == GLFW_PRESS && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
 		m_robot.set_acceleration({ robot_acc.x + acceleration, robot_acc.y });
 	}
 
-	if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
+	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
 		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration * -1.f });
 	}
-	if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
-		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration });
-	}
-	if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT) {
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
 		m_robot.set_acceleration({ robot_acc.x - acceleration * -1.f, robot_acc.y });
 		m_robot.set_velocity({ 0.f, robot_vel.y });
 	}
-	if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT) {
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
 		m_robot.set_acceleration({ robot_acc.x - acceleration, robot_acc.y });
 		m_robot.set_velocity({ 0.f, robot_vel.y });
 	}
