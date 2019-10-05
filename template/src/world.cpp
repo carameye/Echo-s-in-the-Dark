@@ -153,12 +153,13 @@ bool World::update(float elapsed_ms)
 	// Handle robot physics update
 
 	// Maximum velocity in absolute value
-	vec2 max_vel = { 400.f, 400.f };
+	vec2 max_vel = { 400.f, 600.f };
 
 	float time_factor = elapsed_ms / 1000;
 	vec2 robot_pos = m_robot.get_position();
 	vec2 robot_vel = m_robot.get_velocity();
 	vec2 robot_acc = m_robot.get_acceleration();
+	robot_acc.y += 1000; // gravity
 
 	// Update velocity
 	vec2 new_robot_vel = { robot_vel.x + robot_acc.x * time_factor, robot_vel.y + robot_acc.y * time_factor};
@@ -176,38 +177,54 @@ bool World::update(float elapsed_ms)
 
 	// Update position
 	vec2 new_robot_pos = { robot_pos.x + new_robot_vel.x * time_factor, robot_pos.y + new_robot_vel.y * time_factor};
-	
+
 	// Detect collision
 	// If the player will collide with an object next tick with the new velocity,
 	// it will set velocity and acceleration to 0 and not update the position
 	bool collision_x = false;
 	bool collision_y = false;
+	vec2 translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
 	for (auto& brick : m_bricks) {
-		vec2 translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
 		const auto& robot_hitbox_x = m_robot.get_hitbox({ translation.x, 0.f });
-		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation.y });
 		if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
 			collision_x = true;
-			m_robot.set_velocity({ 0.f, new_robot_vel.y });
-			m_robot.set_acceleration({ 0.f, robot_acc.y });
+			m_robot.set_velocity({ 0.f, m_robot.get_velocity().y });
+
+			float circle_width = brick_size.x / 2.f;
+			if (abs(m_robot.get_position().y - brick.get_position().y) > brick_size.y / 2.f)
+			{
+				float param = abs(m_robot.get_position().y - brick.get_position().y) - brick_size.y / 2.f;
+				circle_width = sqrt(pow(brick_size.y / 2.f, 2.f) - pow(param, 2.f));
+			}
+
+			new_robot_pos.x = get_closest_point(robot_pos.x, brick.get_position().x, circle_width, brick_size.x / 2.f);
+			translation.x = new_robot_pos.x;
 		}
+
+		translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
+		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation.y });
 		if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
 			collision_y = true;
-			m_robot.set_velocity({ new_robot_vel.x, 0.f });
-			m_robot.set_acceleration({ robot_acc.x, 0.f });
-		}
-		if (collision_x || collision_y ) {
-			break;
-		}
-	}
-	if (!collision_x && !collision_y) {
-		m_robot.set_position(new_robot_pos);
-		// TODO: set light to match robot
-        m_light.set_position(new_robot_pos);
+			m_robot.set_velocity({ m_robot.get_velocity().x, 0.f });
 
-	} else {
-		// TODO: set position to the furthest point before collision
+			float circle_width = brick_size.y / 2.f;
+			if (abs(m_robot.get_position().x - brick.get_position().x) > brick_size.x / 2.f)
+			{
+				float param = abs(m_robot.get_position().x - brick.get_position().x) - brick_size.x / 2.f;
+				circle_width = sqrt(pow(brick_size.x / 2.f, 2.f) - pow(param, 2.f));
+			}
+
+			new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, circle_width, brick_size.y / 2.f);
+			translation.y = new_robot_pos.y;
+
+			if (brick.get_position().y > new_robot_pos.y)
+				m_robot.set_grounded();
+		}
 	}
+
+	m_robot.set_position(new_robot_pos);
+	m_robot.update(time_factor);
+	m_light.set_position(new_robot_pos)
 	return true;
 }
 
@@ -234,7 +251,7 @@ void World::draw()
 	// Clearing backbuffer
 	glViewport(0, 0, w, h);
 	glDepthRange(0.00001, 10);
-	const float clear_color[3] = { 0.3f, 0.3f, 0.8f };
+	const float clear_color[3] = { 1.f, 1.f, 0.8f };
 	glClearColor(clear_color[0], clear_color[1], clear_color[2], 1.0);
 	glClearDepth(1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -293,36 +310,34 @@ bool World::is_over() const
 // On key callback
 void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 {
-	float acceleration = 500.f;
+	float acceleration = 1800.f;
 	vec2 robot_vel = m_robot.get_velocity();
 	vec2 robot_acc = m_robot.get_acceleration();
 	if (action == GLFW_PRESS && key == GLFW_KEY_UP) {
-		m_robot.set_acceleration({ robot_acc.x, acceleration * -1.f });
+		m_robot.set_acceleration({ robot_acc.x, robot_acc.y + acceleration * -1.f });
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_DOWN) {
-		m_robot.set_acceleration({ robot_acc.x, acceleration });
+		m_robot.set_acceleration({ robot_acc.x, robot_acc.y + acceleration });
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_LEFT) {
-		m_robot.set_acceleration({ acceleration * -1.f, robot_acc.y });
+		m_robot.set_acceleration({ robot_acc.x + acceleration * -1.f, robot_acc.y });
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_RIGHT) {
-		m_robot.set_acceleration({ acceleration, robot_acc.y });
+		m_robot.set_acceleration({ robot_acc.x + acceleration, robot_acc.y });
 	}
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
-		m_robot.set_acceleration({ robot_acc.x, 0.f });
-		m_robot.set_velocity({ robot_vel.x, 0.f });
+		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration * -1.f });
 	}
 	if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
-		m_robot.set_acceleration({ robot_acc.x, 0.f });
-		m_robot.set_velocity({ robot_vel.x, 0.f });
+		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration });
 	}
 	if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT) {
-		m_robot.set_acceleration({ 0.f, robot_acc.y });
+		m_robot.set_acceleration({ robot_acc.x - acceleration * -1.f, robot_acc.y });
 		m_robot.set_velocity({ 0.f, robot_vel.y });
 	}
 	if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT) {
-		m_robot.set_acceleration({ 0.f, robot_acc.y });
+		m_robot.set_acceleration({ robot_acc.x - acceleration, robot_acc.y });
 		m_robot.set_velocity({ 0.f, robot_vel.y });
 	}
 }
