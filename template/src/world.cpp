@@ -121,7 +121,16 @@ bool World::init(vec2 screen)
 
 	fprintf(stderr, "Loaded music\n");
 
-	return parse_level("demo") && m_light.init();
+	bool valid = parse_level("demo") && m_light.init();
+
+	if (valid)
+		camera_pos = m_robot.get_position();
+	else
+		camera_pos = { 0.f, 0.f };
+
+	camera_offset = 0.f;
+
+	return valid;
 }
 
 // Releases all the associated resources
@@ -233,6 +242,10 @@ bool World::update(float elapsed_ms)
 	m_robot.set_position(new_robot_pos);
 	m_robot.update(time_factor);
 	m_light.set_position(new_robot_pos);
+
+	float follow_speed = 0.1f;
+	vec2 follow_point = add(m_robot.get_position(), {0.f, camera_offset});
+	camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
 	return true;
 }
 
@@ -278,9 +291,8 @@ void World::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
-	vec2 centre_pos = m_robot.get_position();
 	// TODO: to fix lulus screen
-	vec2 camera_shift = { right / 2 - centre_pos.x, bottom / 2 - centre_pos.y };
+	vec2 camera_shift = { right / 2 - camera_pos.x, bottom / 2 - camera_pos.y };
 
 	// Drawing entities
 	for (auto& brick : m_bricks)
@@ -331,6 +343,12 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_PRESS && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
 		m_robot.set_acceleration({ robot_acc.x + acceleration, robot_acc.y });
 	}
+	if (action == GLFW_PRESS && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
+		camera_offset -= 100;
+	}
+	if (action == GLFW_PRESS && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
+		camera_offset += 100;
+	}
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
 		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration * -1.f });
@@ -342,6 +360,12 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
 		m_robot.set_acceleration({ robot_acc.x - acceleration, robot_acc.y });
 		m_robot.set_velocity({ 0.f, robot_vel.y });
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
+		camera_offset += 100;
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
+		camera_offset -= 100;
 	}
 }
 
