@@ -54,7 +54,7 @@ void main()
 	vec2 coord = uv.xy;
     vec4 in_color = texture(screen_texture, coord);
 	float illum = clamp(illuminate(in_color, coord), 0, 1);
-	//float hl = clamp(headlight(in_color, coord), 0, 1);
+//	float hl = clamp(headlight(in_color, coord), 0, 1);
 	//float sum = clamp(hl + illum, 0, 1);
 
 	color = in_color * illum;
