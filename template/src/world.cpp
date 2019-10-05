@@ -181,41 +181,49 @@ bool World::update(float elapsed_ms)
 	// Detect collision
 	// If the player will collide with an object next tick with the new velocity,
 	// it will set velocity and acceleration to 0 and not update the position
-	bool collision_x = false;
-	bool collision_y = false;
-	vec2 translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
-	for (auto& brick : m_bricks) {
-		const auto& robot_hitbox_x = m_robot.get_hitbox({ translation.x, 0.f });
+	float translation = new_robot_vel.x * time_factor;
+	for (auto& i_brick : m_bricks) 
+	{
+		auto& robot_hitbox_x = m_robot.get_hitbox({ translation, 0.f });
+		Brick brick = i_brick;
 		if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
-			collision_x = true;
 			m_robot.set_velocity({ 0.f, m_robot.get_velocity().y });
 
 			float circle_width = brick_size.x / 2.f;
 			if (abs(m_robot.get_position().y - brick.get_position().y) > brick_size.y / 2.f)
 			{
 				float param = abs(m_robot.get_position().y - brick.get_position().y) - brick_size.y / 2.f;
-				circle_width = sqrt(pow(brick_size.y / 2.f, 2.f) - pow(param, 2.f));
+				float dist_no_sqrt = pow(brick_size.y / 2.f, 2.f) - pow(param, 2.f);
+				if (dist_no_sqrt >= 0.f)
+					circle_width = sqrt(dist_no_sqrt);
 			}
 
 			new_robot_pos.x = get_closest_point(robot_pos.x, brick.get_position().x, circle_width, brick_size.x / 2.f);
-			translation.x = new_robot_pos.x;
+			translation = new_robot_pos.x - robot_pos.x;
 		}
+	}
 
-		translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
-		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation.y });
+	m_robot.set_position({ new_robot_pos.x, robot_pos.y });
+
+	translation = new_robot_vel.y * time_factor;
+	for (auto& i_brick : m_bricks)
+	{
+		auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation });
+		Brick brick = i_brick;
 		if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
-			collision_y = true;
 			m_robot.set_velocity({ m_robot.get_velocity().x, 0.f });
 
 			float circle_width = brick_size.y / 2.f;
 			if (abs(m_robot.get_position().x - brick.get_position().x) > brick_size.x / 2.f)
 			{
 				float param = abs(m_robot.get_position().x - brick.get_position().x) - brick_size.x / 2.f;
-				circle_width = sqrt(pow(brick_size.x / 2.f, 2.f) - pow(param, 2.f));
+				float dist_no_sqrt = pow(brick_size.x / 2.f, 2.f) - pow(param, 2.f);
+				if (dist_no_sqrt >= 0.f)
+					circle_width = sqrt(dist_no_sqrt);
 			}
 
 			new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, circle_width, brick_size.y / 2.f);
-			translation.y = new_robot_pos.y;
+			translation = new_robot_pos.y -robot_pos.y;
 
 			if (brick.get_position().y > new_robot_pos.y)
 				m_robot.set_grounded();
