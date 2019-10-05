@@ -184,7 +184,7 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 	position.x += translation.x;
 	position.y += translation.y;
 
-	int radius = 33;
+	int radius = brick_size.x / 2;
 	Circle circle(position, radius);
 	circles[0] = circle;
 
