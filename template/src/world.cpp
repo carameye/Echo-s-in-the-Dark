@@ -224,7 +224,7 @@ bool World::update(float elapsed_ms)
 
 	m_robot.set_position(new_robot_pos);
 	m_robot.update(time_factor);
-	m_light.set_position(new_robot_pos)
+	m_light.set_position(new_robot_pos);
 	return true;
 }
 
@@ -395,9 +395,9 @@ bool World::spawn_robot(vec2 position)
 {
 	if (m_robot.init())
 	{
-		m_robot.set_position(position);
+		m_robot.set_position({position.x, position.y });
         if(m_light.init()){
-            m_light.set_position(position);
+            m_light.set_position(m_robot.get_position());
         }
 		return true;
 		// TODO: init light when robot is spawned
