@@ -61,6 +61,10 @@ private:
 	// Light effect
 	Light m_light;
 
+	// Camera position
+	vec2 camera_pos;
+	float camera_offset;
+
 	// Number of fish eaten by the salmon, displayed in the window title
 	unsigned int m_points;
 

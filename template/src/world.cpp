@@ -121,7 +121,16 @@ bool World::init(vec2 screen)
 
 	fprintf(stderr, "Loaded music\n");
 
-	return parse_level("demo") && m_light.init();
+	bool valid = parse_level("demo") && m_light.init();
+
+	if (valid)
+		camera_pos = m_robot.get_position();
+	else
+		camera_pos = { 0.f, 0.f };
+
+	camera_offset = 0.f;
+
+	return valid;
 }
 
 // Releases all the associated resources
@@ -181,41 +190,49 @@ bool World::update(float elapsed_ms)
 	// Detect collision
 	// If the player will collide with an object next tick with the new velocity,
 	// it will set velocity and acceleration to 0 and not update the position
-	bool collision_x = false;
-	bool collision_y = false;
-	vec2 translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
-	for (auto& brick : m_bricks) {
-		const auto& robot_hitbox_x = m_robot.get_hitbox({ translation.x, 0.f });
+	float translation = new_robot_vel.x * time_factor;
+	for (auto& i_brick : m_bricks) 
+	{
+		const auto& robot_hitbox_x = m_robot.get_hitbox({ translation, 0.f });
+		Brick brick = i_brick;
 		if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
-			collision_x = true;
 			m_robot.set_velocity({ 0.f, m_robot.get_velocity().y });
 
 			float circle_width = brick_size.x / 2.f;
 			if (abs(m_robot.get_position().y - brick.get_position().y) > brick_size.y / 2.f)
 			{
 				float param = abs(m_robot.get_position().y - brick.get_position().y) - brick_size.y / 2.f;
-				circle_width = sqrt(pow(brick_size.y / 2.f, 2.f) - pow(param, 2.f));
+				float dist_no_sqrt = pow(brick_size.y / 2.f, 2.f) - pow(param, 2.f);
+				if (dist_no_sqrt >= 0.f)
+					circle_width = sqrt(dist_no_sqrt);
 			}
 
 			new_robot_pos.x = get_closest_point(robot_pos.x, brick.get_position().x, circle_width, brick_size.x / 2.f);
-			translation.x = new_robot_pos.x;
+			translation = new_robot_pos.x - robot_pos.x;
 		}
+	}
 
-		translation = { new_robot_vel.x * time_factor * 1.f, new_robot_vel.y * time_factor * 1.f };
-		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation.y });
+	m_robot.set_position({ new_robot_pos.x, robot_pos.y });
+
+	translation = new_robot_vel.y * time_factor;
+	for (auto& i_brick : m_bricks)
+	{
+		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation });
+		Brick brick = i_brick;
 		if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
-			collision_y = true;
 			m_robot.set_velocity({ m_robot.get_velocity().x, 0.f });
 
 			float circle_width = brick_size.y / 2.f;
 			if (abs(m_robot.get_position().x - brick.get_position().x) > brick_size.x / 2.f)
 			{
 				float param = abs(m_robot.get_position().x - brick.get_position().x) - brick_size.x / 2.f;
-				circle_width = sqrt(pow(brick_size.x / 2.f, 2.f) - pow(param, 2.f));
+				float dist_no_sqrt = pow(brick_size.x / 2.f, 2.f) - pow(param, 2.f);
+				if (dist_no_sqrt >= 0.f)
+					circle_width = sqrt(dist_no_sqrt);
 			}
 
 			new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, circle_width, brick_size.y / 2.f);
-			translation.y = new_robot_pos.y;
+			translation = new_robot_pos.y -robot_pos.y;
 
 			if (brick.get_position().y > new_robot_pos.y)
 				m_robot.set_grounded();
@@ -225,6 +242,10 @@ bool World::update(float elapsed_ms)
 	m_robot.set_position(new_robot_pos);
 	m_robot.update(time_factor);
 	m_light.set_position(new_robot_pos);
+
+	float follow_speed = 0.1f;
+	vec2 follow_point = add(m_robot.get_position(), {0.f, camera_offset});
+	camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
 	return true;
 }
 
@@ -270,9 +291,8 @@ void World::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
-	vec2 centre_pos = m_robot.get_position();
 	// TODO: to fix lulus screen
-	vec2 camera_shift = { right / 2 - centre_pos.x, bottom / 2 - centre_pos.y };
+	vec2 camera_shift = { right / 2 - camera_pos.x, bottom / 2 - camera_pos.y };
 
 	// Drawing entities
 	for (auto& brick : m_bricks)
@@ -313,32 +333,39 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	float acceleration = 1800.f;
 	vec2 robot_vel = m_robot.get_velocity();
 	vec2 robot_acc = m_robot.get_acceleration();
-	if (action == GLFW_PRESS && key == GLFW_KEY_UP) {
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 		m_robot.set_acceleration({ robot_acc.x, robot_acc.y + acceleration * -1.f });
 	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_DOWN) {
-		m_robot.set_acceleration({ robot_acc.x, robot_acc.y + acceleration });
-	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_LEFT) {
+	if (action == GLFW_PRESS && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
 		m_robot.set_acceleration({ robot_acc.x + acceleration * -1.f, robot_acc.y });
 	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_RIGHT) {
+	if (action == GLFW_PRESS && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
 		m_robot.set_acceleration({ robot_acc.x + acceleration, robot_acc.y });
 	}
+	if (action == GLFW_PRESS && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
+		camera_offset -= 100;
+	}
+	if (action == GLFW_PRESS && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
+		camera_offset += 100;
+	}
 
-	if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
+	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
 		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration * -1.f });
 	}
-	if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
-		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration });
-	}
-	if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT) {
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
 		m_robot.set_acceleration({ robot_acc.x - acceleration * -1.f, robot_acc.y });
 		m_robot.set_velocity({ 0.f, robot_vel.y });
 	}
-	if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT) {
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
 		m_robot.set_acceleration({ robot_acc.x - acceleration, robot_acc.y });
 		m_robot.set_velocity({ 0.f, robot_vel.y });
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
+		camera_offset += 100;
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
+		camera_offset -= 100;
 	}
 }
 

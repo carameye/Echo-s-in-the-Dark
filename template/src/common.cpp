@@ -104,9 +104,9 @@ float get_closest_point(float last_pos, float tile_pos, float circle_width, floa
 	if (last_pos < tile_pos)
 		side = -1.f;
 
-	float ret = tile_pos + side * (circle_width + tile_width + 2.f);
+	float ret = tile_pos + side * (circle_width + tile_width + 1.f);
 
-	if (std::abs(last_pos - ret) < 4.f)
+	if (std::abs(last_pos - ret) < 1.f)
 		return last_pos;
 	else
 		return ret;
