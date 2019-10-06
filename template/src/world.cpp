@@ -422,10 +422,11 @@ bool World::spawn_robot(vec2 position)
 {
 	if (m_robot.init())
 	{
-		m_robot.set_position({position.x, position.y });
-        if(m_light.init()){
+		m_robot.set_position(position);
+		m_robot.set_head_position(position);
+        if (m_light.init())
             m_light.set_position(m_robot.get_position());
-        }
+
 		return true;
 		// TODO: init light when robot is spawned
 	}

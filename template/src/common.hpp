@@ -37,6 +37,7 @@ vec2 normalize(vec2 v);
 vec2 add(vec2 a, vec2 b);
 vec2 sub(vec2 a, vec2 b);
 vec2 to_vec2(vec3 v);
+vec2 vpow(vec2 v, float e); 
 float sq_len(vec2 a);
 float len(vec2 a);
 

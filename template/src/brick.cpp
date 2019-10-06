@@ -150,7 +150,7 @@ Hitbox Brick::get_hitbox() const
 {
 	std::vector<Square> squares(1);
 	
-	int width = brick_size.x;
+	float width = brick_size.x;
 	vec2 position = motion.position;
 	position.x -= width / 2;
 	position.y += width / 2;

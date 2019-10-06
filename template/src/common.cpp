@@ -67,6 +67,7 @@ vec3 mul(mat3 m, vec3 v) { return {
   dot(vec3{m.c0.y, m.c1.y, m.c2.y}, v),
   dot(vec3{m.c0.z, m.c1.z, m.c2.z}, v)
 }; }
+vec2 vpow(vec2 v, float e) { return { pow(v.x, e), pow(v.y, e) }; }
 float sq_len(vec2 a) { return dot(a, a); }
 float len(vec2 a) { return std::sqrt(sq_len(a)); }
 vec2 to_vec2(vec3 v) { return { v.x, v.y }; }

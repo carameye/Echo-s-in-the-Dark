@@ -83,7 +83,7 @@ void RobotHead::destroy()
 void RobotHead::update(float ms, vec2 goal)
 {
 	vec2 dist = sub(goal, motion.position);
-	set_position(add(get_position(), { 0.7f * dist.x, 0.7f * dist.y }));
+	set_position(add(get_position(), { 0.65f * dist.x, 0.65f * dist.y }));
 }
 
 void RobotHead::draw(const mat3& projection, const vec2& camera_shift)
@@ -333,6 +333,11 @@ void Robot::set_acceleration(vec2 acceleration)
 void Robot::set_grounded()
 {
 	m_grounded = true;
+}
+
+void Robot::set_head_position(vec2 position)
+{
+	m_head.set_position(position);
 }
 
 Hitbox Robot::get_hitbox(vec2 translation) const

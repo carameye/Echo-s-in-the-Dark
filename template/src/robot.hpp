@@ -77,6 +77,9 @@ public:
 	// Sets grounded to true
 	void set_grounded();
 
+	// Set position of head, for spawning only
+	void set_head_position(vec2 position);
+
 	// Returns the robots hitbox for collision detection
 	Hitbox get_hitbox(vec2 translation) const;
 
