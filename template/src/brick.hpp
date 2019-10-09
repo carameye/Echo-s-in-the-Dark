@@ -5,7 +5,6 @@
 
 class Brick : public Entity
 {
-	// Shared between all turtles, no need to load one for each instance
 	static Texture brick_texture;
 
 public:

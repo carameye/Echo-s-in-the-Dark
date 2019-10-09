@@ -2,6 +2,7 @@
 
 // stlib
 #include <fstream> // stdout, stderr..
+#include <map>
 
 // glfw
 #define NOMINMAX
@@ -37,6 +38,7 @@ vec2 normalize(vec2 v);
 vec2 add(vec2 a, vec2 b);
 vec2 sub(vec2 a, vec2 b);
 vec2 to_vec2(vec3 v);
+vec2 vpow(vec2 v, float e); 
 float sq_len(vec2 a);
 float len(vec2 a);
 
@@ -90,6 +92,7 @@ struct Entity {
 	virtual void draw(const mat3& projection, const vec2& camera_shift) = 0;
 
 protected:
+	Texture* texture;
 	// A Mesh is a collection of a VertexBuffer and an IndexBuffer. A VAO
 	// represents a Vertex Array Object and is the container for 1 or more Vertex Buffers and 
 	// an Index Buffer.
@@ -136,4 +139,8 @@ protected:
 		void translate(vec2 offset);
 		void end();
 	} transform;
+
+protected:
+	bool init_sprite();
+	void draw_sprite(const mat3& projection);
 };
