@@ -50,6 +50,21 @@ void Light::set_position(vec2 pos){
     light_position = pos;
 }
 
+void Light::set_ambient(float ambient)
+{
+	this->ambient = ambient;
+}
+
+void Light::clear_torches()
+{
+	torches.clear();
+}
+
+void Light::add_torch(vec2 torch)
+{
+	torches.push_back(torch);
+}
+
 void Light::draw(const mat3& projection, const vec2& camera_shift) {
 
     // Transformation code, see Rendering and Transformation in the template specification for more info

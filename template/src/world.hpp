@@ -46,7 +46,11 @@ private:
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
 
 	bool spawn_robot(vec2 position);
-	bool add_brick(vec2 position);
+	bool spawn_brick(vec2 position);
+
+	bool spawn_door(vec2 position, std::string next_level);
+
+	bool spawn_sign(vec2 position, std::string text);
 
 private:
 	// Window handle

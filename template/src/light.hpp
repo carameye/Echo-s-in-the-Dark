@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.hpp"
-
+#include <vector>
 
 class Light : public Entity
 {
@@ -17,7 +17,17 @@ public:
 
     void set_position(vec2 pos);
 
+	// Sets the ambient light level
+	void set_ambient(float ambient);
+
+	// Clear torches
+	void clear_torches();
+
+	// Add a torch at a specific location
+	void add_torch(vec2 torch);
 
 private:
     vec2 light_position;
+	float ambient = 0.f;
+	std::vector<vec2> torches;
 };

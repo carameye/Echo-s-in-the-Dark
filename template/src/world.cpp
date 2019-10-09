@@ -2,7 +2,7 @@
 #include "world.hpp"
 
 // stlib
-#include <string.h>
+#include <string>
 #include <cassert>
 #include <sstream>
 #include <iostream>
@@ -121,7 +121,7 @@ bool World::init(vec2 screen)
 
 	fprintf(stderr, "Loaded music\n");
 
-	bool valid = parse_level("demo") && m_light.init();
+	bool valid = parse_level("test") && m_light.init();
 
 	if (valid)
 		camera_pos = m_robot.get_position();
@@ -390,6 +390,32 @@ bool World::parse_level(std::string level)
 		float x = 0.f;
 		float y = 0.f;
 		std::string line;
+
+		// Get ambient light level
+		if (!getline(file, line))
+			return false;
+		m_light.set_ambient(std::stof(line));
+
+		// Get file name for level through the door
+		if (!getline(file, line))
+			return false;
+		std::string next_level = line;
+
+		// Get the text from the signs in the order they will appear 
+		// starting from top to bottom/left to right
+		if (!getline(file, line))
+			return false;
+
+		std::vector<std::string> signs;
+		int sign_i = 0;
+		while (line.compare("endsigns") != 0)
+		{
+			signs.push_back(line);
+			if (!getline(file, line))
+				return false;
+		}
+
+		// Finally get the actual map data
 		while (getline(file, line))
 		{
 			for (x = 0.f; x < line.length(); x++)
@@ -400,12 +426,23 @@ bool World::parse_level(std::string level)
 				switch (line[x])
 				{
 				case 'B':
-					if (!add_brick(position))
+					if (!spawn_brick(position))
 						return false;
 					break;
 				case 'R':
 					if (!spawn_robot(position))
 						return false;
+					break;
+				case 'S':
+					if (!spawn_sign(position, signs[sign_i++]))
+						return false;
+					break;
+				case 'D':
+					if (!spawn_door(position, next_level))
+						return false;
+					break;
+				case 'T':
+					m_light.add_torch(position);
 					break;
 				}
 			}
@@ -433,7 +470,7 @@ bool World::spawn_robot(vec2 position)
 	return false;
 }
 
-bool World::add_brick(vec2 position)
+bool World::spawn_brick(vec2 position)
 {
 	Brick brick;
 	if (brick.init())
@@ -444,4 +481,18 @@ bool World::add_brick(vec2 position)
 	}
 	fprintf(stderr, "Brick spawn failed\n");
 	return false;
+}
+
+bool World::spawn_door(vec2 position, std::string next_level)
+{
+	// TODO: add door code
+	fprintf(stderr, "door at (%f, %f) goes to level \"%s\"\n", position.x, position.y, next_level.c_str()); // remove once real code is done
+	return true;
+}
+
+bool World::spawn_sign(vec2 position, std::string text)
+{
+	// TODO: add sign code
+	fprintf(stderr, "sign at (%f, %f) has text \"%s\"\n", position.x, position.y, text.c_str()); // remove once real code is done
+	return true;
 }
