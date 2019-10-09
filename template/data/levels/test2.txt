@@ -1,0 +1,9 @@
+0.6
+test
+endsigns
+BBBBBBBBBBBB
+B          B
+B          B
+B  R   T D B
+B          B
+BBBBBBBBBBBB
