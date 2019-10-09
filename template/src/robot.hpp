@@ -6,7 +6,6 @@
 class RobotHead : public Entity
 {
 	static Texture robot_head_texture;
-	vec2 m_scaling;
 	bool m_face_right = true;
 
 public:

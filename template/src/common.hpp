@@ -2,6 +2,7 @@
 
 // stlib
 #include <fstream> // stdout, stderr..
+#include <map>
 
 // glfw
 #define NOMINMAX
@@ -66,6 +67,7 @@ struct TexturedVertex
 	vec2 texcoord;
 };
 
+
 // Texture wrapper
 struct Texture
 {
@@ -83,6 +85,8 @@ struct Texture
 	bool create_from_screen(GLFWwindow const * const window); // Screen texture
 };
 
+static std::map<std::string, Texture> textures;
+
 // An entity boils down to a collection of components,
 // organized by their in-game context (mesh, effect, motion, etc...)
 struct Entity {
@@ -91,6 +95,7 @@ struct Entity {
 	virtual void draw(const mat3& projection, const vec2& camera_shift) = 0;
 
 protected:
+	Texture* texture;
 	// A Mesh is a collection of a VertexBuffer and an IndexBuffer. A VAO
 	// represents a Vertex Array Object and is the container for 1 or more Vertex Buffers and 
 	// an Index Buffer.
@@ -137,4 +142,8 @@ protected:
 		void translate(vec2 offset);
 		void end();
 	} transform;
+
+protected:
+	bool init_sprite();
+	void draw_sprite(const mat3& projection);
 };

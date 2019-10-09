@@ -3,58 +3,23 @@
 
 #include <cmath>
 
-Texture Robot::robot_body_texture;
 Texture RobotHead::robot_head_texture;
+Texture Robot::robot_body_texture;
 
 bool RobotHead::init()
 {
-	// Load shared texture
 	if (!robot_head_texture.is_valid())
 	{
 		if (!robot_head_texture.load_from_file(textures_path("head.png")))
 		{
-			fprintf(stderr, "Failed to load robot head texture!");
+			fprintf(stderr, "Failed to load head texture!");
 			return false;
 		}
 	}
 
-	// The position corresponds to the center of the texture.
-	float wr = robot_head_texture.width * 0.5f;
-	float hr = robot_head_texture.height * 0.5f;
+	texture = &robot_head_texture;
 
-	TexturedVertex vertices[4];
-	vertices[0].position = { -wr, +hr, -0.01f };
-	vertices[0].texcoord = { 0.f, 1.f };
-	vertices[1].position = { +wr, +hr, -0.01f };
-	vertices[1].texcoord = { 1.f, 1.f, };
-	vertices[2].position = { +wr, -hr, -0.01f };
-	vertices[2].texcoord = { 1.f, 0.f };
-	vertices[3].position = { -wr, -hr, -0.01f };
-	vertices[3].texcoord = { 0.f, 0.f };
-
-	// Counterclockwise as it's the default opengl front winding direction.
-	uint16_t indices[] = { 0, 3, 1, 1, 3, 2 };
-
-	// Clearing errors
-	gl_flush_errors();
-
-	// Vertex Buffer creation
-	glGenBuffers(1, &mesh.vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(TexturedVertex) * 4, vertices, GL_STATIC_DRAW);
-
-	// Index Buffer creation
-	glGenBuffers(1, &mesh.ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * 6, indices, GL_STATIC_DRAW);
-
-	// Vertex Array (Container for Vertex + Index buffer)
-	glGenVertexArrays(1, &mesh.vao);
-	if (gl_has_errors())
-		return false;
-
-	// Loading shaders
-	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
+	if (!init_sprite())
 		return false;
 
 	motion.position = { 0.f, 0.f };
@@ -62,8 +27,6 @@ bool RobotHead::init()
 	motion.acceleration = { 0.f , 0.f };
 	motion.radians = 0.f;
 
-	// Setting initial values, scale is negative to make it face the opposite way
-	// 1.0 would be as big as the original texture.
 	physics.scale = { 1.0f, 1.0f };
 
 	return true;
@@ -94,48 +57,12 @@ void RobotHead::draw(const mat3& projection, const vec2& camera_shift)
 	transform.translate(camera_shift);
 	transform.translate(motion.position);
 	transform.rotate(motion.radians);
-	transform.scale(m_scaling);
+	transform.scale(physics.scale);
 	if (!m_face_right)
 		transform.scale({ -1.f, 1.f });
 	transform.end();
 
-	// Setting shaders
-	glUseProgram(effect.program);
-
-	// Enabling alpha channel for textures
-	glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDisable(GL_DEPTH_TEST);
-
-	// Getting uniform locations for glUniform* calls
-	GLint transform_uloc = glGetUniformLocation(effect.program, "transform");
-	GLint color_uloc = glGetUniformLocation(effect.program, "fcolor");
-	GLint projection_uloc = glGetUniformLocation(effect.program, "projection");
-
-	// Setting vertices and indices
-	glBindVertexArray(mesh.vao);
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
-
-	// Input data location as in the vertex buffer
-	GLint in_position_loc = glGetAttribLocation(effect.program, "in_position");
-	GLint in_texcoord_loc = glGetAttribLocation(effect.program, "in_texcoord");
-	glEnableVertexAttribArray(in_position_loc);
-	glEnableVertexAttribArray(in_texcoord_loc);
-	glVertexAttribPointer(in_position_loc, 3, GL_FLOAT, GL_FALSE, sizeof(TexturedVertex), (void*)0);
-	glVertexAttribPointer(in_texcoord_loc, 2, GL_FLOAT, GL_FALSE, sizeof(TexturedVertex), (void*)sizeof(vec3));
-
-	// Enabling and binding texture to slot 0
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, robot_head_texture.id);
-
-	// Setting uniform values to the currently bound program
-	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)& transform.out);
-	float color[] = { 1.f, 1.f, 1.f };
-	glUniform3fv(color_uloc, 1, color);
-	glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)& projection);
-
-	// Drawing!
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+	draw_sprite(projection);
 }
 
 vec2 RobotHead::get_position() const
@@ -150,7 +77,7 @@ void RobotHead::set_position(vec2 position)
 
 void RobotHead::set_scaling(vec2 scaling)
 {
-	m_scaling = scaling;
+	physics.scale = scaling;
 }
 
 void RobotHead::set_direction(bool right)
@@ -160,53 +87,18 @@ void RobotHead::set_direction(bool right)
 
 bool Robot::init()
 {
-	// Load shared texture
 	if (!robot_body_texture.is_valid())
 	{
 		if (!robot_body_texture.load_from_file(textures_path("body.png")))
 		{
-			fprintf(stderr, "Failed to load robot body texture!");
+			fprintf(stderr, "Failed to load body texture!");
 			return false;
 		}
 	}
 
-	// The position corresponds to the center of the texture.
-	float wr = robot_body_texture.width * 0.5f;
-	float hr = robot_body_texture.height * 0.5f;
+	texture = &robot_body_texture;
 
-	TexturedVertex vertices[4];
-	vertices[0].position = { -wr, +hr, -0.01f };
-	vertices[0].texcoord = { 0.f, 1.f };
-	vertices[1].position = { +wr, +hr, -0.01f };
-	vertices[1].texcoord = { 1.f, 1.f,  };
-	vertices[2].position = { +wr, -hr, -0.01f };
-	vertices[2].texcoord = { 1.f, 0.f };
-	vertices[3].position = { -wr, -hr, -0.01f };
-	vertices[3].texcoord = { 0.f, 0.f };
-
-	// Counterclockwise as it's the default opengl front winding direction.
-	uint16_t indices[] = { 0, 3, 1, 1, 3, 2 };
-
-	// Clearing errors
-	gl_flush_errors();
-
-	// Vertex Buffer creation
-	glGenBuffers(1, &mesh.vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(TexturedVertex) * 4, vertices, GL_STATIC_DRAW);
-
-	// Index Buffer creation
-	glGenBuffers(1, &mesh.ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * 6, indices, GL_STATIC_DRAW);
-
-	// Vertex Array (Container for Vertex + Index buffer)
-	glGenVertexArrays(1, &mesh.vao);
-	if (gl_has_errors())
-		return false;
-
-	// Loading shaders
-	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
+	if (!init_sprite())
 		return false;
 
     motion.position = { 0.f, 0.f };
@@ -214,11 +106,11 @@ bool Robot::init()
     motion.acceleration = { 0.f , 0.f };
     motion.radians = 0.f;
 
-	// Setting initial values, scale is negative to make it face the opposite way
-	// 1.0 would be as big as the original texture.
-	physics.scale = { 1.0f, 1.0f };
+	physics.scale = { brick_size.x / texture->width, brick_size.y / texture->height };
+	bool valid = m_head.init();
+	m_head.set_scaling(physics.scale);
 
-	return m_head.init();
+	return valid;
 }
 
 // Releases all graphics resources
@@ -254,49 +146,11 @@ void Robot::draw(const mat3& projection, const vec2& camera_shift)
 	transform.translate(camera_shift);
 	transform.translate(motion.position);
 	transform.rotate(motion.radians);
-	vec2 tex_scale = { brick_size.x / robot_body_texture.width, brick_size.y / robot_body_texture.height };
-	transform.scale(tex_scale);
+	transform.scale(physics.scale);
 	transform.end();
 
-	// Setting shaders
-	glUseProgram(effect.program);
+	draw_sprite(projection);
 
-	// Enabling alpha channel for textures
-	glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDisable(GL_DEPTH_TEST);
-
-	// Getting uniform locations for glUniform* calls
-	GLint transform_uloc = glGetUniformLocation(effect.program, "transform");
-	GLint color_uloc = glGetUniformLocation(effect.program, "fcolor");
-	GLint projection_uloc = glGetUniformLocation(effect.program, "projection");
-
-	// Setting vertices and indices
-	glBindVertexArray(mesh.vao);
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
-
-	// Input data location as in the vertex buffer
-	GLint in_position_loc = glGetAttribLocation(effect.program, "in_position");
-	GLint in_texcoord_loc = glGetAttribLocation(effect.program, "in_texcoord");
-	glEnableVertexAttribArray(in_position_loc);
-	glEnableVertexAttribArray(in_texcoord_loc);
-	glVertexAttribPointer(in_position_loc, 3, GL_FLOAT, GL_FALSE, sizeof(TexturedVertex), (void*)0);
-	glVertexAttribPointer(in_texcoord_loc, 2, GL_FLOAT, GL_FALSE, sizeof(TexturedVertex), (void*)sizeof(vec3));
-
-	// Enabling and binding texture to slot 0
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, robot_body_texture.id);
-
-	// Setting uniform values to the currently bound program
-	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform.out);
-	float color[] = { 1.f, 1.f, 1.f };
-	glUniform3fv(color_uloc, 1, color);
-	glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)&projection);
-
-	// Drawing!
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-
-	m_head.set_scaling(tex_scale);
 	m_head.draw(projection, camera_shift);
 }
 
