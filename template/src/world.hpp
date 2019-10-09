@@ -45,8 +45,12 @@ private:
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
 
+	// Spawn objects
 	bool spawn_robot(vec2 position);
-	bool add_brick(vec2 position);
+	bool spawn_brick(vec2 position, vec3 colour);
+	bool spawn_door(vec2 position, std::string next_level);
+	bool spawn_ghost(vec2 position);
+	bool spawn_sign(vec2 position, std::string text);
 
 private:
 	// Window handle
@@ -64,9 +68,6 @@ private:
 	// Camera position
 	vec2 camera_pos;
 	float camera_offset;
-
-	// Number of fish eaten by the salmon, displayed in the window title
-	unsigned int m_points;
 
 	// Game entities
 	std::vector<Brick> m_bricks;
