@@ -45,7 +45,22 @@ void Ghost::destroy()
 
 void Ghost::update(float ms)
 {
-	
+	if (len(sub(goal, motion.position)) < 500.f)
+	{
+		last_seen = goal;
+	}
+
+	vec2 dif = sub(last_seen, motion.position);
+	if (len(dif) != 0.f)
+	{
+		vec2 dir = normalize(dif);
+		vec2 mov = mul(dir, 100.f * ms / 1000.f);
+		if (len(mov) > len(dif))
+			motion.position = last_seen;
+		else
+			motion.position = add(motion.position, mov);
+	}
+	fprintf(stderr, "(%f, %f)\n", motion.position.x, motion.position.y);
 }
 
 void Ghost::draw(const mat3& projection, const vec2& camera_shift)
@@ -69,8 +84,8 @@ vec2 Ghost::get_position()const
 
 void Ghost::set_position(vec2 position)
 {
-	// TODO: not really sure if we will aver need something like this but for now I am going to leave it
 	motion.position = position;
+	last_seen = position;
 }
 
 Hitbox Ghost::get_hitbox() const
@@ -86,4 +101,9 @@ Hitbox Ghost::get_hitbox() const
 
 	Hitbox hitbox({}, squares);
 	return hitbox;
+}
+
+void Ghost::set_goal(vec2 position)
+{
+	goal = position;
 }

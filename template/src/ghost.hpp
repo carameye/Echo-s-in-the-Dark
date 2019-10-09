@@ -6,6 +6,8 @@
 class Ghost : public Entity
 {
 	static Texture ghost_texture;
+	vec2 goal;
+	vec2 last_seen;
 
 public:
 	// Creates all the associated render resources and default transform
@@ -30,4 +32,7 @@ public:
 
 	// Returns the bricks hitbox for collision detection
 	Hitbox get_hitbox() const;
+
+	// Tell the ghost where it wants to go
+	void set_goal(vec2 position);
 };

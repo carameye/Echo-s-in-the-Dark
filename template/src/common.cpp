@@ -113,7 +113,7 @@ float get_closest_point(float last_pos, float tile_pos, float circle_width, floa
 		return ret;
 }
 
-Texture::Texture()
+Texture::Texture() 
 {
 
 }

@@ -249,7 +249,10 @@ bool World::update(float elapsed_ms)
 	m_light.set_position(new_robot_pos);
 
 	for (auto& ghost : m_ghosts)
+	{
+		ghost.set_goal(m_robot.get_position());
 		ghost.update(elapsed_ms);
+	}
 
 	float follow_speed = 0.1f;
 	vec2 follow_point = add(m_robot.get_position(), {0.f, camera_offset});
