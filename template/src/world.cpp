@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <map>
 
 // Same as static in c, local to compilation unit
 namespace
@@ -25,8 +26,7 @@ namespace
 	}
 }
 
-World::World() :
-m_points(0)
+World::World()
 {
 	// Seeding rng with random device
 	m_rng = std::default_random_engine(std::random_device()());
@@ -120,6 +120,11 @@ bool World::init(vec2 screen)
 	Mix_PlayMusic(m_background_music, -1);
 
 	fprintf(stderr, "Loaded music\n");
+
+	// Setting window title
+	std::stringstream title_ss;
+	title_ss << "ECHOs in the Dark";
+	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
 	bool valid = parse_level("test") && m_light.init();
 
@@ -260,11 +265,6 @@ void World::draw()
 	int w, h;
 	glfwGetFramebufferSize(m_window, &w, &h);
 
-	// Updating window title with points
-	std::stringstream title_ss;
-	title_ss << "Points: " << m_points;
-	glfwSetWindowTitle(m_window, title_ss.str().c_str());
-
 	/////////////////////////////////////
 	// First render to the custom framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffer);
@@ -376,6 +376,15 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 
 bool World::parse_level(std::string level)
 {
+	static std::map<char, vec3> colours;
+	colours['B'] = { 1.f, 1.f, 1.f };
+	colours['C'] = { 1.f, 0.f, 0.f };
+	colours['M'] = { 0.f, 1.f, 0.f };
+	colours['N'] = { 0.f, 0.f, 1.f };
+	colours['Y'] = { 1.f, 1.f, 0.f };
+	colours['Z'] = { 1.f, 0.f, 1.f };
+	colours['L'] = { 0.f, 1.f, 1.f };
+
 	std::string filename = level_path;
 	filename.append(level);
 	filename.append(".txt");
@@ -425,8 +434,12 @@ bool World::parse_level(std::string level)
 				position.y = y * brick_size.y;
 				switch (line[x])
 				{
-				case 'B':
-					if (!spawn_brick(position))
+				case 'D':
+					if (!spawn_door(position, next_level))
+						return false;
+					break;
+				case 'G':
+					if (!spawn_ghost(position))
 						return false;
 					break;
 				case 'R':
@@ -437,13 +450,17 @@ bool World::parse_level(std::string level)
 					if (!spawn_sign(position, signs[sign_i++]))
 						return false;
 					break;
-				case 'D':
-					if (!spawn_door(position, next_level))
-						return false;
-					break;
 				case 'T':
 					m_light.add_torch(position);
 					break;
+				case ' ':
+					break;
+				default:
+					if (colours.find(line[x]) == colours.end())
+						return false;
+
+					if (!spawn_brick(position, colours[line[x]]))
+						return false;
 				}
 			}
 			y++;
@@ -452,6 +469,20 @@ bool World::parse_level(std::string level)
 	else
 		return false;
 
+	return true;
+}
+
+bool World::spawn_door(vec2 position, std::string next_level)
+{
+	// TODO: add door code
+	fprintf(stderr, "door at (%f, %f) goes to level \"%s\"\n", position.x, position.y, next_level.c_str()); // remove once real code is done
+	return true;
+}
+
+bool World::spawn_ghost(vec2 position)
+{
+	// TODO: add ghost code
+	fprintf(stderr, "ghost at (%f, %f)\n", position.x, position.y);
 	return true;
 }
 
@@ -470,8 +501,22 @@ bool World::spawn_robot(vec2 position)
 	return false;
 }
 
-bool World::spawn_brick(vec2 position)
+bool World::spawn_sign(vec2 position, std::string text)
 {
+	// TODO: add sign code
+	fprintf(stderr, "sign at (%f, %f) has text \"%s\"\n", position.x, position.y, text.c_str()); // remove once real code is done
+	return true;
+}
+
+bool World::spawn_brick(vec2 position, vec3 colour)
+{
+	// TODO: make bricks respond to different colours
+	bool x = colour.x == 1.f;
+	bool y = colour.y == 1.f;
+	bool z = colour.z == 1.f;
+	if (!x || !y || !z)
+		fprintf(stderr, "brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
+
 	Brick brick;
 	if (brick.init())
 	{
@@ -481,18 +526,4 @@ bool World::spawn_brick(vec2 position)
 	}
 	fprintf(stderr, "Brick spawn failed\n");
 	return false;
-}
-
-bool World::spawn_door(vec2 position, std::string next_level)
-{
-	// TODO: add door code
-	fprintf(stderr, "door at (%f, %f) goes to level \"%s\"\n", position.x, position.y, next_level.c_str()); // remove once real code is done
-	return true;
-}
-
-bool World::spawn_sign(vec2 position, std::string text)
-{
-	// TODO: add sign code
-	fprintf(stderr, "sign at (%f, %f) has text \"%s\"\n", position.x, position.y, text.c_str()); // remove once real code is done
-	return true;
 }

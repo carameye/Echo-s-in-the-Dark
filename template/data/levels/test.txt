@@ -14,9 +14,9 @@ B                                               B
 B                                               B
 B                                               B
 B                                               B
-B         T          T                          B
+B         T          T                 G        B
 B              S                                B
-B       BBBBBBBBBBBBBBBB                        B
+B       BBBBBBBBBBBBBBBB    CMNYZL              B
 B  R                                         D  B
 B  S S                                          B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
