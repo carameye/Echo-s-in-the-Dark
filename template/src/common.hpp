@@ -67,7 +67,6 @@ struct TexturedVertex
 	vec2 texcoord;
 };
 
-
 // Texture wrapper
 struct Texture
 {
@@ -84,8 +83,6 @@ struct Texture
 	bool is_valid()const; // True if texture is valid
 	bool create_from_screen(GLFWwindow const * const window); // Screen texture
 };
-
-static std::map<std::string, Texture> textures;
 
 // An entity boils down to a collection of components,
 // organized by their in-game context (mesh, effect, motion, etc...)
