@@ -248,6 +248,9 @@ bool World::update(float elapsed_ms)
 	m_robot.update(time_factor);
 	m_light.set_position(new_robot_pos);
 
+	for (auto& ghost : m_ghosts)
+		ghost.update(elapsed_ms);
+
 	float follow_speed = 0.1f;
 	vec2 follow_point = add(m_robot.get_position(), {0.f, camera_offset});
 	camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
@@ -297,6 +300,8 @@ void World::draw()
 	// Drawing entities
 	for (auto& brick : m_bricks)
 		brick.draw(projection_2D, camera_shift);
+	for (auto& ghost : m_ghosts)
+		ghost.draw(projection_2D, camera_shift);
 	m_robot.draw(projection_2D, camera_shift);
 
 	/////////////////////
@@ -481,9 +486,14 @@ bool World::spawn_door(vec2 position, std::string next_level)
 
 bool World::spawn_ghost(vec2 position)
 {
-	// TODO: add ghost code
-	fprintf(stderr, "ghost at (%f, %f)\n", position.x, position.y);
-	return true;
+	Ghost ghost;
+	if (ghost.init())
+	{
+		ghost.set_position(position);
+		m_ghosts.push_back(ghost);
+		return true;
+	}
+	return false;
 }
 
 bool World::spawn_robot(vec2 position)
