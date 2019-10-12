@@ -6,6 +6,7 @@
 #include "robot.hpp"
 #include "light.hpp"
 #include "ghost.hpp"
+#include "level_graph.hpp"
 
 // stlib
 #include <vector>
@@ -74,6 +75,8 @@ private:
 	std::vector<Brick> m_bricks;
 	std::vector<Ghost> m_ghosts;
 	Robot m_robot;
+
+	LevelGraph m_graph;
 	
 	Mix_Music* m_background_music;
 

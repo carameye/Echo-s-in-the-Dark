@@ -3,20 +3,20 @@
 
 #include <cmath>
 
-Texture Ghost::ghost_texture;
+Texture Ghost::s_ghost_texture;
 
 bool Ghost::init()
 {
-	if (!ghost_texture.is_valid())
+	if (!s_ghost_texture.is_valid())
 	{
-		if (!ghost_texture.load_from_file(textures_path("robot.png")))
+		if (!s_ghost_texture.load_from_file(textures_path("robot.png")))
 		{
 			fprintf(stderr, "Failed to load ghost texture!");
 			return false;
 		}
 	}
 
-	texture = &ghost_texture;
+	texture = &s_ghost_texture;
 
 	if (!init_sprite())
 		return false;
@@ -26,7 +26,7 @@ bool Ghost::init()
 	motion.acceleration = { 0.f , 0.f };
 	motion.radians = 0.f;
 
-	physics.scale = { brick_size.x / texture->width, brick_size.y / texture->height };
+	physics.scale = { brick_size / texture->width, brick_size / texture->height };
 
 	return true;
 }
@@ -45,22 +45,43 @@ void Ghost::destroy()
 
 void Ghost::update(float ms)
 {
-	if (len(sub(goal, motion.position)) < 500.f)
+	if (len(sub(m_goal, motion.position)) < 500.f)
 	{
-		last_seen = goal;
+		if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > brick_size / 2.f )
+		{
+			m_path = m_level_graph->get_path(motion.position, m_goal);
+		}
 	}
 
-	vec2 dif = sub(last_seen, motion.position);
-	if (len(dif) != 0.f)
+	if (m_path.size() > 0)
 	{
-		vec2 dir = normalize(dif);
-		vec2 mov = mul(dir, 100.f * ms / 1000.f);
-		if (len(mov) > len(dif))
-			motion.position = last_seen;
-		else
-			motion.position = add(motion.position, mov);
+		float allowed_move = 3.f;
+		vec2 next_pos = m_path[0];
+
+		while (allowed_move > TOLERANCE)
+		{
+			vec2 disp = sub(next_pos, motion.position);
+			float dist = len(disp);
+
+			if (allowed_move < dist)
+			{
+				vec2 dir = normalize(disp);
+				motion.position = add(motion.position, mul(dir, allowed_move));
+				allowed_move = 0.f;
+			}
+			else
+			{
+				motion.position = next_pos;
+				allowed_move -= dist;
+				m_path.erase(m_path.begin() + 0);
+
+				if (m_path.size() > 0)
+					next_pos = m_path[0];
+				else
+					allowed_move = 0.f;
+			}
+		}
 	}
-	fprintf(stderr, "(%f, %f)\n", motion.position.x, motion.position.y);
 }
 
 void Ghost::draw(const mat3& projection, const vec2& camera_shift)
@@ -85,14 +106,13 @@ vec2 Ghost::get_position()const
 void Ghost::set_position(vec2 position)
 {
 	motion.position = position;
-	last_seen = position;
 }
 
 Hitbox Ghost::get_hitbox() const
 {
 	std::vector<Square> squares(1);
 
-	float width = brick_size.x;
+	float width = brick_size;
 	vec2 position = motion.position;
 	position.x -= width / 2;
 	position.y += width / 2;
@@ -105,5 +125,10 @@ Hitbox Ghost::get_hitbox() const
 
 void Ghost::set_goal(vec2 position)
 {
-	goal = position;
+	m_goal = position;
+}
+
+void Ghost::set_level_graph(LevelGraph* graph)
+{
+	m_level_graph = graph;
 }

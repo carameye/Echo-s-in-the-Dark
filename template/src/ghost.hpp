@@ -2,12 +2,14 @@
 
 #include "common.hpp"
 #include "hitbox.hpp"
+#include "level_graph.hpp"
 
 class Ghost : public Entity
 {
-	static Texture ghost_texture;
-	vec2 goal;
-	vec2 last_seen;
+	static Texture s_ghost_texture;
+	vec2 m_goal;
+	std::vector<vec2> m_path;
+	LevelGraph* m_level_graph;
 
 public:
 	// Creates all the associated render resources and default transform
@@ -35,4 +37,7 @@ public:
 
 	// Tell the ghost where it wants to go
 	void set_goal(vec2 position);
+
+	// Tell the ghost how to navigate the map
+	void set_level_graph(LevelGraph* graph);
 };

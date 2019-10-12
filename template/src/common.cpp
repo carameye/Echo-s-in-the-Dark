@@ -70,6 +70,10 @@ vec3 mul(mat3 m, vec3 v) { return {
 vec2 vpow(vec2 v, float e) { return { pow(v.x, e), pow(v.y, e) }; }
 float sq_len(vec2 a) { return dot(a, a); }
 float len(vec2 a) { return std::sqrt(sq_len(a)); }
+vec2  to_grid_position(vec2 pos)
+{
+	return mul(pos, 1.f / brick_size);
+}
 vec2 to_vec2(vec3 v) { return { v.x, v.y }; }
 
 mat3 mul(const mat3 & l, const mat3 & r)
