@@ -303,9 +303,9 @@ void World::draw()
 	// Drawing entities
 	for (auto& brick : m_bricks)
 		brick.draw(projection_2D, camera_shift);
+	m_robot.draw(projection_2D, camera_shift);
 	for (auto& ghost : m_ghosts)
 		ghost.draw(projection_2D, camera_shift);
-	m_robot.draw(projection_2D, camera_shift);
 
 	/////////////////////
 	// Truely render to the screen

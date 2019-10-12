@@ -9,7 +9,7 @@ bool Ghost::init()
 {
 	if (!s_ghost_texture.is_valid())
 	{
-		if (!s_ghost_texture.load_from_file(textures_path("robot.png")))
+		if (!s_ghost_texture.load_from_file(textures_path("body.png")))
 		{
 			fprintf(stderr, "Failed to load ghost texture!");
 			return false;
