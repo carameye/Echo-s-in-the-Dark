@@ -1,0 +1,44 @@
+0.2
+level_select
+enddoors
+Use space to fly
+You can only fly for a short time
+endsigns
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                                                                                                                                      B
+B                                                                                                                                   D  B
+B                                                                                                                                      B
+B                                                                                                            BBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                                                                                                                                      B
+B                                                            BBBBBBBBBBBBBBBBBBBBBBBB                                                  B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                   BBBBBBBBBBBBBBBBB                                                                                                  B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+BBBBBB                                                                                                                                 B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+BBBBBBBBBBBBBBBBBBBB                 BBBBBBBBBBBBBBBBBBBBBBBB                        BBBBBBBBBBBBBBBBBBBBBBBB                     BBBBBB
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                 BBBBBB
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                                                                                                                                      B
+B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B          R               BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B          S        S      BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB

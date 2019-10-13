@@ -126,7 +126,7 @@ bool World::init(vec2 screen)
 	title_ss << "ECHO's in the Dark";
 	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
-	bool valid = parse_level("test2") && m_light.init();
+	bool valid = parse_level("level_select") && m_light.init();
 
 	if (valid)
 		camera_pos = m_robot.get_position();
@@ -259,10 +259,10 @@ bool World::update(float elapsed_ms)
 		ghost.update(elapsed_ms);
 	}
 
-	const Hitbox robot_hitbox_y = m_robot.get_hitbox({0.f, m_robot.get_position().y});
+	const Hitbox robot_hitbox = m_robot.get_hitbox({0.f, 0.f});
 	for (auto& door : m_doors)
 	{
-		if (door.get_hitbox().collides_with(robot_hitbox_y)) {
+		if (door.get_hitbox().collides_with(robot_hitbox)) {
 			fprintf(stderr, "Collided with door\n");
 			m_interactable_door = &door;
 		}
@@ -407,6 +407,7 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 bool World::parse_level(std::string level)
 {
 	static std::map<char, vec3> colours;
+	colours.clear();
 	colours['B'] = { 1.f, 1.f, 1.f };
 	colours['C'] = { 1.f, 0.f, 0.f };
 	colours['M'] = { 0.f, 1.f, 0.f };
@@ -444,10 +445,18 @@ bool World::parse_level(std::string level)
 			return false;
 		m_light.set_ambient(std::stof(line));
 
-		// Get file name for level through the door
+		// Get the next levels file names
 		if (!getline(file, line))
 			return false;
-		std::string next_level = line;
+
+		std::vector<std::string> doors;
+		int door_i = 0;
+		while (line.compare("enddoors") != 0)
+		{
+			doors.push_back(line);
+			if (!getline(file, line))
+				return false;
+		}
 
 		// Get the text from the signs in the order they will appear 
 		// starting from top to bottom/left to right
@@ -478,7 +487,7 @@ bool World::parse_level(std::string level)
 				switch (line[x])
 				{
 				case 'D':
-					if (!spawn_door(position, next_level))
+					if (!spawn_door(position, doors[door_i++]))
 						return false;
 					row = row.append(" ");
 					break;

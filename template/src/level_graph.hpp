@@ -41,7 +41,7 @@ Then we use this path on each update by:
 #include <string>
 #include <map>
 #include <utility>
-#include <SDL.h>
+//#include <SDL.h>
 
 
 class CriticalPoint;
@@ -91,7 +91,6 @@ public:
 
 private:
 	std::vector<CriticalPoint> m_vertices;
-	std::map<vec2, std::vector<CriticalPoint*>> m_entry_points;
 	std::vector<std::string> m_data;
 
 	// Test if object can travel between two positions with no collisions

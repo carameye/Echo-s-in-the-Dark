@@ -39,14 +39,16 @@ std::string Door::get_destination()
 
 Hitbox Door::get_hitbox() const
 {
-	std::vector<Square> squares(1);
+	std::vector<Square> squares(2);
 	
-	float width = texture->width;
+	float width = brick_size;
 	vec2 position = motion.position;
 	position.x -= width / 2;
 	position.y += width / 2;
-    Square square(position, width);
-	squares[0] = square;
+    Square top(position, width);
+	Square bot(add(position, {0.f, width}), width);
+	squares[0] = top;
+	squares[1] = bot;
 
     Hitbox hitbox({}, squares);
     return hitbox;

@@ -49,7 +49,6 @@ vec2 CriticalPoint::get_position()
 LevelGraph::LevelGraph()
 {
 	m_vertices.clear();
-	m_entry_points.clear();
 }
 
 static float h(CriticalPoint* u, vec2 goal)
@@ -146,6 +145,7 @@ std::vector<vec2> LevelGraph::get_path(const vec2 start, const vec2 goal)
 
 bool LevelGraph::generate(std::vector<std::string> data)
 {
+	m_vertices.clear();
 	m_data = data;
 
 	int num_crits = 0;
