@@ -41,7 +41,9 @@ Then we use this path on each update by:
 #include <string>
 #include <map>
 #include <utility>
-//#include <SDL.h>
+#ifndef _WIN32
+#include <SDL.h>
+#endif
 
 
 class CriticalPoint;
