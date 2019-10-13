@@ -7,6 +7,7 @@
 #include "light.hpp"
 #include "ghost.hpp"
 #include "level_graph.hpp"
+#include "door.hpp"
 
 // stlib
 #include <vector>
@@ -74,9 +75,11 @@ private:
 	// Game entities
 	std::vector<Brick> m_bricks;
 	std::vector<Ghost> m_ghosts;
+	std::vector<Door> m_doors;
 	Robot m_robot;
 
 	LevelGraph m_graph;
+	Door* m_interactable_door;
 	
 	Mix_Music* m_background_music;
 

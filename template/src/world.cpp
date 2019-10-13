@@ -58,7 +58,7 @@ bool World::init(vec2 screen)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, 0);
-	m_window = glfwCreateWindow((int)screen.x, (int)screen.y, "Salmon Game Assignment", nullptr, nullptr);
+	m_window = glfwCreateWindow((int)screen.x, (int)screen.y, "ECHO's in the Dark", nullptr, nullptr);
 	if (m_window == nullptr)
 		return false;
 
@@ -105,12 +105,12 @@ bool World::init(vec2 screen)
 		return false;
 	}
 
-	m_background_music = Mix_LoadMUS(audio_path("music.wav"));
+	m_background_music = Mix_LoadMUS(audio_path("goldleaf.wav"));
 
 	if (m_background_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
-			audio_path("music.wav"),
+			audio_path("goldleaf.wav"),
 			audio_path("salmon_dead.wav"),
 			audio_path("salmon_eat.wav"));
 		return false;
@@ -123,10 +123,10 @@ bool World::init(vec2 screen)
 
 	// Setting window title
 	std::stringstream title_ss;
-	title_ss << "ECHOs in the Dark";
+	title_ss << "ECHO's in the Dark";
 	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
-	bool valid = parse_level("test") && m_light.init();
+	bool valid = parse_level("test2") && m_light.init();
 
 	if (valid)
 		camera_pos = m_robot.get_position();
@@ -150,9 +150,14 @@ void World::destroy()
 
 	for (auto& brick : m_bricks)
 		brick.destroy();
+	for (auto& door : m_doors)
+		door.destroy();
+	for (auto& ghost : m_ghosts)
+		ghost.destroy();
 	m_robot.destroy();
 	m_light.destroy();
 	m_bricks.clear();
+	m_doors.clear();
 	glfwDestroyWindow(m_window);
 }
 
@@ -231,6 +236,15 @@ bool World::update(float elapsed_ms)
 		ghost.update(elapsed_ms);
 	}
 
+	const Hitbox robot_hitbox_y = m_robot.get_hitbox({0.f, m_robot.get_position().y});
+	for (auto& door : m_doors)
+	{
+		if (door.get_hitbox().collides_with(robot_hitbox_y)) {
+			fprintf(stderr, "Collided with door\n");
+			m_interactable_door = &door;
+		}
+	}
+
 	float follow_speed = 0.1f;
 	vec2 follow_point = add(m_robot.get_position(), {0.f, camera_offset});
 	camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
@@ -280,6 +294,8 @@ void World::draw()
 	// Drawing entities
 	for (auto& brick : m_bricks)
 		brick.draw(projection_2D, camera_shift);
+	for(auto& door : m_doors)
+		door.draw(projection_2D, camera_shift);
 	m_robot.draw(projection_2D, camera_shift);
 	for (auto& ghost : m_ghosts)
 		ghost.draw(projection_2D, camera_shift);
@@ -346,6 +362,12 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
 		camera_offset -= 100;
 	}
+
+	if (action == GLFW_RELEASE && key == GLFW_KEY_F && !!(m_interactable_door)) {
+		bool perform_action = m_interactable_door->perform_action();
+		if (perform_action)
+			parse_level(m_interactable_door->get_destination());
+	}
 }
 
 void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
@@ -373,7 +395,16 @@ bool World::parse_level(std::string level)
 	{
 		fprintf(stderr, "Opened level file\n");
 
+		// clear all level-dependent resources
+		for (auto& brick : m_bricks)
+			brick.destroy();
+		for (auto& door : m_doors)
+			door.destroy();
+		for (auto& ghost : m_ghosts)
+			ghost.destroy();
 		m_bricks.clear();
+		m_ghosts.clear();
+		m_doors.clear();
 
 		float x = 0.f;
 		float y = 0.f;
@@ -473,9 +504,16 @@ bool World::parse_level(std::string level)
 
 bool World::spawn_door(vec2 position, std::string next_level)
 {
-	// TODO: add door code
-	fprintf(stderr, "	door at (%f, %f) goes to level \"%s\"\n", position.x, position.y, next_level.c_str()); // remove once real code is done
-	return true;
+	Door door;
+	if (door.init())
+	{
+		door.set_position(position);
+		door.set_destination(next_level);
+		m_doors.push_back(door);
+		return true;
+	}
+	fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
+	return false;
 }
 
 bool World::spawn_ghost(vec2 position)
