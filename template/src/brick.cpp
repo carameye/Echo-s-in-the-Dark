@@ -26,7 +26,7 @@ bool Brick::init()
 	motion.acceleration = { 0.f , 0.f };
 	motion.radians = 0.f;
 
-	physics.scale = { brick_size.x / texture->width, brick_size.y / texture->height };
+	physics.scale = { brick_size / texture->width, brick_size / texture->height };
 
 	return true;
 }
@@ -77,7 +77,7 @@ Hitbox Brick::get_hitbox() const
 {
 	std::vector<Square> squares(1);
 	
-	float width = brick_size.x;
+	float width = brick_size;
 	vec2 position = motion.position;
 	position.x -= width / 2;
 	position.y += width / 2;
