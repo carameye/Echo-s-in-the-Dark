@@ -203,16 +203,16 @@ bool World::update(float elapsed_ms)
 		if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
 			m_robot.set_velocity({ 0.f, m_robot.get_velocity().y });
 
-			float circle_width = brick_size.x / 2.f;
-			if (abs(m_robot.get_position().y - brick.get_position().y) > brick_size.y / 2.f)
+			float circle_width = brick_size / 2.f;
+			if (abs(m_robot.get_position().y - brick.get_position().y) > brick_size / 2.f)
 			{
-				float param = abs(m_robot.get_position().y - brick.get_position().y) - brick_size.y / 2.f;
-				float dist_no_sqrt = pow(brick_size.y / 2.f, 2.f) - pow(param, 2.f);
+				float param = abs(m_robot.get_position().y - brick.get_position().y) - brick_size / 2.f;
+				float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
 				if (dist_no_sqrt >= 0.f)
 					circle_width = sqrt(dist_no_sqrt);
 			}
 
-			new_robot_pos.x = get_closest_point(robot_pos.x, brick.get_position().x, circle_width, brick_size.x / 2.f);
+			new_robot_pos.x = get_closest_point(robot_pos.x, brick.get_position().x, circle_width, brick_size / 2.f);
 			translation = new_robot_pos.x - robot_pos.x;
 		}
 	}
@@ -227,16 +227,16 @@ bool World::update(float elapsed_ms)
 		if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
 			m_robot.set_velocity({ m_robot.get_velocity().x, 0.f });
 
-			float circle_width = brick_size.y / 2.f;
-			if (abs(m_robot.get_position().x - brick.get_position().x) > brick_size.x / 2.f)
+			float circle_width = brick_size / 2.f;
+			if (abs(m_robot.get_position().x - brick.get_position().x) > brick_size / 2.f)
 			{
-				float param = abs(m_robot.get_position().x - brick.get_position().x) - brick_size.x / 2.f;
-				float dist_no_sqrt = pow(brick_size.x / 2.f, 2.f) - pow(param, 2.f);
+				float param = abs(m_robot.get_position().x - brick.get_position().x) - brick_size / 2.f;
+				float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
 				if (dist_no_sqrt >= 0.f)
 					circle_width = sqrt(dist_no_sqrt);
 			}
 
-			new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, circle_width, brick_size.y / 2.f);
+			new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, circle_width, brick_size / 2.f);
 			translation = new_robot_pos.y -robot_pos.y;
 
 			if (brick.get_position().y > new_robot_pos.y)
@@ -247,6 +247,12 @@ bool World::update(float elapsed_ms)
 	m_robot.set_position(new_robot_pos);
 	m_robot.update(time_factor);
 	m_light.set_position(new_robot_pos);
+
+	for (auto& ghost : m_ghosts)
+	{
+		ghost.set_goal(m_robot.get_position());
+		ghost.update(elapsed_ms);
+	}
 
 	float follow_speed = 0.1f;
 	vec2 follow_point = add(m_robot.get_position(), {0.f, camera_offset});
@@ -298,6 +304,8 @@ void World::draw()
 	for (auto& brick : m_bricks)
 		brick.draw(projection_2D, camera_shift);
 	m_robot.draw(projection_2D, camera_shift);
+	for (auto& ghost : m_ghosts)
+		ghost.draw(projection_2D, camera_shift);
 
 	/////////////////////
 	// Truely render to the screen
@@ -424,38 +432,49 @@ bool World::parse_level(std::string level)
 				return false;
 		}
 
+		std::vector<std::string> brick_data;
+
 		// Finally get the actual map data
 		while (getline(file, line))
 		{
+			std::string row;
+
 			for (x = 0.f; x < line.length(); x++)
 			{
 				vec2 position;
-				position.x = x * brick_size.x;
-				position.y = y * brick_size.y;
+				position.x = x * brick_size;
+				position.y = y * brick_size;
 				switch (line[x])
 				{
 				case 'D':
 					if (!spawn_door(position, next_level))
 						return false;
+					row = row.append(" ");
 					break;
 				case 'G':
 					if (!spawn_ghost(position))
 						return false;
+					row = row.append(" ");
 					break;
 				case 'R':
 					if (!spawn_robot(position))
 						return false;
+					row = row.append(" ");
 					break;
 				case 'S':
 					if (!spawn_sign(position, signs[sign_i++]))
 						return false;
+					row = row.append(" ");
 					break;
 				case 'T':
 					m_light.add_torch(position);
+					row = row.append(" ");
 					break;
 				case ' ':
+					row = row.append(" ");
 					break;
 				default:
+					row = row.append("B");
 					if (colours.find(line[x]) == colours.end())
 						return false;
 
@@ -463,27 +482,41 @@ bool World::parse_level(std::string level)
 						return false;
 				}
 			}
+			brick_data.push_back(row);
 			y++;
 		}
-	}
-	else
-		return false;
 
-	return true;
+		fprintf(stderr, "Generating level graph\n");
+		bool valid = m_graph.generate(brick_data);
+
+		for (auto& g : m_ghosts)
+		{
+			g.set_level_graph(&m_graph);
+		}
+
+		return valid;
+	}
+
+	return false;
 }
 
 bool World::spawn_door(vec2 position, std::string next_level)
 {
 	// TODO: add door code
-	fprintf(stderr, "door at (%f, %f) goes to level \"%s\"\n", position.x, position.y, next_level.c_str()); // remove once real code is done
+	fprintf(stderr, "	door at (%f, %f) goes to level \"%s\"\n", position.x, position.y, next_level.c_str()); // remove once real code is done
 	return true;
 }
 
 bool World::spawn_ghost(vec2 position)
 {
-	// TODO: add ghost code
-	fprintf(stderr, "ghost at (%f, %f)\n", position.x, position.y);
-	return true;
+	Ghost ghost;
+	if (ghost.init())
+	{
+		ghost.set_position(position);
+		m_ghosts.push_back(ghost);
+		return true;
+	}
+	return false;
 }
 
 bool World::spawn_robot(vec2 position)
@@ -498,14 +531,14 @@ bool World::spawn_robot(vec2 position)
 		return true;
 		// TODO: init light when robot is spawned
 	}
-	fprintf(stderr, "Robot spawn failed\n");
+	fprintf(stderr, "	robot spawn failed\n");
 	return false;
 }
 
 bool World::spawn_sign(vec2 position, std::string text)
 {
 	// TODO: add sign code
-	fprintf(stderr, "sign at (%f, %f) has text \"%s\"\n", position.x, position.y, text.c_str()); // remove once real code is done
+	fprintf(stderr, "	sign at (%f, %f) has text \"%s\"\n", position.x, position.y, text.c_str()); // remove once real code is done
 	return true;
 }
 
@@ -516,7 +549,7 @@ bool World::spawn_brick(vec2 position, vec3 colour)
 	bool y = colour.y == 1.f;
 	bool z = colour.z == 1.f;
 	if (!x || !y || !z)
-		fprintf(stderr, "brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
+		fprintf(stderr, "	brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
 
 	Brick brick;
 	if (brick.init())
@@ -525,6 +558,6 @@ bool World::spawn_brick(vec2 position, vec3 colour)
 		m_bricks.push_back(brick);
 		return true;
 	}
-	fprintf(stderr, "Brick spawn failed\n");
+	fprintf(stderr, "	brick spawn failed\n");
 	return false;
 }

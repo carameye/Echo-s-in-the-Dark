@@ -106,7 +106,7 @@ bool Robot::init()
     motion.acceleration = { 0.f , 0.f };
     motion.radians = 0.f;
 
-	physics.scale = { brick_size.x / texture->width, brick_size.y / texture->height };
+	physics.scale = { brick_size / texture->width, brick_size / texture->height };
 	bool valid = m_head.init();
 	m_head.set_scaling(physics.scale);
 
@@ -203,7 +203,7 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 	position.x += translation.x;
 	position.y += translation.y;
 
-	int radius = brick_size.x / 2;
+	int radius = brick_size / 2;
 	Circle circle(position, radius);
 	circles[0] = circle;
 
