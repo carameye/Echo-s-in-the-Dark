@@ -41,6 +41,8 @@ Then we use this path on each update by:
 #include <string>
 #include <map>
 #include <utility>
+#include <algorithm>
+#include <math.h>
 
 
 class CriticalPoint;
