@@ -145,4 +145,5 @@ protected:
 protected:
 	bool init_sprite();
 	void draw_sprite(const mat3& projection);
+	void draw_sprite_alpha(const mat3& projection, float alpha);
 };
