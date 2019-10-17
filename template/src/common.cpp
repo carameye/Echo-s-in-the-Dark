@@ -364,11 +364,18 @@ bool Entity::init_sprite()
 
 void Entity::draw_sprite(const mat3& projection)
 {
+	draw_sprite_alpha(projection, 1.f);
+}
+
+// Draw sprite with or without transparency
+// alpha is from 0.0 to 1.0 (from transparent to opaque)
+void Entity::draw_sprite_alpha(const mat3& projection, float alpha)
+{
 	// Setting shaders
 	glUseProgram(effect.program);
 
 	// Enabling alpha channel for textures
-	glEnable(GL_BLEND); 
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
 
@@ -396,8 +403,8 @@ void Entity::draw_sprite(const mat3& projection)
 
 	// Setting uniform values to the currently bound program
 	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform.out);
-	float color[] = { 1.f, 1.f, 1.f };
-	glUniform3fv(color_uloc, 1, color);
+	float color[] = { 1.f, 1.f, 1.f, alpha };
+	glUniform4fv(color_uloc, 1, color);
 	glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)& projection);
 
 	// Drawing!

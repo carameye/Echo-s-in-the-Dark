@@ -5,6 +5,7 @@
 
 Texture RobotHead::robot_head_texture;
 Texture Robot::robot_body_texture;
+Texture Robot::robot_body_flying_texture;
 Texture RobotShoulders::robot_shoulder_texture;
 
 bool RobotHead::init()
@@ -175,6 +176,14 @@ bool Robot::init()
 			return false;
 		}
 	}
+	if (!robot_body_flying_texture.is_valid())
+	{
+		if (!robot_body_flying_texture.load_from_file(textures_path("body_ball_flying.png")))
+		{
+			fprintf(stderr, "Failed to load body flying texture!");
+			return false;
+		}
+	}
 
 	texture = &robot_body_texture;
 
@@ -187,7 +196,7 @@ bool Robot::init()
     motion.radians = 0.f;
 
 	physics.scale = { brick_size / texture->width, brick_size / texture->height };
-	bool valid = m_head.init() && m_shoulders.init();
+	bool valid = m_head.init() && m_shoulders.init() && m_smoke_system.init();
 	m_head.set_scaling(physics.scale);
 	m_shoulders.set_scaling(physics.scale);
 
@@ -204,6 +213,8 @@ void Robot::destroy()
 	glDeleteShader(effect.vertex);
 	glDeleteShader(effect.fragment);
 	glDeleteShader(effect.program);
+
+	m_smoke_system.destroy();
 }
 
 void Robot::update(float ms)
@@ -220,6 +231,12 @@ void Robot::update(float ms)
         m_head.set_direction(motion.acceleration.x > 0.f);
         m_shoulders.set_direction(motion.acceleration.x > 0.f);
     }
+
+	m_smoke_system.update(ms, motion.position, motion.velocity);
+
+	if (m_should_stop_smoke && motion.velocity.y >= 0) {
+		m_smoke_system.stop_smoke();
+	}
 }
 
 void Robot::draw(const mat3& projection, const vec2& camera_shift)
@@ -237,6 +254,7 @@ void Robot::draw(const mat3& projection, const vec2& camera_shift)
 
     m_shoulders.draw(projection, camera_shift);
 	m_head.draw(projection, camera_shift);
+	m_smoke_system.draw(projection, camera_shift);
 }
 
 vec2 Robot::get_position() const
@@ -301,4 +319,21 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 	// TODO: figure out why this line is not working
 	// hitbox.translate(translation);
 	return hitbox;
+}
+
+void Robot::start_flying()
+{
+	m_smoke_system.start_smoke();
+	m_should_stop_smoke = false;
+	texture = &robot_body_flying_texture;
+	physics.scale.x *= 53.f / 45.f;
+	motion.radians = 0.f;
+}
+
+void Robot::stop_flying()
+{
+	// smoke will stop in update() when velocity.y is positive
+	m_should_stop_smoke = true;
+	texture = &robot_body_texture;
+	physics.scale = { brick_size / texture->width, brick_size / texture->height };
 }
