@@ -4,9 +4,9 @@
 
 namespace
 {
-	const size_t SPAWN_DELAY_MS = 50;
+	const size_t SPAWN_DELAY_MS = 25;
 	const size_t SMOKE_COUNT = 3; // # of smokes generated at the same time
-	const float SMOKE_WIDTH = 50.f;
+	const float SMOKE_WIDTH = 40.f;
 }
 
 Texture SmokeSystem::test_texture;

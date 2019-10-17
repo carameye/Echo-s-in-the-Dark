@@ -4,7 +4,7 @@
 
 namespace
 {
-	const size_t FADE_OUT_MS = 750;
+	const size_t FADE_OUT_MS = 500;
 	const float MAX_SCALE = 3.f;
 	const float MIN_SCALE = 1.5f;
 	const size_t SIZE_MOD_MS = 200; // MS for one size modulation cycle
@@ -45,7 +45,7 @@ bool Smoke::init(vec2 robot_position, vec2 robot_velocity)
 	if (motion.velocity.y < 0.f) {
 		motion.velocity.y = VELOCITY_Y;
 	}
-	motion.position = { robot_position.x, robot_position.y + 35.f };
+	motion.position = { robot_position.x, robot_position.y + 25.f };
 
 	float scale = MIN_SCALE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(MAX_SCALE-MIN_SCALE)));
     m_original_scale = { scale, scale };
