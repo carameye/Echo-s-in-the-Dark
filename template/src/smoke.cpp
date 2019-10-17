@@ -45,7 +45,6 @@ bool Smoke::init(vec2 robot_position, vec2 robot_velocity)
 	if (motion.velocity.y < 0.f) {
 		motion.velocity.y = VELOCITY_Y;
 	}
-    fprintf(stderr, "Smoke velocity. x: %f, y: %f\n", motion.velocity.x, motion.velocity.y);
 	motion.position = { robot_position.x, robot_position.y + 35.f };
 
 	float scale = MIN_SCALE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(MAX_SCALE-MIN_SCALE)));
