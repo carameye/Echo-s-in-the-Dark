@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "hitbox.hpp"
+#include "smoke_system.hpp"
 
 class RobotHead : public Entity
 {
@@ -118,8 +119,16 @@ public:
 	// Returns the robots hitbox for collision detection
 	Hitbox get_hitbox(vec2 translation) const;
 
+	// Starts smoke system and changes to flying sprite
+	void start_flying();
+
+	// Stops smoke system and changes to normal sprite
+	void stop_flying();
+
 private:
 	RobotHead m_head;
 	RobotShoulders m_shoulders;
+	SmokeSystem m_smoke_system;
 	bool m_grounded = false;
+	bool m_should_stop_smoke = false;
 };

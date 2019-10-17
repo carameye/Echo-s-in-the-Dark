@@ -187,7 +187,7 @@ bool Robot::init()
     motion.radians = 0.f;
 
 	physics.scale = { brick_size / texture->width, brick_size / texture->height };
-	bool valid = m_head.init() && m_shoulders.init();
+	bool valid = m_head.init() && m_shoulders.init() && m_smoke_system.init();
 	m_head.set_scaling(physics.scale);
 	m_shoulders.set_scaling(physics.scale);
 
@@ -204,6 +204,8 @@ void Robot::destroy()
 	glDeleteShader(effect.vertex);
 	glDeleteShader(effect.fragment);
 	glDeleteShader(effect.program);
+
+	m_smoke_system.destroy();
 }
 
 void Robot::update(float ms)
@@ -220,6 +222,12 @@ void Robot::update(float ms)
         m_head.set_direction(motion.acceleration.x > 0.f);
         m_shoulders.set_direction(motion.acceleration.x > 0.f);
     }
+
+	m_smoke_system.update(ms, motion.position, motion.velocity);
+
+	if (m_should_stop_smoke && motion.velocity.y >= 0) {
+		m_smoke_system.stop_smoke();
+	}
 }
 
 void Robot::draw(const mat3& projection, const vec2& camera_shift)
@@ -237,6 +245,7 @@ void Robot::draw(const mat3& projection, const vec2& camera_shift)
 
     m_shoulders.draw(projection, camera_shift);
 	m_head.draw(projection, camera_shift);
+	m_smoke_system.draw(projection, camera_shift);
 }
 
 vec2 Robot::get_position() const
@@ -301,4 +310,16 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 	// TODO: figure out why this line is not working
 	// hitbox.translate(translation);
 	return hitbox;
+}
+
+void Robot::start_flying()
+{
+	m_smoke_system.start_smoke();
+	m_should_stop_smoke = false;
+}
+
+void Robot::stop_flying()
+{
+	// smoke will stop in update() when velocity.y is positive
+	m_should_stop_smoke = true;
 }

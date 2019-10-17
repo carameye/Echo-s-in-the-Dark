@@ -31,6 +31,11 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/project_path.hpp.in" "${CMAKE_CU
 # file(GLOB SOURCE_FILES src/*.cpp src/*.hpp)
 
 set(SOURCE_FILES
+	src/main.cpp
+	src/common.cpp
+        src/smoke.cpp
+        src/smoke_system.cpp
+        src/robot.cpp
         src/brick.cpp
         src/common.cpp
         src/ghost.cpp
@@ -41,6 +46,10 @@ set(SOURCE_FILES
         src/robot.cpp
         src/world.cpp
         src/project_path.hpp
+	src/common.hpp
+        src/smoke.hpp
+        src/smoke_system.hpp
+        src/robot.hpp
         src/brick.hpp
         src/common.hpp
         src/ghost.hpp
