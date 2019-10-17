@@ -7,8 +7,8 @@ namespace
 	const size_t FADE_OUT_MS = 750;
 	const float MAX_SCALE = 3.f;
 	const float MIN_SCALE = 1.5f;
-	const size_t DISTORTION_MS = 200; // MS for one distortion cycle
-	const float DISTORTION_AMPLITUDE = 0.7f;
+	const size_t SIZE_MOD_MS = 200; // MS for one size modulation cycle
+	const float SIZE_MOD_AMPLITUDE = 0.7f;
 	const float VELOCITY_Y = 50.f;
 	const float PI = 3.14159265f;
 }
@@ -76,12 +76,12 @@ void Smoke::update(float ms)
 	motion.position.x += motion.velocity.x * time_factor;
 	motion.position.y += motion.velocity.y * time_factor;
 	m_alpha -= ms / FADE_OUT_MS;
-	m_distortion_count += ms / DISTORTION_MS * PI;
-	if (m_distortion_count > PI) {
-		m_distortion_count = 0;
+	m_size_mod_count += ms / SIZE_MOD_MS * PI;
+	if (m_size_mod_count > PI) {
+		m_size_mod_count = 0;
 	}
-	physics.scale.x = m_original_scale.x + sin(m_distortion_count) * DISTORTION_AMPLITUDE;
-	physics.scale.y = m_original_scale.y + sin(m_distortion_count) * DISTORTION_AMPLITUDE;
+	physics.scale.x = m_original_scale.x + sin(m_size_mod_count) * SIZE_MOD_AMPLITUDE;
+	physics.scale.y = m_original_scale.y + sin(m_size_mod_count) * SIZE_MOD_AMPLITUDE;
 }
 
 void Smoke::draw(const mat3& projection, const vec2& camera_shift)

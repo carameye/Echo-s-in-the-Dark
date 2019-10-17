@@ -21,6 +21,6 @@ public:
 
 private:
 	float m_alpha = 1.f;
-	float m_distortion_count = 0.f;
+	float m_size_mod_count = 0.f;
 	vec2 m_original_scale;
 };
