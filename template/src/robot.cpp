@@ -5,6 +5,7 @@
 
 Texture RobotHead::robot_head_texture;
 Texture Robot::robot_body_texture;
+Texture Robot::robot_body_flying_texture;
 Texture RobotShoulders::robot_shoulder_texture;
 
 bool RobotHead::init()
@@ -175,6 +176,14 @@ bool Robot::init()
 			return false;
 		}
 	}
+	if (!robot_body_flying_texture.is_valid())
+	{
+		if (!robot_body_flying_texture.load_from_file(textures_path("body_ball_flying.png")))
+		{
+			fprintf(stderr, "Failed to load body flying texture!");
+			return false;
+		}
+	}
 
 	texture = &robot_body_texture;
 
@@ -316,10 +325,15 @@ void Robot::start_flying()
 {
 	m_smoke_system.start_smoke();
 	m_should_stop_smoke = false;
+	texture = &robot_body_flying_texture;
+	physics.scale.x *= 53.f / 45.f;
+	motion.radians = 0.f;
 }
 
 void Robot::stop_flying()
 {
 	// smoke will stop in update() when velocity.y is positive
 	m_should_stop_smoke = true;
+	texture = &robot_body_texture;
+	physics.scale = { brick_size / texture->width, brick_size / texture->height };
 }

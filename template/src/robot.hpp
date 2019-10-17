@@ -73,6 +73,7 @@ public:
 class Robot : public Entity
 {
 	static Texture robot_body_texture;
+	static Texture robot_body_flying_texture;
 
 public:
 	// Creates all the associated render resources and default transform
