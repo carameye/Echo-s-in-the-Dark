@@ -4,11 +4,11 @@
 #include <cmath>
 
 namespace {
-    const float VERTICAL_ACCELERATION = 700.f;
-    const float HORIZONTAL_ACCELERATION = 500.f;
-    const float HORIZONTAL_DECELERATION = 300.f;
-    const float MAX_HORIZONTAL_VELOCITY = 600.f;
-    const float MAX_VERTICAL_VELOCITY = 600.f;
+    const float VERTICAL_ACCELERATION = 40.f;
+    const float HORIZONTAL_ACCELERATION = 40.f;
+    const float HORIZONTAL_DECELERATION = 30.f;
+    const float MAX_HORIZONTAL_VELOCITY = 30.f;
+    const float MAX_VERTICAL_VELOCITY = 40.f;
 }
 
 Texture Robot::robot_body_texture;
@@ -67,7 +67,7 @@ void Robot::destroy()
 
 void Robot::update_velocity(float ms) {
 
-    float step = ms / 1000;
+    float step = (ms / 1000);
 
     if (m_is_accelerating_right) {
         float new_velocity = motion.velocity.x + motion.acceleration.x * step;
@@ -99,7 +99,7 @@ void Robot::update(float ms)
     {
 	// TODO: handle  key strokes from world
 	if (m_grounded && std::abs(motion.velocity.x) > TOLERANCE)
-		motion.radians += motion.velocity.x / 1000;
+		motion.radians += motion.velocity.x / 50;
 
 	m_grounded = false;
 	m_head.update(ms, add(motion.position, { 0.f, -48.f }));

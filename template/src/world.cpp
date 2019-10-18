@@ -164,23 +164,15 @@ bool World::update(float elapsed_ms)
 	vec2 screen = { (float)w / m_screen_scale, (float)h / m_screen_scale };
 
 	//-------------------------------------------------------------------------
-	// Handle robot physics update
 
-	float time_factor = elapsed_ms / 1000;
 	vec2 robot_pos = m_robot.get_position();
 
     m_robot.update_velocity(elapsed_ms);
 
     vec2 new_robot_vel = m_robot.get_velocity();
-    // vec2 new_robot_pos = m_robot.get_next_position();
+    vec2 new_robot_pos = m_robot.get_next_position();
 
-	// Update position
-	vec2 new_robot_pos = { robot_pos.x + new_robot_vel.x * time_factor, robot_pos.y + new_robot_vel.y * time_factor};
-
-	// Detect collision
-	// If the player will collide with an object next tick with the new velocity,
-	// it will set velocity and acceleration to 0 and not update the position
-	float translation = new_robot_vel.x * time_factor;
+	float translation = new_robot_vel.x;
 	for (auto& i_brick : m_bricks) 
 	{
 		const auto& robot_hitbox_x = m_robot.get_hitbox({ translation, 0.f });
@@ -204,7 +196,7 @@ bool World::update(float elapsed_ms)
 
 	m_robot.set_position({ new_robot_pos.x, robot_pos.y });
 
-	translation = new_robot_vel.y * time_factor;
+	translation = new_robot_vel.y;
 	for (auto& i_brick : m_bricks)
 	{
 		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation });
