@@ -35,7 +35,7 @@ set(SOURCE_FILES
 	src/common.cpp
         src/smoke.cpp
         src/smoke_system.cpp
-        src/robot.cpp
+        src/Robot/robot.cpp
         src/brick.cpp
         src/common.cpp
         src/ghost.cpp
@@ -43,20 +43,24 @@ set(SOURCE_FILES
         src/level_graph.cpp
         src/light.cpp
         src/main.cpp
-        src/robot.cpp
+        src/Robot/robot.cpp
+        src/Robot/robot_head.cpp
+        src/Robot/robot_shoulders.cpp
         src/world.cpp
         src/project_path.hpp
-	src/common.hpp
+	    src/common.hpp
         src/smoke.hpp
         src/smoke_system.hpp
-        src/robot.hpp
+        src/Robot/robot.hpp
+        src/Robot/robot_head.hpp
+        src/Robot/robot_shoulders.hpp
         src/brick.hpp
         src/common.hpp
         src/ghost.hpp
         src/hitbox.hpp
         src/level_graph.hpp
         src/light.hpp
-        src/robot.hpp
+        src/Robot/robot.hpp
         src/world.hpp
         )
 

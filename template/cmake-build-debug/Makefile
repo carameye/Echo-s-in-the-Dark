@@ -122,32 +122,86 @@ EITD/fast:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/build
 .PHONY : EITD/fast
 
-src/background.obj: src/background.cpp.obj
+src/Robot/robot.obj: src/Robot/robot.cpp.obj
 
-.PHONY : src/background.obj
+.PHONY : src/Robot/robot.obj
 
 # target to build an object file
-src/background.cpp.obj:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/background.cpp.obj
-.PHONY : src/background.cpp.obj
+src/Robot/robot.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/robot.cpp.obj
+.PHONY : src/Robot/robot.cpp.obj
 
-src/background.i: src/background.cpp.i
+src/Robot/robot.i: src/Robot/robot.cpp.i
 
-.PHONY : src/background.i
+.PHONY : src/Robot/robot.i
 
 # target to preprocess a source file
-src/background.cpp.i:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/background.cpp.i
-.PHONY : src/background.cpp.i
+src/Robot/robot.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/robot.cpp.i
+.PHONY : src/Robot/robot.cpp.i
 
-src/background.s: src/background.cpp.s
+src/Robot/robot.s: src/Robot/robot.cpp.s
 
-.PHONY : src/background.s
+.PHONY : src/Robot/robot.s
 
 # target to generate assembly for a file
-src/background.cpp.s:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/background.cpp.s
-.PHONY : src/background.cpp.s
+src/Robot/robot.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/robot.cpp.s
+.PHONY : src/Robot/robot.cpp.s
+
+src/Robot/robot_head.obj: src/Robot/robot_head.cpp.obj
+
+.PHONY : src/Robot/robot_head.obj
+
+# target to build an object file
+src/Robot/robot_head.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/robot_head.cpp.obj
+.PHONY : src/Robot/robot_head.cpp.obj
+
+src/Robot/robot_head.i: src/Robot/robot_head.cpp.i
+
+.PHONY : src/Robot/robot_head.i
+
+# target to preprocess a source file
+src/Robot/robot_head.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/robot_head.cpp.i
+.PHONY : src/Robot/robot_head.cpp.i
+
+src/Robot/robot_head.s: src/Robot/robot_head.cpp.s
+
+.PHONY : src/Robot/robot_head.s
+
+# target to generate assembly for a file
+src/Robot/robot_head.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/robot_head.cpp.s
+.PHONY : src/Robot/robot_head.cpp.s
+
+src/Robot/robot_shoulders.obj: src/Robot/robot_shoulders.cpp.obj
+
+.PHONY : src/Robot/robot_shoulders.obj
+
+# target to build an object file
+src/Robot/robot_shoulders.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/robot_shoulders.cpp.obj
+.PHONY : src/Robot/robot_shoulders.cpp.obj
+
+src/Robot/robot_shoulders.i: src/Robot/robot_shoulders.cpp.i
+
+.PHONY : src/Robot/robot_shoulders.i
+
+# target to preprocess a source file
+src/Robot/robot_shoulders.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/robot_shoulders.cpp.i
+.PHONY : src/Robot/robot_shoulders.cpp.i
+
+src/Robot/robot_shoulders.s: src/Robot/robot_shoulders.cpp.s
+
+.PHONY : src/Robot/robot_shoulders.s
+
+# target to generate assembly for a file
+src/Robot/robot_shoulders.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/robot_shoulders.cpp.s
+.PHONY : src/Robot/robot_shoulders.cpp.s
 
 src/brick.obj: src/brick.cpp.obj
 
@@ -203,6 +257,114 @@ src/common.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/common.cpp.s
 .PHONY : src/common.cpp.s
 
+src/ghost.obj: src/ghost.cpp.obj
+
+.PHONY : src/ghost.obj
+
+# target to build an object file
+src/ghost.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/ghost.cpp.obj
+.PHONY : src/ghost.cpp.obj
+
+src/ghost.i: src/ghost.cpp.i
+
+.PHONY : src/ghost.i
+
+# target to preprocess a source file
+src/ghost.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/ghost.cpp.i
+.PHONY : src/ghost.cpp.i
+
+src/ghost.s: src/ghost.cpp.s
+
+.PHONY : src/ghost.s
+
+# target to generate assembly for a file
+src/ghost.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/ghost.cpp.s
+.PHONY : src/ghost.cpp.s
+
+src/hitbox.obj: src/hitbox.cpp.obj
+
+.PHONY : src/hitbox.obj
+
+# target to build an object file
+src/hitbox.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/hitbox.cpp.obj
+.PHONY : src/hitbox.cpp.obj
+
+src/hitbox.i: src/hitbox.cpp.i
+
+.PHONY : src/hitbox.i
+
+# target to preprocess a source file
+src/hitbox.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/hitbox.cpp.i
+.PHONY : src/hitbox.cpp.i
+
+src/hitbox.s: src/hitbox.cpp.s
+
+.PHONY : src/hitbox.s
+
+# target to generate assembly for a file
+src/hitbox.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/hitbox.cpp.s
+.PHONY : src/hitbox.cpp.s
+
+src/level_graph.obj: src/level_graph.cpp.obj
+
+.PHONY : src/level_graph.obj
+
+# target to build an object file
+src/level_graph.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/level_graph.cpp.obj
+.PHONY : src/level_graph.cpp.obj
+
+src/level_graph.i: src/level_graph.cpp.i
+
+.PHONY : src/level_graph.i
+
+# target to preprocess a source file
+src/level_graph.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/level_graph.cpp.i
+.PHONY : src/level_graph.cpp.i
+
+src/level_graph.s: src/level_graph.cpp.s
+
+.PHONY : src/level_graph.s
+
+# target to generate assembly for a file
+src/level_graph.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/level_graph.cpp.s
+.PHONY : src/level_graph.cpp.s
+
+src/light.obj: src/light.cpp.obj
+
+.PHONY : src/light.obj
+
+# target to build an object file
+src/light.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/light.cpp.obj
+.PHONY : src/light.cpp.obj
+
+src/light.i: src/light.cpp.i
+
+.PHONY : src/light.i
+
+# target to preprocess a source file
+src/light.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/light.cpp.i
+.PHONY : src/light.cpp.i
+
+src/light.s: src/light.cpp.s
+
+.PHONY : src/light.s
+
+# target to generate assembly for a file
+src/light.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/light.cpp.s
+.PHONY : src/light.cpp.s
+
 src/main.obj: src/main.cpp.obj
 
 .PHONY : src/main.obj
@@ -230,32 +392,59 @@ src/main.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
-src/robot.obj: src/robot.cpp.obj
+src/smoke.obj: src/smoke.cpp.obj
 
-.PHONY : src/robot.obj
+.PHONY : src/smoke.obj
 
 # target to build an object file
-src/robot.cpp.obj:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/robot.cpp.obj
-.PHONY : src/robot.cpp.obj
+src/smoke.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/smoke.cpp.obj
+.PHONY : src/smoke.cpp.obj
 
-src/robot.i: src/robot.cpp.i
+src/smoke.i: src/smoke.cpp.i
 
-.PHONY : src/robot.i
+.PHONY : src/smoke.i
 
 # target to preprocess a source file
-src/robot.cpp.i:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/robot.cpp.i
-.PHONY : src/robot.cpp.i
+src/smoke.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/smoke.cpp.i
+.PHONY : src/smoke.cpp.i
 
-src/robot.s: src/robot.cpp.s
+src/smoke.s: src/smoke.cpp.s
 
-.PHONY : src/robot.s
+.PHONY : src/smoke.s
 
 # target to generate assembly for a file
-src/robot.cpp.s:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/robot.cpp.s
-.PHONY : src/robot.cpp.s
+src/smoke.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/smoke.cpp.s
+.PHONY : src/smoke.cpp.s
+
+src/smoke_system.obj: src/smoke_system.cpp.obj
+
+.PHONY : src/smoke_system.obj
+
+# target to build an object file
+src/smoke_system.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/smoke_system.cpp.obj
+.PHONY : src/smoke_system.cpp.obj
+
+src/smoke_system.i: src/smoke_system.cpp.i
+
+.PHONY : src/smoke_system.i
+
+# target to preprocess a source file
+src/smoke_system.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/smoke_system.cpp.i
+.PHONY : src/smoke_system.cpp.i
+
+src/smoke_system.s: src/smoke_system.cpp.s
+
+.PHONY : src/smoke_system.s
+
+# target to generate assembly for a file
+src/smoke_system.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/smoke_system.cpp.s
+.PHONY : src/smoke_system.cpp.s
 
 src/world.obj: src/world.cpp.obj
 
@@ -293,21 +482,42 @@ help:
 	@echo ... EITD
 	@echo ... edit_cache
 	@echo ... rebuild_cache
-	@echo ... src/background.obj
-	@echo ... src/background.i
-	@echo ... src/background.s
+	@echo ... src/Robot/robot.obj
+	@echo ... src/Robot/robot.i
+	@echo ... src/Robot/robot.s
+	@echo ... src/Robot/robot_head.obj
+	@echo ... src/Robot/robot_head.i
+	@echo ... src/Robot/robot_head.s
+	@echo ... src/Robot/robot_shoulders.obj
+	@echo ... src/Robot/robot_shoulders.i
+	@echo ... src/Robot/robot_shoulders.s
 	@echo ... src/brick.obj
 	@echo ... src/brick.i
 	@echo ... src/brick.s
 	@echo ... src/common.obj
 	@echo ... src/common.i
 	@echo ... src/common.s
+	@echo ... src/ghost.obj
+	@echo ... src/ghost.i
+	@echo ... src/ghost.s
+	@echo ... src/hitbox.obj
+	@echo ... src/hitbox.i
+	@echo ... src/hitbox.s
+	@echo ... src/level_graph.obj
+	@echo ... src/level_graph.i
+	@echo ... src/level_graph.s
+	@echo ... src/light.obj
+	@echo ... src/light.i
+	@echo ... src/light.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s
-	@echo ... src/robot.obj
-	@echo ... src/robot.i
-	@echo ... src/robot.s
+	@echo ... src/smoke.obj
+	@echo ... src/smoke.i
+	@echo ... src/smoke.s
+	@echo ... src/smoke_system.obj
+	@echo ... src/smoke_system.i
+	@echo ... src/smoke_system.s
 	@echo ... src/world.obj
 	@echo ... src/world.i
 	@echo ... src/world.s
