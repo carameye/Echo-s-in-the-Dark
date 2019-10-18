@@ -315,10 +315,6 @@ bool World::is_over() const
 // On key callback
 void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 {
-	float acceleration = 1800.f;
-	vec2 robot_vel = m_robot.get_velocity();
-	vec2 robot_acc = m_robot.get_acceleration();
-
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 		m_robot.start_flying();
 	}
