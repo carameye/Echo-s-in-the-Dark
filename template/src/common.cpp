@@ -74,6 +74,10 @@ vec2  to_grid_position(vec2 pos)
 {
 	return mul(pos, 1.f / brick_size);
 }
+vec2  to_pixel_position(vec2 pos)
+{
+	return mul(pos, brick_size);
+}
 vec2 to_vec2(vec3 v) { return { v.x, v.y }; }
 
 mat3 mul(const mat3 & l, const mat3 & r)

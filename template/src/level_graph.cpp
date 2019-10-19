@@ -143,36 +143,34 @@ std::vector<vec2> LevelGraph::get_path(const vec2 start, const vec2 goal)
 	return path;
 }
 
-bool LevelGraph::generate(std::vector<std::string> data)
+bool LevelGraph::generate(std::vector<vec2> cps, std::vector<std::vector<bool>> data, int width, int height)
 {
+	fprintf(stderr, "Generating graph\n");
 	m_vertices.clear();
 	m_data = data;
 
 	int num_crits = 0;
 	int num_edges = 0;
 
-	for (int y = 0; y < m_data.size(); y++)
+	std::vector<vec2> diffs = { { -1.f, 0.f }, { 1.f, 0.f }, { 0.f, 1.f }, { 0.f, -1.f }, { 0.f, 0.f } };
+
+	for (vec2 cp : cps)
 	{
-		std::string line = m_data[y];
-		for (int x = 0; x < line.size(); x++)
+		bool valid = true;
+		for (vec2 diff : diffs)
 		{
-			if (line[x] == 'B')
-				continue;
-
-			int decx = x - 1;
-			int incx = x + 1;
-			int decy = y - 1;
-			int incy = y + 1;
-
-			if ((m_data[decy][decx] == 'B' && m_data[decy][x] == ' ' && m_data[y][decx] == ' ') ||
-				(m_data[incy][decx] == 'B' && m_data[incy][x] == ' ' && m_data[y][decx] == ' ') ||
-				(m_data[decy][incx] == 'B' && m_data[decy][x] == ' ' && m_data[y][incx] == ' ') ||
-				(m_data[incy][incx] == 'B' && m_data[incy][x] == ' ' && m_data[y][incx] == ' '))
+			vec2 pos = add(cp, diff);
+			if (pos.x >= 0.f && pos.x < width && pos.y >= 0.f && pos.y < height)
 			{
-				CriticalPoint v({brick_size * x, brick_size * y});
-				m_vertices.push_back(v);
-				num_crits++;
+				valid &= !data[pos.y][pos.x];
 			}
+		}
+		
+		if (valid)
+		{
+			CriticalPoint v(to_pixel_position(cp));
+			m_vertices.push_back(v);
+			num_crits++;
 		}
 	}
 

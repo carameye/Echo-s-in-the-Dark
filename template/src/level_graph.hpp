@@ -86,7 +86,7 @@ public:
 	LevelGraph();
 
 	// Given a string with map data, generates a graph
-	bool generate(std::vector<std::string> data);
+	bool generate(std::vector<vec2> cps, std::vector<std::vector<bool>> data, int width, int height);
 
 	// Gets shortest path from start to goal
 	// Uses A* search on level graph
@@ -94,7 +94,7 @@ public:
 
 private:
 	std::vector<CriticalPoint> m_vertices;
-	std::vector<std::string> m_data;
+	std::vector<std::vector<bool>> m_data;
 
 	// Test if object can travel between two positions with no collisions
 	bool can_travel_between(CriticalPoint a, CriticalPoint b);

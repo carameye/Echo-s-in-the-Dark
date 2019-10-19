@@ -9,6 +9,9 @@
 #include "level_graph.hpp"
 #include "door.hpp"
 
+// external
+#include "json.hpp"
+
 // stlib
 #include <vector>
 #include <random>
@@ -41,7 +44,7 @@ public:
 	bool is_over()const;
 
 	// Generate a level from a text file
-	bool parse_level(std::string level);
+	bool parse_level_json(std::string level);
 
 private:
 	// !!! INPUT CALLBACK FUNCTIONS

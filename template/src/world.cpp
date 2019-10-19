@@ -2,12 +2,14 @@
 #include "world.hpp"
 
 // stlib
-#include <string>
 #include <cassert>
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <map>
+
+using json = nlohmann::json;
 
 // Same as static in c, local to compilation unit
 namespace
@@ -126,7 +128,7 @@ bool World::init(vec2 screen)
 	title_ss << "ECHO's in the Dark";
 	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
-	bool valid = parse_level("level_select") && m_light.init();
+	bool valid = parse_level_json("level_select") && m_light.init();
 
 	if (valid)
 		camera_pos = m_robot.get_position();
@@ -366,7 +368,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_RELEASE && key == GLFW_KEY_F && !!(m_interactable_door)) {
 		bool perform_action = m_interactable_door->perform_action();
 		if (perform_action)
-			parse_level(m_interactable_door->get_destination());
+			parse_level_json(m_interactable_door->get_destination());
 	}
 }
 
@@ -375,140 +377,105 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 
 }
 
-bool World::parse_level(std::string level)
+bool World::parse_level_json(std::string level)
 {
-	static std::map<char, vec3> colours;
-	colours.clear();
-	colours['B'] = { 1.f, 1.f, 1.f };
-	colours['C'] = { 1.f, 0.f, 0.f };
-	colours['M'] = { 0.f, 1.f, 0.f };
-	colours['N'] = { 0.f, 0.f, 1.f };
-	colours['Y'] = { 1.f, 1.f, 0.f };
-	colours['Z'] = { 1.f, 0.f, 1.f };
-	colours['L'] = { 0.f, 1.f, 1.f };
-
+	// Construct file name with path
 	std::string filename = level_path;
 	filename.append(level);
-	filename.append(".txt");
-	std::ifstream file;
-	file.open(filename);
-	if (file.is_open())
+	filename.append(".json");
+
+	// Open file
+	std::ifstream file(filename);
+	if (!file.is_open())
 	{
-		fprintf(stderr, "Opened level file\n");
+		return false;
+	}
+	fprintf(stderr, "Opened level file\n");
 
-		// clear all level-dependent resources
-		for (auto& brick : m_bricks)
-			brick.destroy();
-		for (auto& door : m_doors)
-			door.destroy();
-		for (auto& ghost : m_ghosts)
-			ghost.destroy();
-		m_bricks.clear();
-		m_ghosts.clear();
-		m_doors.clear();
+	// clear all level-dependent resources
+	for (auto& brick : m_bricks)
+		brick.destroy();
+	for (auto& door : m_doors)
+		door.destroy();
+	for (auto& ghost : m_ghosts)
+		ghost.destroy();
+	m_bricks.clear();
+	m_ghosts.clear();
+	m_doors.clear();
 
-		float x = 0.f;
-		float y = 0.f;
-		std::string line;
+	// Parse the json
+	json j = json::parse(file);
 
-		// Get ambient light level
-		if (!getline(file, line))
-			return false;
-		m_light.set_ambient(std::stof(line));
+	int width = j["size"]["width"];
+	int height = j["size"]["height"];
 
-		// Get the next levels file names
-		if (!getline(file, line))
-			return false;
+	// Get ambient light level
+	m_light.set_ambient(j["ambient_light"]);
 
-		std::vector<std::string> doors;
-		int door_i = 0;
-		while (line.compare("enddoors") != 0)
-		{
-			doors.push_back(line);
-			if (!getline(file, line))
-				return false;
-		}
-
-		// Get the text from the signs in the order they will appear 
-		// starting from top to bottom/left to right
-		if (!getline(file, line))
-			return false;
-
-		std::vector<std::string> signs;
-		int sign_i = 0;
-		while (line.compare("endsigns") != 0)
-		{
-			signs.push_back(line);
-			if (!getline(file, line))
-				return false;
-		}
-
-		std::vector<std::string> brick_data;
-
-		// Finally get the actual map data
-		while (getline(file, line))
-		{
-			std::string row;
-
-			for (x = 0.f; x < line.length(); x++)
-			{
-				vec2 position;
-				position.x = x * brick_size;
-				position.y = y * brick_size;
-				switch (line[x])
-				{
-				case 'D':
-					if (!spawn_door(position, doors[door_i++]))
-						return false;
-					row = row.append(" ");
-					break;
-				case 'G':
-					if (!spawn_ghost(position))
-						return false;
-					row = row.append(" ");
-					break;
-				case 'R':
-					if (!spawn_robot(position))
-						return false;
-					row = row.append(" ");
-					break;
-				case 'S':
-					if (!spawn_sign(position, signs[sign_i++]))
-						return false;
-					row = row.append(" ");
-					break;
-				case 'T':
-					m_light.add_torch(position);
-					row = row.append(" ");
-					break;
-				case ' ':
-					row = row.append(" ");
-					break;
-				default:
-					row = row.append("B");
-					if (colours.find(line[x]) == colours.end())
-						return false;
-
-					if (!spawn_brick(position, colours[line[x]]))
-						return false;
-				}
-			}
-			brick_data.push_back(row);
-			y++;
-		}
-
-		fprintf(stderr, "Generating level graph\n");
-		bool valid = m_graph.generate(brick_data);
-
-		for (auto& g : m_ghosts)
-		{
-			g.set_level_graph(&m_graph);
-		}
-
-		return valid;
+	// Get the doors
+	fprintf(stderr, "	getting doors\n");
+	for (json door : j["doors"])
+	{
+		vec2 pos = { door["pos"]["x"], door["pos"]["y"] };
+		spawn_door(to_pixel_position(pos), door["next_level"]);
 	}
 
-	return false;
+	// Get the signs
+	fprintf(stderr, "	getting signs\n");
+	for (json sign : j["signs"])
+	{
+		vec2 pos = { sign["pos"]["x"], sign["pos"]["y"] };
+		spawn_sign(to_pixel_position(pos), sign["text"]);
+	}
+
+	// Get the ghosts
+	fprintf(stderr, "	getting ghosts\n");
+	for (json ghost : j["ghosts"])
+	{
+		vec2 pos = { ghost["pos"]["x"], ghost["pos"]["y"] };
+		spawn_ghost(to_pixel_position(pos));
+	}
+
+	// Get the bricks
+	fprintf(stderr, "	getting bricks\n");
+	std::vector<vec2> potential_cp;
+	std::vector<vec2> diffs = { { -1.f, -1.f }, { 1.f, -1.f }, { -1.f, 1.f }, { 1.f, 1.f } };
+
+	std::vector<bool> empty(width, false);
+	std::vector<std::vector<bool>> bricks(height, empty);
+
+	for (json brick : j["bricks"])
+	{
+		vec2 pos = { brick["pos"]["x"], brick["pos"]["y"] };
+		vec3 colour = { brick["colour"]["r"], brick["colour"]["g"], brick["colour"]["b"] };
+
+		// Set brick here
+		bricks[pos.y][pos.x] = true;
+
+		// Add brick to critical points if not already cancelled
+		for (vec2 diff : diffs)
+		{
+			vec2 pot = add(pos, diff);
+			if (pot.x >= 0.f && pot.x < width && pot.y >= 0.f && pot.y < height)
+			{
+				potential_cp.push_back(pot);
+			}
+		}
+
+		spawn_brick(to_pixel_position(pos), colour);
+	}
+
+	fprintf(stderr, "	built world with %d doors, %d ghosts, and %d bricks\n",
+		m_doors.size(), m_ghosts.size(), m_bricks.size());
+
+	// Generate the graph
+	m_graph.generate(potential_cp, bricks, width, height);
+
+	// Spawn the robot
+	vec2 pos = { j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"] };
+	spawn_robot(to_pixel_position(pos));
+
+	return true;
 }
 
 bool World::spawn_door(vec2 position, std::string next_level)
@@ -557,19 +524,12 @@ bool World::spawn_robot(vec2 position)
 bool World::spawn_sign(vec2 position, std::string text)
 {
 	// TODO: add sign code
-	fprintf(stderr, "	sign at (%f, %f) has text \"%s\"\n", position.x, position.y, text.c_str()); // remove once real code is done
 	return true;
 }
 
 bool World::spawn_brick(vec2 position, vec3 colour)
 {
 	// TODO: make bricks respond to different colours
-	bool x = colour.x == 1.f;
-	bool y = colour.y == 1.f;
-	bool z = colour.z == 1.f;
-	if (!x || !y || !z)
-		fprintf(stderr, "	brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
-
 	Brick brick;
 	if (brick.init())
 	{

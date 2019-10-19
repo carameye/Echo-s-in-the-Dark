@@ -101,7 +101,7 @@ void Robot::update(float ms)
     {
 	// TODO: handle  key strokes from world
 	if (m_grounded && std::abs(motion.velocity.x) > TOLERANCE)
-		motion.radians += motion.velocity.x / 50;
+		motion.radians += motion.velocity.x * ms / 20000;
 
 	m_grounded = false;
 	m_head.update(ms, add(motion.position, { 0.f, -48.f }));
