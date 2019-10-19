@@ -9,7 +9,9 @@ class Smoke : public Entity
 	static Texture smoke_texture_small;
 
 public:
-	bool init(vec2 robot_position, vec2 robot_velocity);
+	bool init();
+
+	void activate(vec2 robot_position, vec2 robot_velocity);
 
 	void destroy();
 	

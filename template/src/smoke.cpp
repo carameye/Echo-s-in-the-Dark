@@ -16,7 +16,7 @@ namespace
 Texture Smoke::smoke_texture_large;
 Texture Smoke::smoke_texture_small;
 
-bool Smoke::init(vec2 robot_position, vec2 robot_velocity)
+bool Smoke::init()
 {
 	if (!smoke_texture_large.is_valid())
 	{
@@ -40,13 +40,6 @@ bool Smoke::init(vec2 robot_position, vec2 robot_velocity)
 		texture = &smoke_texture_small;
 	}
 
-    motion.velocity.x = robot_velocity.x * -1.f / 3.f;
-    motion.velocity.y = robot_velocity.y * -1.f / 2.f;
-	if (motion.velocity.y < 0.f) {
-		motion.velocity.y = VELOCITY_Y;
-	}
-	motion.position = { robot_position.x, robot_position.y + 25.f };
-
 	float scale = MIN_SCALE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(MAX_SCALE-MIN_SCALE)));
     m_original_scale = { scale, scale };
 	physics.scale = m_original_scale;
@@ -56,6 +49,17 @@ bool Smoke::init(vec2 robot_position, vec2 robot_velocity)
 	if (!init_sprite())
 		return false;
     return true;
+}
+
+void Smoke::activate(vec2 robot_position, vec2 robot_velocity)
+{
+	motion.velocity.x = robot_velocity.x * -1.f / 3.f;
+	motion.velocity.y = robot_velocity.y * -1.f / 2.f;
+	if (motion.velocity.y < 0.f) {
+		motion.velocity.y = VELOCITY_Y;
+	}
+	motion.position = { robot_position.x, robot_position.y + 25.f };
+	m_alpha = 1.f;
 }
 
 void Smoke::destroy()

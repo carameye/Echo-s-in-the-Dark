@@ -22,7 +22,8 @@ public:
 	void stop_smoke();
 
 private:
-	std::vector<Smoke> m_smokes;
+	std::vector<Smoke> m_active_smokes;
+	std::vector<Smoke> m_inactive_smokes;
 	bool m_started = false;
 	float m_next_spawn;
 
