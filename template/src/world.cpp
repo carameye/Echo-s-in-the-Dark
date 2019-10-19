@@ -169,38 +169,15 @@ bool World::update(float elapsed_ms)
 	vec2 screen = { (float)w / m_screen_scale, (float)h / m_screen_scale };
 
 	//-------------------------------------------------------------------------
-	// Handle robot physics update
 
-	// Maximum velocity in absolute value
-	vec2 max_vel = { 400.f, 600.f };
-
-	float time_factor = elapsed_ms / 1000;
 	vec2 robot_pos = m_robot.get_position();
-	vec2 robot_vel = m_robot.get_velocity();
-	vec2 robot_acc = m_robot.get_acceleration();
-	robot_acc.y += 1000; // gravity
 
-	// Update velocity
-	vec2 new_robot_vel = { robot_vel.x + robot_acc.x * time_factor, robot_vel.y + robot_acc.y * time_factor};
-	if (new_robot_vel.x > max_vel.x) {
-		new_robot_vel.x = max_vel.x;
-	} else if (new_robot_vel.x < max_vel.x * -1.f) {
-		new_robot_vel.x = max_vel.x * -1.f;
-	}
-	if (new_robot_vel.y > max_vel.y) {
-		new_robot_vel.y = max_vel.y;
-	} else if (new_robot_vel.y < max_vel.y * -1.f) {
-		new_robot_vel.y = max_vel.y * -1.f;
-	}
-	m_robot.set_velocity(new_robot_vel);
+    m_robot.update_velocity(elapsed_ms);
 
-	// Update position
-	vec2 new_robot_pos = { robot_pos.x + new_robot_vel.x * time_factor, robot_pos.y + new_robot_vel.y * time_factor};
+    vec2 new_robot_vel = m_robot.get_velocity();
+    vec2 new_robot_pos = m_robot.get_next_position();
 
-	// Detect collision
-	// If the player will collide with an object next tick with the new velocity,
-	// it will set velocity and acceleration to 0 and not update the position
-	float translation = new_robot_vel.x * time_factor;
+	float translation = new_robot_vel.x;
 	for (auto& i_brick : m_bricks) 
 	{
 		const auto& robot_hitbox_x = m_robot.get_hitbox({ translation, 0.f });
@@ -224,7 +201,7 @@ bool World::update(float elapsed_ms)
 
 	m_robot.set_position({ new_robot_pos.x, robot_pos.y });
 
-	translation = new_robot_vel.y * time_factor;
+	translation = new_robot_vel.y;
 	for (auto& i_brick : m_bricks)
 	{
 		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation });
@@ -354,19 +331,14 @@ bool World::is_over() const
 // On key callback
 void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 {
-	float acceleration = 1800.f;
-	vec2 robot_vel = m_robot.get_velocity();
-	vec2 robot_acc = m_robot.get_acceleration();
-
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-		m_robot.set_acceleration({ robot_acc.x, robot_acc.y + acceleration * -1.f });
 		m_robot.start_flying();
 	}
-	if (action == GLFW_PRESS && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-		m_robot.set_acceleration({ robot_acc.x + acceleration * -1.f, robot_acc.y });
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+        m_robot.set_is_accelerating_left(true);
 	}
-	if (action == GLFW_PRESS && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-		m_robot.set_acceleration({ robot_acc.x + acceleration, robot_acc.y });
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+        m_robot.set_is_accelerating_right(true);
 	}
 	if (action == GLFW_PRESS && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
 		camera_offset -= 100;
@@ -376,16 +348,13 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	}
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
-		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration * -1.f });
 		m_robot.stop_flying();
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-		m_robot.set_acceleration({ robot_acc.x - acceleration * -1.f, robot_acc.y });
-		m_robot.set_velocity({ 0.f, robot_vel.y });
+	    m_robot.set_is_accelerating_left(false);
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-		m_robot.set_acceleration({ robot_acc.x - acceleration, robot_acc.y });
-		m_robot.set_velocity({ 0.f, robot_vel.y });
+	    m_robot.set_is_accelerating_right(false);
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
 		camera_offset += 100;

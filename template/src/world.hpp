@@ -3,7 +3,7 @@
 // internal
 #include "common.hpp"
 #include "brick.hpp"
-#include "robot.hpp"
+#include "Robot/robot.hpp"
 #include "light.hpp"
 #include "ghost.hpp"
 #include "level_graph.hpp"
