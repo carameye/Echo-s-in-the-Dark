@@ -3,72 +3,8 @@
 #include "common.hpp"
 #include "hitbox.hpp"
 #include "smoke_system.hpp"
-
-class RobotHead : public Entity
-{
-	static Texture robot_head_texture;
-	bool m_face_right = true;
-
-public:
-	// Creates all the associated render resources and default transform
-	bool init();
-
-	// Releases all the associated resources
-	void destroy();
-
-	// Update robot
-	// ms represents the number of milliseconds elapsed from the previous update() call
-	void update(float ms, vec2 goal);
-
-	// Renders the robot
-	// projection is the 2D orthographic projection matrix
-	void draw(const mat3& projection, const vec2& camera_shift) override;
-
-	// Returns the current robot position
-	vec2 get_position() const;
-
-	// Sets the new robot position
-	void set_position(vec2 position);
-
-	// Sets the scaling
-	void set_scaling(vec2 scaling);
-
-	// Set the look direction
-	void set_direction(bool right);
-};
-
-class RobotShoulders : public Entity
-{
-    static Texture robot_shoulder_texture;
-    bool m_face_right = true;
-
-public:
-    // Creates all the associated render resources and default transform
-    bool init();
-
-    // Releases all the associated resources
-    void destroy();
-
-    // Update robot
-    // ms represents the number of milliseconds elapsed from the previous update() call
-    void update(float ms, vec2 goal);
-
-    // Renders the robot
-    // projection is the 2D orthographic projection matrix
-    void draw(const mat3& projection, const vec2& camera_shift) override;
-
-    // Returns the current robot position
-    vec2 get_position() const;
-
-    // Sets the new robot position
-    void set_position(vec2 position);
-
-    // Sets the scaling
-    void set_scaling(vec2 scaling);
-
-    // Set the look direction
-    void set_direction(bool right);
-};
+#include "robot_head.hpp"
+#include "robot_shoulders.hpp"
 
 class Robot : public Entity
 {
@@ -86,6 +22,9 @@ public:
 	// ms represents the number of milliseconds elapsed from the previous update() call
 	void update(float ms);
 
+	// Update robots velocity based on its current movement direction and it's acceleration
+	void update_velocity(float ms);
+
 	// Renders the robot
 	// projection is the 2D orthographic projection matrix
 	void draw(const mat3& projection, const vec2& camera_shift) override;
@@ -99,6 +38,9 @@ public:
 	// Returns the current robot acceleration
 	vec2 get_acceleration() const;
 
+	// Calculates and return next position with out updating robot
+	vec2 get_next_position();
+
 	// Sets the new robot position
 	void set_position(vec2 position);
 
@@ -107,6 +49,12 @@ public:
 
 	// Sets the new robot acceleration
 	void set_acceleration(vec2 acceleration);
+
+	// Sets whether robot is accelerating right
+	void set_is_accelerating_right(bool val);
+
+	// Sets whether robot is accelerating left
+    void set_is_accelerating_left(bool val);
 
 	// Sets grounded to true
 	void set_grounded();
@@ -132,4 +80,7 @@ private:
 	SmokeSystem m_smoke_system;
 	bool m_grounded = false;
 	bool m_should_stop_smoke = false;
+	bool m_is_accelerating_right = false;
+	bool m_is_accelerating_left = false;
+	bool m_is_accelerating_up = false;
 };
