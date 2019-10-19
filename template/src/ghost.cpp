@@ -46,7 +46,7 @@ void Ghost::destroy()
 
 void Ghost::update(float ms)
 {
-	if (len(sub(m_goal, motion.position)) < 500.f)
+	if (len(sub(m_goal, motion.position)) < 800.f)
 	{
 		if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > TOLERANCE)
 		{

@@ -115,12 +115,13 @@ std::vector<vec2> LevelGraph::get_path(const vec2 start, const vec2 goal)
 
 		for (auto& edge : cp->get_edges())
 		{
-			auto it = std::find(element.second.begin(), element.second.end(), edge.second);
-			if (it != element.second.end())
+			auto it = std::find(v.begin(), v.end(), edge.second);
+			if (it != v.end())
 			{
 				continue;
 			}
 
+			v.push_back(edge.second);
 			std::vector<CriticalPoint*> n_v = element.second;
 			n_v.push_back(edge.second);
 			elem n_e = std::make_pair(element.first + edge.first, n_v);

@@ -498,6 +498,7 @@ bool World::spawn_ghost(vec2 position)
 	if (ghost.init())
 	{
 		ghost.set_position(position);
+		ghost.set_level_graph(&m_graph);
 		m_ghosts.push_back(ghost);
 		return true;
 	}
