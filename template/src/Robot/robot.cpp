@@ -214,7 +214,7 @@ void Robot::start_flying()
 	texture = &robot_body_flying_texture;
 	physics.scale.x *= 53.f / 45.f;
 	motion.radians = 0.f;
-	set_acceleration({motion.acceleration.x ,  VERTICAL_ACCELERATION});
+    // If we want made robot fall faster, reset vertical acceleration here.
 }
 
 void Robot::stop_flying()
@@ -224,7 +224,7 @@ void Robot::stop_flying()
 	m_should_stop_smoke = true;
 	texture = &robot_body_texture;
 	physics.scale = { brick_size / texture->width, brick_size / texture->height };
-    set_acceleration({motion.acceleration.x , VERTICAL_ACCELERATION});
+	// If we want the robot to fall a bit faster, set vertical acceleration here. Positive number, make it a const
 }
 
 void Robot::set_is_accelerating_right(bool val) {
