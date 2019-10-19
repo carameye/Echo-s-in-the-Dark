@@ -257,6 +257,33 @@ src/common.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/common.cpp.s
 .PHONY : src/common.cpp.s
 
+src/flight_timer.obj: src/flight_timer.cpp.obj
+
+.PHONY : src/flight_timer.obj
+
+# target to build an object file
+src/flight_timer.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/flight_timer.cpp.obj
+.PHONY : src/flight_timer.cpp.obj
+
+src/flight_timer.i: src/flight_timer.cpp.i
+
+.PHONY : src/flight_timer.i
+
+# target to preprocess a source file
+src/flight_timer.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/flight_timer.cpp.i
+.PHONY : src/flight_timer.cpp.i
+
+src/flight_timer.s: src/flight_timer.cpp.s
+
+.PHONY : src/flight_timer.s
+
+# target to generate assembly for a file
+src/flight_timer.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/flight_timer.cpp.s
+.PHONY : src/flight_timer.cpp.s
+
 src/ghost.obj: src/ghost.cpp.obj
 
 .PHONY : src/ghost.obj
@@ -497,6 +524,9 @@ help:
 	@echo ... src/common.obj
 	@echo ... src/common.i
 	@echo ... src/common.s
+	@echo ... src/flight_timer.obj
+	@echo ... src/flight_timer.i
+	@echo ... src/flight_timer.s
 	@echo ... src/ghost.obj
 	@echo ... src/ghost.i
 	@echo ... src/ghost.s

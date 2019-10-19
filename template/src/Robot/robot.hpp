@@ -82,5 +82,5 @@ private:
 	bool m_should_stop_smoke = false;
 	bool m_is_accelerating_right = false;
 	bool m_is_accelerating_left = false;
-	bool m_is_accelerating_up = false;
+	bool m_is_flying = false;
 };

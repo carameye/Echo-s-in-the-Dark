@@ -9,6 +9,7 @@ namespace {
     const float HORIZONTAL_DECELERATION = 30.f;
     const float MAX_HORIZONTAL_VELOCITY = 20.f;
     const float MAX_VERTICAL_VELOCITY = 30.f;
+    const float MAX_FLIGHT_DURATION = 5000.f;
 }
 
 Texture Robot::robot_body_texture;
@@ -87,11 +88,11 @@ void Robot::update_velocity(float ms) {
         float new_velocity = motion.velocity.x + motion.acceleration.x * step;
         motion.velocity.x = new_velocity > 0 ? 0 : new_velocity;
     }
-    if (m_is_accelerating_up) {
+    if (m_is_flying) {
         float new_velocity = motion.velocity.y - motion.acceleration.y * step;
         motion.velocity.y = new_velocity < MAX_VERTICAL_VELOCITY * -1.f ? MAX_VERTICAL_VELOCITY * -1.f : new_velocity;
     }
-    if (!m_is_accelerating_up) {
+    if (!m_is_flying) {
         float new_velocity = motion.velocity.y + motion.acceleration.y * step;
         motion.velocity.y = new_velocity > MAX_VERTICAL_VELOCITY ? MAX_VERTICAL_VELOCITY : new_velocity;
     }
@@ -208,7 +209,7 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 
 void Robot::start_flying()
 {
-    m_is_accelerating_up = true;
+    m_is_flying = true;
 	m_smoke_system.start_smoke();
 	m_should_stop_smoke = false;
 	texture = &robot_body_flying_texture;
@@ -219,7 +220,7 @@ void Robot::start_flying()
 
 void Robot::stop_flying()
 {
-    m_is_accelerating_up = false;
+    m_is_flying = false;
 	// smoke will stop in update() when velocity.y is positive
 	m_should_stop_smoke = true;
 	texture = &robot_body_texture;
