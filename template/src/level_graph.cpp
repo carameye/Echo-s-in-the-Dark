@@ -214,10 +214,10 @@ bool LevelGraph::can_travel_between(CriticalPoint a, CriticalPoint b)
 			float yfirst = add(start, mul(disp, xfirst / max)).y;
 			float ylast = add(start, mul(disp, xlast / max)).y;
 
-			if (m_data[floor(yfirst + 1.f - TOLERANCE)][floor(start.x + sign * xfirst)] == 'B' ||
-				m_data[floor(yfirst       + TOLERANCE)][floor(start.x + sign * xfirst)] == 'B' ||
-				m_data[floor(ylast  + 1.f - TOLERANCE)][floor(start.x + sign * xlast)] == 'B' ||
-				m_data[floor(ylast        + TOLERANCE)][floor(start.x + sign * xlast)] == 'B')
+			if (m_data[floor(yfirst + 1.f - TOLERANCE)][floor(start.x + sign * xfirst)] ||
+				m_data[floor(yfirst       + TOLERANCE)][floor(start.x + sign * xfirst)] ||
+				m_data[floor(ylast  + 1.f - TOLERANCE)][floor(start.x + sign * xlast)] ||
+				m_data[floor(ylast        + TOLERANCE)][floor(start.x + sign * xlast)])
 			{
 				return false;
 			}
@@ -245,10 +245,10 @@ bool LevelGraph::can_travel_between(CriticalPoint a, CriticalPoint b)
 			float xfirst = add(start, mul(disp, yfirst / max)).x;
 			float xlast = add(start, mul(disp, ylast / max)).x;
 
-			if (m_data[floor(start.y + sign * yfirst)][floor(xfirst + 1.f - TOLERANCE)] == 'B' ||
-				m_data[floor(start.y + sign * yfirst)][floor(xfirst       + TOLERANCE)] == 'B' ||
-				m_data[floor(start.y + sign * ylast)] [floor(xlast  + 1.f - TOLERANCE)] == 'B' ||
-				m_data[floor(start.y + sign * ylast)] [floor(xlast        + TOLERANCE)] == 'B')
+			if (m_data[floor(start.y + sign * yfirst)][floor(xfirst + 1.f - TOLERANCE)] ||
+				m_data[floor(start.y + sign * yfirst)][floor(xfirst       + TOLERANCE)] ||
+				m_data[floor(start.y + sign * ylast)] [floor(xlast  + 1.f - TOLERANCE)] ||
+				m_data[floor(start.y + sign * ylast)] [floor(xlast        + TOLERANCE)])
 			{
 				return false;
 			}
