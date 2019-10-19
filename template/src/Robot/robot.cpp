@@ -4,11 +4,11 @@
 #include <cmath>
 
 namespace {
-    const float VERTICAL_ACCELERATION = 40.f;
-    const float HORIZONTAL_ACCELERATION = 40.f;
+    const float VERTICAL_ACCELERATION = 20.f;
+    const float HORIZONTAL_ACCELERATION = 20.f;
     const float HORIZONTAL_DECELERATION = 30.f;
-    const float MAX_HORIZONTAL_VELOCITY = 30.f;
-    const float MAX_VERTICAL_VELOCITY = 40.f;
+    const float MAX_HORIZONTAL_VELOCITY = 20.f;
+    const float MAX_VERTICAL_VELOCITY = 30.f;
 }
 
 Texture Robot::robot_body_texture;
@@ -40,7 +40,7 @@ bool Robot::init()
 
     motion.position = { 0.f, 0.f };
     motion.velocity = { 0.f, 0.f };
-    motion.acceleration = { 0.f , 0.f };
+    motion.acceleration = { 0.f , VERTICAL_ACCELERATION };
     motion.radians = 0.f;
 
 	physics.scale = { brick_size / texture->width, brick_size / texture->height };
@@ -62,6 +62,8 @@ void Robot::destroy()
 	glDeleteShader(effect.fragment);
 	glDeleteShader(effect.program);
 
+	m_shoulders.destroy();
+	m_head.destroy();
 	m_smoke_system.destroy();
 }
 
