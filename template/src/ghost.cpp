@@ -47,7 +47,7 @@ void Ghost::update(float ms)
 {
 	if (len(sub(m_goal, motion.position)) < 500.f)
 	{
-		if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > brick_size / 2.f )
+		if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > TOLERANCE)
 		{
 			m_path = m_level_graph->get_path(motion.position, m_goal);
 		}
@@ -55,7 +55,7 @@ void Ghost::update(float ms)
 
 	if (m_path.size() > 0)
 	{
-		float allowed_move = 3.f;
+		float allowed_move = 100.f * ms / 1000.f;
 		vec2 next_pos = m_path[0];
 
 		while (allowed_move > TOLERANCE)
