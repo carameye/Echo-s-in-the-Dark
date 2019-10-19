@@ -250,7 +250,7 @@ bool World::update(float elapsed_ms)
 	}
 
 	m_robot.set_position(new_robot_pos);
-	m_robot.update(time_factor);
+	m_robot.update(elapsed_ms);
 	m_light.set_position(new_robot_pos);
 
 	for (auto& ghost : m_ghosts)
@@ -360,6 +360,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 		m_robot.set_acceleration({ robot_acc.x, robot_acc.y + acceleration * -1.f });
+		m_robot.start_flying();
 	}
 	if (action == GLFW_PRESS && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
 		m_robot.set_acceleration({ robot_acc.x + acceleration * -1.f, robot_acc.y });
@@ -376,6 +377,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
 		m_robot.set_acceleration({ robot_acc.x, robot_acc.y - acceleration * -1.f });
+		m_robot.stop_flying();
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
 		m_robot.set_acceleration({ robot_acc.x - acceleration * -1.f, robot_acc.y });
@@ -572,6 +574,7 @@ bool World::spawn_robot(vec2 position)
 	{
 		m_robot.set_position(position);
 		m_robot.set_head_position(position);
+        m_robot.set_shoulder_position(position);
         if (m_light.init())
             m_light.set_position(m_robot.get_position());
 

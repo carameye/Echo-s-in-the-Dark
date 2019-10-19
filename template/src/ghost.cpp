@@ -9,7 +9,7 @@ bool Ghost::init()
 {
 	if (!s_ghost_texture.is_valid())
 	{
-		if (!s_ghost_texture.load_from_file(textures_path("body.png")))
+		if (!s_ghost_texture.load_from_file(textures_path("ghost.png")))
 		{
 			fprintf(stderr, "Failed to load ghost texture!");
 			return false;
@@ -27,6 +27,7 @@ bool Ghost::init()
 	motion.radians = 0.f;
 
 	physics.scale = { brick_size / texture->width, brick_size / texture->height };
+	physics.scale.x *= 47.f / 41.f;
 
 	return true;
 }
@@ -93,6 +94,9 @@ void Ghost::draw(const mat3& projection, const vec2& camera_shift)
 	transform.translate(motion.position);
 	transform.rotate(motion.radians);
 	transform.scale(physics.scale);
+	if (motion.position.x < m_goal.x) {
+		transform.scale({ -1.f, 1.f });
+	}
 	transform.end();
 
 	draw_sprite(projection);

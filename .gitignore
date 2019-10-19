@@ -45,3 +45,5 @@ cmake-build-debug
 
 # Idea
 .idea
+
+template/src/project_path.hpp
