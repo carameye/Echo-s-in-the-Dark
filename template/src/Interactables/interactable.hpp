@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <cmath>
+#include <functional>
 
 class Interactable: public Entity
 {
