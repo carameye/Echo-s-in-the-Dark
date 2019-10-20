@@ -55,18 +55,18 @@ bool FlightEnergyBar::init()
         }
     }
 
-    texture = &fuel_full;
-
-    if (!init_sprite()) {
-        return false;
-    }
-
     motion.position = { 0.f, 0.f };
     motion.velocity = { 0.f, 0.f };
     motion.acceleration = { 0.f , 0.f };
     motion.radians = 0.f;
 
     physics.scale = { 1.0f, 1.0f };
+
+    texture = &fuel_full;
+
+    if (!init_sprite()) {
+        return false;
+    }
 
     return true;
 }
@@ -82,8 +82,19 @@ void FlightEnergyBar::destroy()
     glDeleteShader(effect.program);
 }
 
-void FlightEnergyBar::update(float ms, vec2 goal)
+void FlightEnergyBar::update(float ms, vec2 goal, float percent)
 {
+    if (percent > .8) {
+        texture = &fuel_full;
+    } else if (percent > .6) {
+        texture = &fuel_4;
+    } else if (percent > .4) {
+        texture = &fuel_3;
+    } else if (percent > .2) {
+        texture = &fuel_2;
+    } else {
+        texture = &fuel_empty;
+    }
     vec2 dist = sub(goal, motion.position);
     set_position(add(get_position(), { dist.x,  dist.y }));
 }

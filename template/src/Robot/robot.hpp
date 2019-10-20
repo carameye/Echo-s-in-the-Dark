@@ -88,4 +88,5 @@ private:
 	bool m_is_accelerating_right = false;
 	bool m_is_accelerating_left = false;
 	bool m_is_flying = false;
+	float m_available_flight_time;
 };

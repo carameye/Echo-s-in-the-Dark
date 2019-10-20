@@ -19,7 +19,7 @@ public:
     void destroy();
 
     // Updates the Health bar bot position and percentage health
-    void update(float ms, vec2 goal);
+    void update(float ms, vec2 goal, float percent);
 
     // Renders the health bar
     void draw(const mat3& projection, const vec2& camera_shift) override;

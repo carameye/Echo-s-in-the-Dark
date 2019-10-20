@@ -2,6 +2,7 @@
 #include "robot.hpp"
 
 #include <cmath>
+#include <ntdef.h>
 
 namespace {
     const float VERTICAL_ACCELERATION = 20.f;
@@ -49,6 +50,8 @@ bool Robot::init()
 	m_head.set_scaling(physics.scale);
 	m_shoulders.set_scaling(physics.scale);
     m_energy_bar.set_scaling(physics.scale);
+
+    m_available_flight_time = MAX_FLIGHT_DURATION;
 
 	return valid;
 }
@@ -104,6 +107,7 @@ void Robot::update(float ms)
 	// TODO: handle  key strokes from world
 	if (m_grounded && std::abs(motion.velocity.x) > TOLERANCE) {
         motion.radians += motion.velocity.x / 50;
+        m_available_flight_time = fmin(m_available_flight_time += ms, MAX_FLIGHT_DURATION);
     }
 
 	m_grounded = false;
@@ -111,7 +115,10 @@ void Robot::update(float ms)
     m_shoulders.update(ms, add(motion.position, { 0.f, 0.f }));
 
 
-    m_energy_bar.update(ms, add(motion.position, { 0.f, -90.f }));
+    if (m_is_flying) {
+        m_available_flight_time = fmax(m_available_flight_time -= ms, 0);
+    }
+    m_energy_bar.update(ms, add(motion.position, { 0.f, -90.f }), (m_available_flight_time/MAX_FLIGHT_DURATION));
 
 	if (motion.velocity.x != 0.f) {
         m_head.set_direction(motion.velocity.x > 0.f);
