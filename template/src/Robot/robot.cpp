@@ -4,11 +4,11 @@
 #include <cmath>
 
 namespace {
-    const float VERTICAL_ACCELERATION = 20.f;
-    const float HORIZONTAL_ACCELERATION = 20.f;
+    const float VERTICAL_ACCELERATION = 10.f;
+    const float HORIZONTAL_ACCELERATION = 10.f;
     const float HORIZONTAL_DECELERATION = 30.f;
-    const float MAX_HORIZONTAL_VELOCITY = 20.f;
-    const float MAX_VERTICAL_VELOCITY = 30.f;
+    const float MAX_HORIZONTAL_VELOCITY = 15.f;
+    const float MAX_VERTICAL_VELOCITY = 15.f;
     const float MAX_FLIGHT_DURATION = 1500.f;
 }
 
