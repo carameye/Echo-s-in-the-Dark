@@ -122,6 +122,33 @@ EITD/fast:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/build
 .PHONY : EITD/fast
 
+src/Robot/flight_energy_bar.obj: src/Robot/flight_energy_bar.cpp.obj
+
+.PHONY : src/Robot/flight_energy_bar.obj
+
+# target to build an object file
+src/Robot/flight_energy_bar.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/flight_energy_bar.cpp.obj
+.PHONY : src/Robot/flight_energy_bar.cpp.obj
+
+src/Robot/flight_energy_bar.i: src/Robot/flight_energy_bar.cpp.i
+
+.PHONY : src/Robot/flight_energy_bar.i
+
+# target to preprocess a source file
+src/Robot/flight_energy_bar.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/flight_energy_bar.cpp.i
+.PHONY : src/Robot/flight_energy_bar.cpp.i
+
+src/Robot/flight_energy_bar.s: src/Robot/flight_energy_bar.cpp.s
+
+.PHONY : src/Robot/flight_energy_bar.s
+
+# target to generate assembly for a file
+src/Robot/flight_energy_bar.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/flight_energy_bar.cpp.s
+.PHONY : src/Robot/flight_energy_bar.cpp.s
+
 src/Robot/robot.obj: src/Robot/robot.cpp.obj
 
 .PHONY : src/Robot/robot.obj
@@ -482,6 +509,9 @@ help:
 	@echo ... EITD
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... src/Robot/flight_energy_bar.obj
+	@echo ... src/Robot/flight_energy_bar.i
+	@echo ... src/Robot/flight_energy_bar.s
 	@echo ... src/Robot/robot.obj
 	@echo ... src/Robot/robot.i
 	@echo ... src/Robot/robot.s

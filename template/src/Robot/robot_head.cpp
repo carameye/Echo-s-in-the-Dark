@@ -48,7 +48,7 @@ void RobotHead::update(float ms, vec2 goal)
 void RobotHead::draw(const mat3& projection, const vec2& camera_shift)
 {
     // Transformation code, see Rendering and Transformation in the template specification for more info
-// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
+    // Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
     transform.begin();
     transform.translate(camera_shift);
     transform.translate(motion.position);

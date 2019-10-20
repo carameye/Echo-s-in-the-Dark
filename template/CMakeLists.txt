@@ -43,7 +43,7 @@ set(SOURCE_FILES
         src/level_graph.cpp
         src/light.cpp
         src/main.cpp
-        src/Robot/robot.cpp
+        src/Robot/flight_energy_bar.cpp
         src/Robot/robot_head.cpp
         src/Robot/robot_shoulders.cpp
         src/world.cpp
@@ -51,6 +51,7 @@ set(SOURCE_FILES
 	    src/common.hpp
         src/smoke.hpp
         src/smoke_system.hpp
+        src/Robot/flight_energy_bar.hpp
         src/Robot/robot.hpp
         src/Robot/robot_head.hpp
         src/Robot/robot_shoulders.hpp

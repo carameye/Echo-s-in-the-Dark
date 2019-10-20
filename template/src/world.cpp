@@ -497,6 +497,7 @@ bool World::spawn_robot(vec2 position)
 		m_robot.set_position(position);
 		m_robot.set_head_position(position);
         m_robot.set_shoulder_position(position);
+        m_robot.set_energy_bar_position(position);
         if (m_light.init())
             m_light.set_position(m_robot.get_position());
 
