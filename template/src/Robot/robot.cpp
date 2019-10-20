@@ -2,7 +2,6 @@
 #include "robot.hpp"
 
 #include <cmath>
-#include <ntdef.h>
 
 namespace {
     const float VERTICAL_ACCELERATION = 20.f;
@@ -10,7 +9,7 @@ namespace {
     const float HORIZONTAL_DECELERATION = 30.f;
     const float MAX_HORIZONTAL_VELOCITY = 20.f;
     const float MAX_VERTICAL_VELOCITY = 30.f;
-    const float MAX_FLIGHT_DURATION = 2500.f;
+    const float MAX_FLIGHT_DURATION = 1500.f;
 }
 
 Texture Robot::robot_body_texture;
@@ -46,7 +45,7 @@ bool Robot::init()
     motion.radians = 0.f;
 
 	physics.scale = { brick_size / texture->width, brick_size / texture->height };
-	bool valid = m_head.init() && m_shoulders.init() && m_smoke_system.init() && m_energy_bar.init() && m_energy_bar.init();
+	bool valid = m_head.init() && m_shoulders.init() && m_smoke_system.init() && m_energy_bar.init();
 	m_head.set_scaling(physics.scale);
 	m_shoulders.set_scaling(physics.scale);
     m_energy_bar.set_scaling(physics.scale);
