@@ -54,12 +54,11 @@ Hitbox Door::get_hitbox() const
     return hitbox;
 }
 
-bool Door::perform_action()
+bool Door::perform_action(actionFunction go_to_dest)
 {
-    if (!m_locked && m_destination.length() > 0 && m_can_perform_action) {
+    if (!m_locked && m_destination.length() > 0) {
         // go to destination
-        set_can_perform_action(false);
-        return true;
+        return go_to_dest(m_destination);
     }
     // otherwise, door is locked or no destination specified
     // so, stay at current location

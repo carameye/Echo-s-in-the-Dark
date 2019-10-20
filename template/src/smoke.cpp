@@ -1,4 +1,4 @@
-#include "smoke.hpp";
+#include "smoke.hpp"
 
 #include <math.h>
 

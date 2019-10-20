@@ -2,12 +2,7 @@
 
 // internal
 #include "common.hpp"
-#include "brick.hpp"
-#include "Robot/robot.hpp"
-#include "light.hpp"
-#include "ghost.hpp"
-#include "level_graph.hpp"
-#include "door.hpp"
+#include "level.hpp"
 
 // stlib
 #include <vector>
@@ -40,20 +35,10 @@ public:
 	// Should the game be over ?
 	bool is_over()const;
 
-	// Generate a level from a text file
-	bool parse_level(std::string level);
-
 private:
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
-
-	// Spawn objects
-	bool spawn_robot(vec2 position);
-	bool spawn_brick(vec2 position, vec3 colour);
-	bool spawn_door(vec2 position, std::string next_level);
-	bool spawn_ghost(vec2 position);
-	bool spawn_sign(vec2 position, std::string text);
 
 private:
 	// Window handle
@@ -65,21 +50,11 @@ private:
 	GLuint m_frame_buffer;
 	Texture m_screen_tex;
 
-	// Light effect
-	Light m_light;
-
 	// Camera position
 	vec2 camera_pos;
 	float camera_offset;
 
-	// Game entities
-	std::vector<Brick> m_bricks;
-	std::vector<Ghost> m_ghosts;
-	std::vector<Door> m_doors;
-	Robot m_robot;
-
-	LevelGraph m_graph;
-	Door* m_interactable_door;
+	Level m_level;
 	
 	Mix_Music* m_background_music;
 

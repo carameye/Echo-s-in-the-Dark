@@ -46,6 +46,9 @@ set(SOURCE_FILES
         src/Robot/flight_energy_bar.cpp
         src/Robot/robot_head.cpp
         src/Robot/robot_shoulders.cpp
+        src/Interactables/door.cpp
+        src/Interactables/interactable.cpp
+        src/level.cpp
         src/world.cpp
         src/project_path.hpp
 	    src/common.hpp
@@ -62,6 +65,9 @@ set(SOURCE_FILES
         src/level_graph.hpp
         src/light.hpp
         src/Robot/robot.hpp
+        src/Interactables/door.hpp
+        src/Interactables/interactable.hpp
+        src/level.hpp
         src/world.hpp
         )
 

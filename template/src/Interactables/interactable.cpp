@@ -4,8 +4,6 @@ bool Interactable::init()
 {
     motion.position = { 0.f, 0.f };
     physics.scale = { brick_size / texture->width, brick_size / texture->height };
-
-    m_can_perform_action = true;
     return true;
 }
 
@@ -35,9 +33,4 @@ void Interactable::draw(const mat3& projection, const vec2& camera_shift)
 void Interactable::set_position(vec2 pos)
 {
     motion.position = pos;
-}
-
-void Interactable::set_can_perform_action(bool perform)
-{
-    m_can_perform_action = perform;
 }

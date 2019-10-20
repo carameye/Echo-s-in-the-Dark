@@ -8,6 +8,7 @@
 
 class Interactable: public Entity
 {
+    protected: typedef std::function<bool(std::string)> actionFunction;
     public:
         bool init();
 
@@ -20,13 +21,8 @@ class Interactable: public Entity
         // Set the position of the interactable
         void set_position(vec2 pos);
 
-        void set_can_perform_action(bool perform);
-
         virtual Hitbox get_hitbox() const = 0;
 
         // perform_action is abstract, as implementation is dependent on child classes
-        virtual bool perform_action() = 0;
-
-    protected:
-        bool m_can_perform_action;
+        virtual bool perform_action(actionFunction action) = 0;
 };
