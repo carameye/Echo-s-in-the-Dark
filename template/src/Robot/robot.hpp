@@ -5,6 +5,7 @@
 #include "smoke_system.hpp"
 #include "robot_head.hpp"
 #include "robot_shoulders.hpp"
+#include "flight_energy_bar.hpp"
 
 class Robot : public Entity
 {
@@ -65,6 +66,9 @@ public:
     // Set position of head, for spawning only
     void set_shoulder_position(vec2 position);
 
+    // Set position of energy bar, for spawning only
+    void set_energy_bar_position(vec2 position);
+
 	// Returns the robots hitbox for collision detection
 	Hitbox get_hitbox(vec2 translation) const;
 
@@ -78,6 +82,7 @@ private:
 	RobotHead m_head;
 	RobotShoulders m_shoulders;
 	SmokeSystem m_smoke_system;
+	FlightEnergyBar m_energy_bar;
 	bool m_grounded = false;
 	bool m_should_stop_smoke = false;
 	bool m_is_accelerating_right = false;

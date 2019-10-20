@@ -45,9 +45,10 @@ bool Robot::init()
     motion.radians = 0.f;
 
 	physics.scale = { brick_size / texture->width, brick_size / texture->height };
-	bool valid = m_head.init() && m_shoulders.init() && m_smoke_system.init();
+	bool valid = m_head.init() && m_shoulders.init() && m_smoke_system.init() && m_energy_bar.init() && m_energy_bar.init();
 	m_head.set_scaling(physics.scale);
 	m_shoulders.set_scaling(physics.scale);
+    m_energy_bar.set_scaling(physics.scale);
 
 	return valid;
 }
@@ -101,12 +102,16 @@ void Robot::update_velocity(float ms) {
 void Robot::update(float ms)
     {
 	// TODO: handle  key strokes from world
-	if (m_grounded && std::abs(motion.velocity.x) > TOLERANCE)
-		motion.radians += motion.velocity.x / 50;
+	if (m_grounded && std::abs(motion.velocity.x) > TOLERANCE) {
+        motion.radians += motion.velocity.x / 50;
+    }
 
 	m_grounded = false;
 	m_head.update(ms, add(motion.position, { 0.f, -48.f }));
     m_shoulders.update(ms, add(motion.position, { 0.f, 0.f }));
+
+
+    m_energy_bar.update(ms, add(motion.position, { 0.f, -90.f }));
 
 	if (motion.velocity.x != 0.f) {
         m_head.set_direction(motion.velocity.x > 0.f);
@@ -135,6 +140,7 @@ void Robot::draw(const mat3& projection, const vec2& camera_shift)
 
     m_shoulders.draw(projection, camera_shift);
 	m_head.draw(projection, camera_shift);
+	m_energy_bar.draw(projection, camera_shift);
 	m_smoke_system.draw(projection, camera_shift);
 }
 
@@ -186,6 +192,11 @@ void Robot::set_head_position(vec2 position)
 void Robot::set_shoulder_position(vec2 position)
 {
     m_shoulders.set_position(position);
+}
+
+
+void Robot::set_energy_bar_position(vec2 position) {
+    m_energy_bar.set_position(position);
 }
 
 Hitbox Robot::get_hitbox(vec2 translation) const

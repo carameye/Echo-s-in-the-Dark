@@ -122,6 +122,33 @@ EITD/fast:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/build
 .PHONY : EITD/fast
 
+src/Robot/flight_energy_bar.obj: src/Robot/flight_energy_bar.cpp.obj
+
+.PHONY : src/Robot/flight_energy_bar.obj
+
+# target to build an object file
+src/Robot/flight_energy_bar.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/flight_energy_bar.cpp.obj
+.PHONY : src/Robot/flight_energy_bar.cpp.obj
+
+src/Robot/flight_energy_bar.i: src/Robot/flight_energy_bar.cpp.i
+
+.PHONY : src/Robot/flight_energy_bar.i
+
+# target to preprocess a source file
+src/Robot/flight_energy_bar.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/flight_energy_bar.cpp.i
+.PHONY : src/Robot/flight_energy_bar.cpp.i
+
+src/Robot/flight_energy_bar.s: src/Robot/flight_energy_bar.cpp.s
+
+.PHONY : src/Robot/flight_energy_bar.s
+
+# target to generate assembly for a file
+src/Robot/flight_energy_bar.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/flight_energy_bar.cpp.s
+.PHONY : src/Robot/flight_energy_bar.cpp.s
+
 src/Robot/robot.obj: src/Robot/robot.cpp.obj
 
 .PHONY : src/Robot/robot.obj
@@ -256,33 +283,6 @@ src/common.s: src/common.cpp.s
 src/common.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/common.cpp.s
 .PHONY : src/common.cpp.s
-
-src/flight_timer.obj: src/flight_timer.cpp.obj
-
-.PHONY : src/flight_timer.obj
-
-# target to build an object file
-src/flight_timer.cpp.obj:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/flight_timer.cpp.obj
-.PHONY : src/flight_timer.cpp.obj
-
-src/flight_timer.i: src/flight_timer.cpp.i
-
-.PHONY : src/flight_timer.i
-
-# target to preprocess a source file
-src/flight_timer.cpp.i:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/flight_timer.cpp.i
-.PHONY : src/flight_timer.cpp.i
-
-src/flight_timer.s: src/flight_timer.cpp.s
-
-.PHONY : src/flight_timer.s
-
-# target to generate assembly for a file
-src/flight_timer.cpp.s:
-	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/flight_timer.cpp.s
-.PHONY : src/flight_timer.cpp.s
 
 src/ghost.obj: src/ghost.cpp.obj
 
@@ -509,6 +509,9 @@ help:
 	@echo ... EITD
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... src/Robot/flight_energy_bar.obj
+	@echo ... src/Robot/flight_energy_bar.i
+	@echo ... src/Robot/flight_energy_bar.s
 	@echo ... src/Robot/robot.obj
 	@echo ... src/Robot/robot.i
 	@echo ... src/Robot/robot.s
@@ -524,9 +527,6 @@ help:
 	@echo ... src/common.obj
 	@echo ... src/common.i
 	@echo ... src/common.s
-	@echo ... src/flight_timer.obj
-	@echo ... src/flight_timer.i
-	@echo ... src/flight_timer.s
 	@echo ... src/ghost.obj
 	@echo ... src/ghost.i
 	@echo ... src/ghost.s
