@@ -10,7 +10,7 @@ namespace {
     const float HORIZONTAL_DECELERATION = 30.f;
     const float MAX_HORIZONTAL_VELOCITY = 20.f;
     const float MAX_VERTICAL_VELOCITY = 30.f;
-    const float MAX_FLIGHT_DURATION = 4000.f;
+    const float MAX_FLIGHT_DURATION = 2500.f;
 }
 
 Texture Robot::robot_body_texture;
@@ -105,7 +105,7 @@ void Robot::update_velocity(float ms) {
 void Robot::update(float ms)
     {
 	if (m_grounded) {
-        m_available_flight_time = fmin(m_available_flight_time += (ms/2), MAX_FLIGHT_DURATION);
+        m_available_flight_time = fmin(m_available_flight_time += (ms*2), MAX_FLIGHT_DURATION);
 	    if (std::abs(motion.velocity.x) > TOLERANCE) {
             motion.radians += motion.velocity.x / 50;
         }
