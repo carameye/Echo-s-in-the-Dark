@@ -40,8 +40,6 @@ set(SOURCE_FILES
         src/common.cpp
         src/ghost.cpp
         src/hitbox.cpp
-        src/interactable.cpp
-        src/door.cpp
         src/level_graph.cpp
         src/light.cpp
         src/main.cpp
@@ -64,8 +62,6 @@ set(SOURCE_FILES
         src/common.hpp
         src/ghost.hpp
         src/hitbox.hpp
-        src/interactable.hpp
-        src/door.hpp
         src/level_graph.hpp
         src/light.hpp
         src/Robot/robot.hpp
