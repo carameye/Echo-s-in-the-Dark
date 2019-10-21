@@ -32,5 +32,5 @@ void Interactable::draw(const mat3& projection, const vec2& camera_shift)
 
 void Interactable::set_position(vec2 pos)
 {
-    motion.position = pos;
+	motion.position = add(pos, { 0.f, brick_size / 2.f + 6.f });
 }
