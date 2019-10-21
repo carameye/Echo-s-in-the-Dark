@@ -1,5 +1,6 @@
 // Header
 #include "world.hpp"
+#include "level.hpp"
 
 // stlib
 #include <cassert>
@@ -283,5 +284,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 
 void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
-
+    float radians = atan2(-ypos + 300, xpos- 600);
+    Light* m_light = m_level.get_light();
+    m_light->set_radians(radians);
 }

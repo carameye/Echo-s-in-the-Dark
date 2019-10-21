@@ -38,7 +38,12 @@ class Level
     // Interact with the current level interactable
     void interact();
 
-    private:
+    // Light effect
+	Light m_light;
+
+	Light* get_light();
+
+private:
     // Generate a level from a text file
 	bool parse_level(std::string level);
 
@@ -64,8 +69,5 @@ class Level
     LevelGraph m_graph;
     Door* m_interactable;
 
-    // Light effect
-	Light m_light;
-
-	std::vector<vec2> reset_positions;
+    std::vector<vec2> reset_positions;
 };

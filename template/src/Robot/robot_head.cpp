@@ -80,3 +80,8 @@ void RobotHead::set_direction(bool right)
 {
     m_face_right = right;
 }
+
+bool RobotHead::get_direction()
+{
+    return m_face_right;
+}

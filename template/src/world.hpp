@@ -55,7 +55,7 @@ private:
 	float camera_offset;
 
 	Level m_level;
-	
+
 	Mix_Music* m_background_music;
 
 	// C++ rng
