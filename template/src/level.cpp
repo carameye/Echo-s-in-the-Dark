@@ -20,10 +20,14 @@ void Level::destroy()
     for (auto& ghost : m_ghosts) {
         ghost.destroy();
     }
+	for (auto& sign : m_signs) {
+		sign.destroy();
+	}
     m_robot.destroy();
     m_bricks.clear();
     m_ghosts.clear();
     m_interactables.clear();
+	m_signs.clear();
 }
 
 void Level::draw_entities(const mat3& projection, const vec2& camera_shift)
@@ -32,6 +36,9 @@ void Level::draw_entities(const mat3& projection, const vec2& camera_shift)
 	for (auto& brick : m_bricks) {
         brick.draw(projection, camera_shift);
     }
+	for (auto& sign : m_signs) {
+		sign.draw(projection, camera_shift);
+	}
 	for(auto& interactable : m_interactables) {
 		interactable.draw(projection, camera_shift);
     }
@@ -120,6 +127,14 @@ void Level::update(float elapsed_ms)
 		}
 	}
 
+	for (auto& sign : m_signs)
+	{
+		 if (sign.get_hitbox().collides_with(new_robot_hitbox))
+			sign.show_text();
+		 else
+			sign.hide_text();
+	}
+
 	const Hitbox robot_hitbox = m_robot.get_hitbox({0.f, 0.f});
 	// only check collision with interactable if there is no current interactable or if the current interactable
 	// isn't being interacted with
@@ -175,9 +190,12 @@ bool Level::parse_level(std::string level)
 		door.destroy();
 	for (auto& ghost : m_ghosts)
 		ghost.destroy();
+	for (auto& sign : m_signs)
+		sign.destroy();
 	m_bricks.clear();
 	m_ghosts.clear();
 	m_interactables.clear();
+	m_signs.clear();
 
 	// Parse the json
 	json j = json::parse(file);
@@ -302,9 +320,14 @@ bool Level::spawn_robot(vec2 position)
 
 bool Level::spawn_sign(vec2 position, std::string text)
 {
-	// TODO: add sign code
-	fprintf(stderr, "	sign at (%f, %f) has text \"%s\"\n", position.x, position.y, text.c_str()); // remove once real code is done
-	return true;
+	Sign sign;
+	if (sign.init(text, position))
+	{
+		m_signs.push_back(sign);
+		return true;
+	}
+	fprintf(stderr, "	sign spawn failed\n");
+	return false;
 }
 
 bool Level::spawn_brick(vec2 position, vec3 colour)

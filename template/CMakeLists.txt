@@ -48,6 +48,8 @@ set(SOURCE_FILES
         src/Robot/robot_shoulders.cpp
         src/Interactables/door.cpp
         src/Interactables/interactable.cpp
+		src/text.cpp
+		src/sign.cpp
         src/level.cpp
         src/world.cpp
         src/project_path.hpp
@@ -67,6 +69,8 @@ set(SOURCE_FILES
         src/Robot/robot.hpp
         src/Interactables/door.hpp
         src/Interactables/interactable.hpp
+		src/text.hpp
+		src/sign.hpp
         src/level.hpp
         src/world.hpp
         )
