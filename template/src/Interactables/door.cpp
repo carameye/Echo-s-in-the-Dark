@@ -7,7 +7,7 @@ bool Door::init()
 
     if (!s_door_texture.is_valid())
 	{
-        if (!s_door_texture.load_from_file(textures_path("body_ball.png")))
+        if (!s_door_texture.load_from_file(textures_path("door.png")))
 		{
 			std::fprintf(stderr, "Failed to load door texture!");
 			return false;
@@ -21,6 +21,8 @@ bool Door::init()
 
     if (!Interactable::init())
         return false;
+
+	physics.scale = { 1.5f, 1.5f };
 
     m_destination = "";
     m_locked = false;
