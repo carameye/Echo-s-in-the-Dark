@@ -4,6 +4,7 @@ level_2
 enddoors
 Use A and D (or left and right) to roll
 Use W and S (or up and down) to pan the camera
+Use F to interact with objects
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B                                                                         B
@@ -19,5 +20,5 @@ B                                                                         B
 B                                                                         B
 B                                                                         B
 B          R                   D                    D                     B
-B          S        S                                                     B
+B          S        S       S                                             B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB

@@ -7,6 +7,7 @@
 #include "level_graph.hpp"
 #include "Interactables/door.hpp"
 #include "light.hpp"
+#include "sign.hpp"
 #include "json.hpp"
 #include <vector>
 
@@ -58,6 +59,7 @@ class Level
     std::vector<Brick> m_bricks;
 	std::vector<Ghost> m_ghosts;
     std::vector<Door> m_interactables;
+	std::vector<Sign> m_signs;
 
     LevelGraph m_graph;
     Door* m_interactable;
