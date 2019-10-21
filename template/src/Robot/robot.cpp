@@ -102,7 +102,7 @@ void Robot::update_velocity(float ms) {
 }
 
 void Robot::update(float ms)
-    {
+{
 	if (m_grounded) {
         m_available_flight_time = fmin(m_available_flight_time += (ms*2), MAX_FLIGHT_DURATION);
 	    if (std::abs(motion.velocity.x) > TOLERANCE) {

@@ -7,6 +7,7 @@
 #include "level_graph.hpp"
 #include "Interactables/door.hpp"
 #include "light.hpp"
+#include "json.hpp"
 #include <vector>
 
 class Level
@@ -47,6 +48,10 @@ class Level
 	bool spawn_ghost(vec2 position);
 	bool spawn_sign(vec2 position, std::string text);
 
+	// For resetting the level
+	void save_level();
+	void reset_level();
+
     private:
     // Level entities
     Robot m_robot;
@@ -59,4 +64,6 @@ class Level
 
     // Light effect
 	Light m_light;
+
+	std::vector<vec2> reset_positions;
 };

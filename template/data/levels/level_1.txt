@@ -4,41 +4,43 @@ enddoors
 Use space to fly
 You can only fly for a short time
 endsigns
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                                                                                                                                      B
-B                                                                                                                                   D  B
-B                                                                                                                                      B
-B                                                                                                            BBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                                                                                                                                      B
-B                                                            BBBBBBBBBBBBBBBBBBBBBBBB                                                  B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                   BBBBBBBBBBBBBBBBB                                                                                                  B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-BBBBBB                                                                                                                                 B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-BBBBBBBBBBBBBBBBBBBB                 BBBBBBBBBBBBBBBBBBBBBBBB                        BBBBBBBBBBBBBBBBBBBBBBBB                     BBBBBB
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                 BBBBBB
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B          R               BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B          S        S      BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                                                                            B
+B                                                                         D  B
+B                                                                            B
+B                                                                       BBBBBB
+B                                                                            B
+B                                                                            B
+B                                                        BBBBB               B
+B                                                                            B
+B                                                                            B
+B                              BBBBBBBBBBBBBBBB                              B
+B                                                                            B
+B                                                                            B
+B               BBBBB                                                        B
+B                                                                            B
+B                                                                            B
+BBBBBB                                                                       B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+BBBBBB          BBBBB          BBBBBBBBBBBBBBBB          BBBBB          BBBBBB
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                       BBBBBB
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                          B
+B                          B
+B          R               B
+B          S        S      B
+BBBBBBBBBBBBBBBBBBBBBBBBBBBB

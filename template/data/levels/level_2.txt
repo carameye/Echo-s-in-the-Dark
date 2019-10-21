@@ -3,41 +3,45 @@ level_select
 enddoors
 watch out for ghosts!
 endsigns
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                                                                                                                                      B
-B                                                                                                                                   D  B
-B                                                                                                                                      B
-B                                                                                                            BBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                                                                                                                                      B
-B                                                            BBBBBBBBBBBBBBBBBBBBBBBB                                                  B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                   BBBBBBBBBBBBBBBBB                                                                                                  B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-BBBBBB                                                                                                                                 B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-BBBBBBBBBBBBBBBBBBBB                 BBBBBBBBBBBBBBBBBBBBBBBB                        BBBBBBBBBBBBBBBBBBBBBBBB                     BBBBBB
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                 BBBBBB
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                                                                                                                      B
-B                                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                                      BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                                  BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B    G          R              BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B               S          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                                                       B
+B                                                    D  B
+B                                                       B
+B                                                  BBBBBB
+B                                                       B
+B             BBBBB               BBBBB                 B
+B                                                       B
+B                                                       B
+B                       BBBBB                           B
+B                                                       B
+B                                                       B
+B             BBBBB                                     B
+B                                                       B
+B                                                       B
+B                                                       B
+B                                                     G B
+B                                                       B
+BBBBBB        BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                 B                  B                  B
+B                 B                  B                  B
+B                 B                  B                  B
+B                 B                  B                  B
+B                 B                  B                  B
+BBBBBB            B      BBBBBB      B      BBBBBB      B
+B                 B                  B                  B
+B                 B                  B                  B
+B                 B                  B                  B
+B                 G                                     B
+B                                                       B
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB      BBBBBBB
+B                                                       B
+B                                                       B
+B                                                       B
+B                                                       B
+B                                                       B
+B                                          BBBBBBBBBBBBBB
+B                                      BBBBB
+B                                  BBBBB
+B               R              BBBBB
+B               S          BBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBB

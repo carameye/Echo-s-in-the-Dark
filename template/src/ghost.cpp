@@ -46,9 +46,9 @@ void Ghost::destroy()
 
 void Ghost::update(float ms)
 {
-	if (len(sub(m_goal, motion.position)) < 500.f)
+	if (len(sub(m_goal, motion.position)) < 800.f)
 	{
-		if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > brick_size / 2.f )
+		if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > TOLERANCE)
 		{
 			m_path = m_level_graph->get_path(motion.position, m_goal);
 		}
@@ -56,7 +56,7 @@ void Ghost::update(float ms)
 
 	if (m_path.size() > 0)
 	{
-		float allowed_move = 3.f;
+		float allowed_move = 100.f * ms / 1000.f;
 		vec2 next_pos = m_path[0];
 
 		while (allowed_move > TOLERANCE)
@@ -110,6 +110,7 @@ vec2 Ghost::get_position()const
 void Ghost::set_position(vec2 position)
 {
 	motion.position = position;
+	m_path.clear();
 }
 
 Hitbox Ghost::get_hitbox() const

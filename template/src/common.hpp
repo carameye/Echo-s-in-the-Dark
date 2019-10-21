@@ -21,11 +21,12 @@
 #define textures_path(name)  data_path "/textures/" name
 #define audio_path(name) data_path  "/audio/" name
 #define mesh_path(name) data_path  "/meshes/" name
-#define level_path data_path "/levels/"
+#define level_path data_path "/levels/json/"
 
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..
 struct vec2 { float x, y; };
+inline bool operator==(const vec2& lhs, const vec2& rhs) { return lhs.x == rhs.x && lhs.y == rhs.y; }
 struct vec3 { float x, y, z; };
 struct mat3 { vec3 c0, c1, c2; };
 
@@ -44,6 +45,7 @@ float sq_len(vec2 a);
 float len(vec2 a);
 
 vec2 to_grid_position(vec2 pos);
+vec2 to_pixel_position(vec2 pos);
 
 static const float brick_size = 64.f;
 static const float TOLERANCE = 0.005f;

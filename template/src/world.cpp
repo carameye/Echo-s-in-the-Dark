@@ -2,12 +2,14 @@
 #include "world.hpp"
 
 // stlib
-#include <string>
 #include <cassert>
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <map>
+
+using json = nlohmann::json;
 
 // Same as static in c, local to compilation unit
 namespace
@@ -165,7 +167,7 @@ bool World::update(float elapsed_ms)
 	m_level.update(elapsed_ms);
 
 	float follow_speed = 0.1f;
-	vec2 follow_point = add(m_level.get_camera_position(), {0.f, camera_offset});
+	vec2 follow_point = add(m_level.get_camera_position(), { 0.f, camera_offset });
 	camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
 	return true;
 }

@@ -1,5 +1,7 @@
 #include "level.hpp"
 
+using json = nlohmann::json;
+
 bool Level::init(std::string level)
 {
     m_interactable = NULL;
@@ -106,10 +108,16 @@ void Level::update(float elapsed_ms)
 	m_robot.update(elapsed_ms);
 	m_light.set_position(new_robot_pos);
 
+	Hitbox new_robot_hitbox = m_robot.get_hitbox({ 0.f, 0.f });
+
 	for (auto& ghost : m_ghosts)
 	{
 		ghost.set_goal(m_robot.get_position());
 		ghost.update(elapsed_ms);
+		if (ghost.get_hitbox().collides_with(new_robot_hitbox))
+		{
+			reset_level();
+		}
 	}
 
 	const Hitbox robot_hitbox = m_robot.get_hitbox({0.f, 0.f});
@@ -147,131 +155,105 @@ void Level::interact()
 
 bool Level::parse_level(std::string level)
 {
-	fprintf(stderr, "parsing level\n");
-	static std::map<char, vec3> colours;
-	colours.clear();
-	colours['B'] = { 1.f, 1.f, 1.f };
-	colours['C'] = { 1.f, 0.f, 0.f };
-	colours['M'] = { 0.f, 1.f, 0.f };
-	colours['N'] = { 0.f, 0.f, 1.f };
-	colours['Y'] = { 1.f, 1.f, 0.f };
-	colours['Z'] = { 1.f, 0.f, 1.f };
-	colours['L'] = { 0.f, 1.f, 1.f };
-
+	// Construct file name with path
 	std::string filename = level_path;
 	filename.append(level);
-	filename.append(".txt");
-	std::ifstream file;
-	file.open(filename);
-	if (file.is_open())
+	filename.append(".json");
+
+	// Open file
+	std::ifstream file(filename);
+	if (!file.is_open())
 	{
-		fprintf(stderr, "Opened level file\n");
+		return false;
+	}
+	fprintf(stderr, "Opened level file\n");
 
-		// Destroy level-dependent resources
-        destroy();
+	// clear all level-dependent resources
+	for (auto& brick : m_bricks)
+		brick.destroy();
+	for (auto& door : m_interactables)
+		door.destroy();
+	for (auto& ghost : m_ghosts)
+		ghost.destroy();
+	m_bricks.clear();
+	m_ghosts.clear();
+	m_interactables.clear();
 
-		float x = 0.f;
-		float y = 0.f;
-		std::string line;
+	// Parse the json
+	json j = json::parse(file);
 
-		// Get ambient light level
-		if (!getline(file, line))
-			return false;
-		m_light.set_ambient(std::stof(line));
+	int width = j["size"]["width"];
+	int height = j["size"]["height"];
 
-		// Get the next levels file names
-		if (!getline(file, line))
-			return false;
+	// Get ambient light level
+	m_light.set_ambient(j["ambient_light"]);
 
-		std::vector<std::string> doors;
-		int door_i = 0;
-		while (line.compare("enddoors") != 0)
-		{
-			doors.push_back(line);
-			if (!getline(file, line))
-				return false;
-		}
-
-		// Get the text from the signs in the order they will appear 
-		// starting from top to bottom/left to right
-		if (!getline(file, line))
-			return false;
-
-		std::vector<std::string> signs;
-		int sign_i = 0;
-		while (line.compare("endsigns") != 0)
-		{
-			signs.push_back(line);
-			if (!getline(file, line))
-				return false;
-		}
-
-		std::vector<std::string> brick_data;
-
-		// Finally get the actual map data
-		while (getline(file, line))
-		{
-			std::string row;
-
-			for (x = 0.f; x < line.length(); x++)
-			{
-				vec2 position;
-				position.x = x * brick_size;
-				position.y = y * brick_size;
-				switch (line[x])
-				{
-				case 'D':
-					if (!spawn_door(position, doors[door_i++]))
-						return false;
-					row = row.append(" ");
-					break;
-				case 'G':
-					if (!spawn_ghost(position))
-						return false;
-					row = row.append(" ");
-					break;
-				case 'R':
-					if (!spawn_robot(position))
-						return false;
-					row = row.append(" ");
-					break;
-				case 'S':
-					if (!spawn_sign(position, signs[sign_i++]))
-						return false;
-					row = row.append(" ");
-					break;
-				case 'T':
-					m_light.add_torch(position);
-					row = row.append(" ");
-					break;
-				case ' ':
-					row = row.append(" ");
-					break;
-				default:
-					row = row.append("B");
-					if (colours.find(line[x]) == colours.end())
-						return false;
-
-					if (!spawn_brick(position, colours[line[x]]))
-						return false;
-				}
-			}
-			brick_data.push_back(row);
-			y++;
-		}
-
-		fprintf(stderr, "Generating level graph\n");
-		bool valid = m_graph.generate(brick_data);
-
-		for (auto& g : m_ghosts)
-		{
-			g.set_level_graph(&m_graph);
-		}
-
-		return valid;
+	// Get the doors
+	fprintf(stderr, "	getting doors\n");
+	for (json door : j["doors"])
+	{
+		vec2 pos = { door["pos"]["x"], door["pos"]["y"] };
+		spawn_door(to_pixel_position(pos), door["next_level"]);
 	}
 
-	return false;
+	// Get the signs
+	fprintf(stderr, "	getting signs\n");
+	for (json sign : j["signs"])
+	{
+		vec2 pos = { sign["pos"]["x"], sign["pos"]["y"] };
+		spawn_sign(to_pixel_position(pos), sign["text"]);
+	}
+
+	// Get the ghosts
+	fprintf(stderr, "	getting ghosts\n");
+	for (json ghost : j["ghosts"])
+	{
+		vec2 pos = { ghost["pos"]["x"], ghost["pos"]["y"] };
+		spawn_ghost(to_pixel_position(pos));
+	}
+
+	// Get the bricks
+	fprintf(stderr, "	getting bricks\n");
+	std::vector<vec2> potential_cp;
+	std::vector<vec2> diffs = { { -1.f, -1.f }, { 1.f, -1.f }, { -1.f, 1.f }, { 1.f, 1.f } };
+
+	std::vector<bool> empty(width, false);
+	std::vector<std::vector<bool>> bricks(height, empty);
+
+	for (json brick : j["bricks"])
+	{
+		vec2 pos = { brick["pos"]["x"], brick["pos"]["y"] };
+		vec3 colour = { brick["colour"]["r"], brick["colour"]["g"], brick["colour"]["b"] };
+
+		// Set brick here
+		bricks[pos.y][pos.x] = true;
+
+		// Add brick to critical points if not already cancelled
+		for (vec2 diff : diffs)
+		{
+			vec2 pot = add(pos, diff);
+			if (pot.x >= 0.f && pot.x < width && pot.y >= 0.f && pot.y < height)
+			{
+				potential_cp.push_back(pot);
+			}
+		}
+
+		spawn_brick(to_pixel_position(pos), colour);
+	}
+
+	fprintf(stderr, "	built world with %d doors, %d ghosts, and %d bricks\n",
+		m_interactables.size(), m_ghosts.size(), m_bricks.size());
+
+	// Generate the graph
+	m_graph.generate(potential_cp, bricks, width, height);
+
+	// Spawn the robot
+	vec2 pos = { j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"] };
+	spawn_robot(to_pixel_position(pos));
+
+	save_level();
+
+	return true;
 }
 
 bool Level::spawn_door(vec2 position, std::string next_level)
@@ -294,6 +276,7 @@ bool Level::spawn_ghost(vec2 position)
 	if (ghost.init())
 	{
 		ghost.set_position(position);
+		ghost.set_level_graph(&m_graph);
 		m_ghosts.push_back(ghost);
 		return true;
 	}
@@ -342,4 +325,24 @@ bool Level::spawn_brick(vec2 position, vec3 colour)
 	}
 	fprintf(stderr, "	brick spawn failed\n");
 	return false;
+}
+
+void Level::save_level()
+{
+	reset_positions.clear();
+	reset_positions.push_back(m_robot.get_position());
+	for (auto ghost : m_ghosts)
+	{
+		reset_positions.push_back(ghost.get_position());
+	}
+}
+
+void Level::reset_level()
+{
+	int pos_i = 0;
+	m_robot.set_position(reset_positions[pos_i++]);
+	for (auto& ghost : m_ghosts)
+	{
+		ghost.set_position(reset_positions[pos_i++]);
+	}
 }
