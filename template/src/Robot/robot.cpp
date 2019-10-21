@@ -201,6 +201,11 @@ void Robot::set_head_position(vec2 position)
 	m_head.set_position(position);
 }
 
+bool Robot::get_head_direction()
+{
+    return m_head.get_direction();
+}
+
 void Robot::set_shoulder_position(vec2 position)
 {
     m_shoulders.set_position(position);

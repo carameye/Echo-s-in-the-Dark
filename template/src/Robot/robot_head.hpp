@@ -31,4 +31,6 @@ public:
 
     // Set the look direction
     void set_direction(bool right);
+
+    bool get_direction();
 };

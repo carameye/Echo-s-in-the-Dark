@@ -1,3 +1,4 @@
+#include <iostream>
 #include "level.hpp"
 
 using json = nlohmann::json;
@@ -107,6 +108,16 @@ void Level::update(float elapsed_ms)
 	m_robot.set_position(new_robot_pos);
 	m_robot.update(elapsed_ms);
 	m_light.set_position(new_robot_pos);
+
+
+    // TODO: init light when robot is spawned
+    bool isHeadFacingRight = m_robot.get_head_direction();
+    bool isLightFacingRight = m_light.get_direction();
+    // if head and light are facing different directions
+    if (isHeadFacingRight != isLightFacingRight) {
+        std::cout << 1 << std::endl;
+        m_light.set_direction();
+    }
 
 	Hitbox new_robot_hitbox = m_robot.get_hitbox({ 0.f, 0.f });
 
@@ -290,11 +301,20 @@ bool Level::spawn_robot(vec2 position)
 		m_robot.set_position(position);
 		m_robot.set_head_position(position);
         m_robot.set_shoulder_position(position);
-        if (m_light.init())
+        if (m_light.init()) {
+
             m_light.set_position(m_robot.get_position());
 
-		return true;
-		// TODO: init light when robot is spawned
+//            // TODO: init light when robot is spawned
+//            bool isHeadFacingRight = m_robot.get_head_direction();
+//            bool isLightFacingRight = m_light.get_direction();
+//            // if head and light are facing different directions
+//            if (isHeadFacingRight != isLightFacingRight) {
+//                std::cout << 1 << std::endl;
+//                m_light.set_direction();
+//            }
+        }
+        return true;
 	}
 	fprintf(stderr, "	robot spawn failed\n");
 	return false;
@@ -345,4 +365,8 @@ void Level::reset_level()
 	{
 		ghost.set_position(reset_positions[pos_i++]);
 	}
+}
+
+Light* Level::get_light() {
+    return &m_light;
 }

@@ -6,28 +6,36 @@
 class Light : public Entity
 {
 public:
-	// Creates all the associated render resources and default transform
-	bool init();
+    // Creates all the associated render resources and default transform
+    bool init();
 
-	// Releases all associated resources
-	void destroy();
+    // Releases all associated resources
+    void destroy();
 
-	// Renders the water
-	void draw(const mat3& projection, const vec2& camera_shift)override;
+    // Renders the water
+    void draw(const mat3& projection, const vec2& camera_shift)override;
 
     void set_position(vec2 pos);
 
-	// Sets the ambient light level
-	void set_ambient(float ambient);
+    void set_radians(float radians);
 
-	// Clear torches
-	void clear_torches();
+    float get_radians();
 
-	// Add a torch at a specific location
-	void add_torch(vec2 torch);
+    void set_direction();
+
+    bool get_direction();
+
+    // Sets the ambient light level
+    void set_ambient(float ambient);
+
+    // Clear torches
+    void clear_torches();
+
+    // Add a torch at a specific location
+    void add_torch(vec2 torch);
 
 private:
     vec2 light_position;
-	float ambient = 0.f;
-	std::vector<vec2> torches;
+    float ambient = 0.f;
+    std::vector<vec2> torches;
 };

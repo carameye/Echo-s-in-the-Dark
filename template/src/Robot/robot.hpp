@@ -63,6 +63,8 @@ public:
 	// Set position of head, for spawning only
     void set_head_position(vec2 position);
 
+    bool get_head_direction();
+
     // Set position of head, for spawning only
     void set_shoulder_position(vec2 position);
 
