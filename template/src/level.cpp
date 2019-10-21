@@ -115,7 +115,6 @@ void Level::update(float elapsed_ms)
     bool isLightFacingRight = m_light.get_direction();
     // if head and light are facing different directions
     if (isHeadFacingRight != isLightFacingRight) {
-        std::cout << 1 << std::endl;
         m_light.set_direction();
     }
 

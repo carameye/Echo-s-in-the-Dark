@@ -127,18 +127,33 @@ void Light::draw(const mat3& projection, const vec2& camera_shift) {
         float torchpositions_x[len];
         float torchpositions_y[len];
         for (int i = 0; i < len; i++) {
+            std::cout << 1 << std::endl;
             vec2 torch = torches[i];
-            torch = add(torch, vec2{0, -400});
             torch.x = torch.x + camera_shift.x;
             torch.y = torch.y - camera_shift.y;
             torchpositions_x[i] = torch.x;
             torchpositions_y[i] = torch.y;
-            //std::cout << torch.x << std::endl;
-            //std::cout << torch.y << std::endl;
         }
         glUniform2fv(torches_position_uloc_x, 1, torchpositions_x);
         glUniform2fv(torches_position_uloc_y, 1, torchpositions_y);
     }
+    // TODO: once torches is not empty, remove
+        GLuint torches_position_uloc_x = glGetUniformLocation(effect.program, "torches_position_x");
+        GLuint torches_position_uloc_y = glGetUniformLocation(effect.program, "torches_position_y");
+        int len = 4;
+        float torchpositions_x[len];
+        float torchpositions_y[len];
+        for (int i = 0; i < len; i++) {
+            std::cout << 1 << std::endl;
+            vec2 torch = vec2{340.0f*(i*4) , 340.0f};
+            torch.x = torch.x + camera_shift.x;
+            torch.y = torch.y - camera_shift.y;
+            torchpositions_x[i] = torch.x;
+            torchpositions_y[i] = torch.y;
+        }
+        glUniform2fv(torches_position_uloc_x, 1, torchpositions_x);
+        glUniform2fv(torches_position_uloc_y, 1, torchpositions_y);
+    // TODO: end todo
 
     // Draw the screen texture on the quad geometry
     // Setting vertices
