@@ -108,10 +108,16 @@ void Level::update(float elapsed_ms)
 	m_robot.update(elapsed_ms);
 	m_light.set_position(new_robot_pos);
 
+	Hitbox new_robot_hitbox = m_robot.get_hitbox({ 0.f, 0.f });
+
 	for (auto& ghost : m_ghosts)
 	{
 		ghost.set_goal(m_robot.get_position());
 		ghost.update(elapsed_ms);
+		if (ghost.get_hitbox().collides_with(new_robot_hitbox))
+		{
+			reset_level();
+		}
 	}
 
 	const Hitbox robot_hitbox = m_robot.get_hitbox({0.f, 0.f});
@@ -245,6 +251,8 @@ bool Level::parse_level(std::string level)
 	vec2 pos = { j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"] };
 	spawn_robot(to_pixel_position(pos));
 
+	save_level();
+
 	return true;
 }
 
@@ -268,6 +276,7 @@ bool Level::spawn_ghost(vec2 position)
 	if (ghost.init())
 	{
 		ghost.set_position(position);
+		ghost.set_level_graph(&m_graph);
 		m_ghosts.push_back(ghost);
 		return true;
 	}
@@ -316,4 +325,24 @@ bool Level::spawn_brick(vec2 position, vec3 colour)
 	}
 	fprintf(stderr, "	brick spawn failed\n");
 	return false;
+}
+
+void Level::save_level()
+{
+	reset_positions.clear();
+	reset_positions.push_back(m_robot.get_position());
+	for (auto ghost : m_ghosts)
+	{
+		reset_positions.push_back(ghost.get_position());
+	}
+}
+
+void Level::reset_level()
+{
+	int pos_i = 0;
+	m_robot.set_position(reset_positions[pos_i++]);
+	for (auto& ghost : m_ghosts)
+	{
+		ghost.set_position(reset_positions[pos_i++]);
+	}
 }

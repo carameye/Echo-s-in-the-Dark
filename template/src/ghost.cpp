@@ -110,6 +110,7 @@ vec2 Ghost::get_position()const
 void Ghost::set_position(vec2 position)
 {
 	motion.position = position;
+	m_path.clear();
 }
 
 Hitbox Ghost::get_hitbox() const
