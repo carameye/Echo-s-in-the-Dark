@@ -280,6 +280,18 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
 		m_level.interact();
 	}
+
+	// headlight toggle
+    if (action == GLFW_PRESS && key == GLFW_KEY_1) {
+        m_level.get_light()->set_red_channel();
+    }
+    if (action == GLFW_PRESS && key == GLFW_KEY_2) {
+        m_level.get_light()->set_green_channel();
+    }
+    if (action == GLFW_PRESS && key == GLFW_KEY_3) {
+        m_level.get_light()->set_blue_channel();
+    }
+
 }
 
 void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)

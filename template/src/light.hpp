@@ -34,9 +34,16 @@ public:
     // Add a torch at a specific location
     void add_torch(vec2 torch);
 
+    vec3 get_headlight_channel();
+
+    void set_red_channel();
+    void set_green_channel();
+    void set_blue_channel();
+
 private:
     vec2 light_position;
     float ambient = 0.f;
+    vec3 headlight_channel;
     std::vector<vec2> torches;
 
 	Mesh mesh;
