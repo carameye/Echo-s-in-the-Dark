@@ -2,8 +2,13 @@
 
 uniform sampler2D screen_texture;
 uniform vec2 light_position;
-uniform vec2 torches_position_x;
-uniform vec2 torches_position_y;
+
+// pass torches size
+uniform int torches_size;
+// pass toches[] with fixed size
+uniform vec2 torches_position[5];
+
+uniform vec3 headlight_channel;
 
 uniform float light_angle;
 
@@ -29,8 +34,7 @@ float illuminate_torches(vec4 in_color, vec2 coord, vec2 torchcoord)
 	vec4 color = in_color;
 	float light_radius = 100;
 	vec2 pos = torchcoord;
-	//vec2 pos = vec2(torches_position_x.x, torches_position_y.x);
-	//vec2 pos = vec2(600, 400);
+	//vec2 pos = vec2(600, 600);
 	float dist = sqrt(pow((pos.x - coord.x*1200), 2.0) + pow((pos.y - coord.y*800), 2.0));
 	float darkness = 1.5;
 	return (1- darkness * dist/600);
@@ -41,7 +45,6 @@ float headlight(vec4 in_color, vec2 coord){
 	// if the cord inside the area covered by headlight?
 	// hardcoded light info
 	vec2 light_pos = vec2(600 + (light_position.x*1200 - 600) / 2.1, 400 + (light_position.y*800 - 400) / 2.1);
-	//vec2 cone_dir = vec2(1, 1);
 	vec2 cone_dir = vec2(cos(light_angle), sin(light_angle));
 	// TODO: cone_dir comes from cone angle
 	cone_dir = normalize(cone_dir);
@@ -52,7 +55,6 @@ float headlight(vec4 in_color, vec2 coord){
 	vec2 line =  coord_px - light_pos;
 	line = normalize(line);
 	float slope_line = line.y / line.x;
-	//float angle_line = atan(slope_line);
 	float dot_pr = dot(line, cone_dir);
 	float darkness = 0.6;
 
@@ -64,7 +66,7 @@ float headlight(vec4 in_color, vec2 coord){
 	if (dot_pr > 0.8){
 		return (1 - dist/600) * pow(dot_pr,5);
 	}
-	return 0;//darkness*pow(dot_pr,5);//*(1- darkness * dist/600);
+	return 0;
 
 }
 
@@ -72,18 +74,25 @@ void main()
 {
 	vec2 coord = uv.xy;
 	vec4 in_color = texture(screen_texture, coord);
+	vec4 headlight_channels = vec4(headlight_channel, 1.0);
+
 	// illuminate for torches first
-	// iterate over torches_pos_x and torches_pos_y
-	float illum_torches1 = clamp(illuminate_torches(in_color, coord, vec2(torches_position_x.x, torches_position_y.x)), 0 , 1);
-	float illum_torches2 = clamp(illuminate_torches(in_color, coord, vec2(torches_position_x.y, torches_position_y.y)), 0 , 1);
-	float illum_torches = clamp(illum_torches1+ illum_torches2, 0, 1);
+	float illum_torch_sum = 0;
+	// todo: fix later so i < torches_size
+	for(int i = 0; i< 5 ; i++){
+		float illum_torch = illuminate_torches(in_color, coord, torches_position[i]);
+		illum_torch_sum = max(illum_torch_sum, illum_torch);
+	}
+	//color = in_color * clamp(illum_torch_sum, 0.3, 1);
 
 	float illum_robot = clamp(illuminate_robot(in_color, coord), 0, 1);
-	//float illum_torches = clamp(illuminate_torches(in_color, coord), 0 , 1);
-	//float illum = clamp(illuminate(in_color, coord), 0, 1);
-	float hl = clamp(headlight(in_color, coord), 0, 1);
-	float sum = clamp(hl + illum_torches + illum_robot, 0, 1);
+	float hl = clamp(headlight(in_color, coord), 0, 0.8);
+	float sum = clamp(hl + illum_torch_sum + illum_robot, 0, 0.9);
 
-	color = in_color *sum;//* illum_torches * hl;
-	//	color = in_color * illum;
+	if (headlight_channels.x == 0 && headlight_channels.y == 0 && headlight_channels.z == 0){
+		color = in_color * sum;
+	} else{
+		color = mix( in_color,headlight_channels, hl) * sum;
+	}
+
 }

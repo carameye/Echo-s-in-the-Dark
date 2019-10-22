@@ -84,6 +84,29 @@ void Light::add_torch(vec2 torch)
     torches.push_back(torch);
 }
 
+vec3 Light::get_headlight_channel(){
+    return headlight_channel;
+}
+
+void Light::set_red_channel(){
+    if  (headlight_channel.x == 1.0){
+        headlight_channel.x = 0.0;
+    } else
+    headlight_channel.x = 1.0;
+}
+void Light::set_green_channel(){
+    if  (headlight_channel.y == 1.0){
+        headlight_channel.y = 0.0;
+    } else
+        headlight_channel.y = 1.0;
+}
+void Light::set_blue_channel(){
+    if  (headlight_channel.z == 1.0){
+        headlight_channel.z = 0.0;
+    } else
+        headlight_channel.z = 1.0;
+}
+
 void Light::draw(const mat3& projection, const vec2& camera_shift) {
 
     // Transformation code, see Rendering and Transformation in the template specification for more info
@@ -120,40 +143,30 @@ void Light::draw(const mat3& projection, const vec2& camera_shift) {
     float angle = motion.radians;
     glUniform1f(light_angle_uloc, angle);
 
+    // pass headlight channel
+    GLuint headlight_channel_uloc = glGetUniformLocation(effect.program, "headlight_channel");
+    float channel[] = {headlight_channel.x, headlight_channel.y, headlight_channel.z};
+    glUniform3fv(headlight_channel_uloc, 1, channel);
+
     if(!(torches.empty())) {
-        GLuint torches_position_uloc_x = glGetUniformLocation(effect.program, "torches_position_x");
-        GLuint torches_position_uloc_y = glGetUniformLocation(effect.program, "torches_position_y");
+        // pass torches size
         int len = torches.size();
-        float torchpositions_x[len];
-        float torchpositions_y[len];
-        for (int i = 0; i < len; i++) {
-            std::cout << 1 << std::endl;
-            vec2 torch = torches[i];
-            torch.x = torch.x + camera_shift.x;
-            torch.y = torch.y - camera_shift.y;
-            torchpositions_x[i] = torch.x;
-            torchpositions_y[i] = torch.y;
+        GLuint torches_size_uloc = glGetUniformLocation(effect.program, "torches_size");
+        glUniform1f(torches_size_uloc, len);
+
+//        GLuint torches_position_uloc = glGetUniformLocation(effect.program, "torches_position[0]");
+        // pass all torch positions
+        for (int i = 0; i < 5; i++){
+            char s[50];
+            std::sprintf(s,"torches_position[%d]", i );
+//          std::cout<< s << std::endl;
+            GLuint torches_position_uloc = glGetUniformLocation(effect.program, s);
+            float torch[] = {torches[i].x + camera_shift.x, torches[i].y - camera_shift.y - 600};
+            glUniform2fv(torches_position_uloc, 1, torch);
         }
-        glUniform2fv(torches_position_uloc_x, 1, torchpositions_x);
-        glUniform2fv(torches_position_uloc_y, 1, torchpositions_y);
     }
-    // TODO: once torches is not empty, remove
-        GLuint torches_position_uloc_x = glGetUniformLocation(effect.program, "torches_position_x");
-        GLuint torches_position_uloc_y = glGetUniformLocation(effect.program, "torches_position_y");
-        int len = 4;
-        float torchpositions_x[len];
-        float torchpositions_y[len];
-        for (int i = 0; i < len; i++) {
-            std::cout << 1 << std::endl;
-            vec2 torch = vec2{340.0f*(i*4) , 340.0f};
-            torch.x = torch.x + camera_shift.x;
-            torch.y = torch.y - camera_shift.y;
-            torchpositions_x[i] = torch.x;
-            torchpositions_y[i] = torch.y;
-        }
-        glUniform2fv(torches_position_uloc_x, 1, torchpositions_x);
-        glUniform2fv(torches_position_uloc_y, 1, torchpositions_y);
-    // TODO: end todo
+
+
 
     // Draw the screen texture on the quad geometry
     // Setting vertices

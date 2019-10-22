@@ -215,6 +215,13 @@ bool Level::parse_level(std::string level)
 		spawn_door(to_pixel_position(pos), door["next_level"]);
 	}
 
+	fprintf(stderr, "   getting torches\n");
+	for (json torch : j["torches"])
+    {
+	    vec2 pos = {torch["pos"]["x"], torch["pos"]["y"]};
+	    m_light.add_torch(to_pixel_position(pos));
+    }
+
 	// Get the signs
 	fprintf(stderr, "	getting signs\n");
 	for (json sign : j["signs"])
@@ -310,7 +317,6 @@ bool Level::spawn_robot(vec2 position)
 		m_robot.set_head_position(position);
         m_robot.set_shoulder_position(position);
         if (m_light.init()) {
-
             m_light.set_position(m_robot.get_position());
 
 //            // TODO: init light when robot is spawned
