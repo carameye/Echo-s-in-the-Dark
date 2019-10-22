@@ -120,7 +120,7 @@ void Light::draw(const mat3& projection, const vec2& camera_shift) {
     float angle = motion.radians;
     glUniform1f(light_angle_uloc, angle);
 
-    /*if(!(torches.empty())) {
+    if(!(torches.empty())) {
         GLuint torches_position_uloc_x = glGetUniformLocation(effect.program, "torches_position_x");
         GLuint torches_position_uloc_y = glGetUniformLocation(effect.program, "torches_position_y");
         int len = torches.size();
@@ -153,7 +153,7 @@ void Light::draw(const mat3& projection, const vec2& camera_shift) {
         }
         glUniform2fv(torches_position_uloc_x, 1, torchpositions_x);
         glUniform2fv(torches_position_uloc_y, 1, torchpositions_y);
-    // TODO: end todo*/
+    // TODO: end todo
 
     // Draw the screen texture on the quad geometry
     // Setting vertices
