@@ -106,3 +106,8 @@ void FlightEnergyBar::set_scaling(vec2 scaling)
 {
 	rc.physics.scale = scaling;
 }
+
+void FlightEnergyBar::set_status(bool visible)
+{
+	rc.render = visible;
+}

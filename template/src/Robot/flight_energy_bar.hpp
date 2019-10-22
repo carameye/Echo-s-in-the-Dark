@@ -31,6 +31,6 @@ public:
     // Sets the scaling
     void set_scaling(vec2 scaling);
 
-private:
-
+	// Make [in]visible
+	void set_status(bool visible);
 };

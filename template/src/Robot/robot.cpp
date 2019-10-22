@@ -122,6 +122,8 @@ void Robot::update(float ms)
 	if (m_should_stop_smoke && mc.velocity.y >= 0) {
 		m_smoke_system.stop_smoke();
 	}
+
+	m_energy_bar.set_status(MAX_FLIGHT_DURATION != m_available_flight_time);
 }
 
 vec2 Robot::get_position() const
