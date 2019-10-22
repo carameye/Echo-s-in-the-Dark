@@ -12,39 +12,22 @@ namespace
 
 Texture SmokeSystem::test_texture;
 
-bool SmokeSystem::init()
+bool SmokeSystem::init(int id)
 {
-	if (!test_texture.is_valid())
-	{
-		if (!test_texture.load_from_file(textures_path("smoke_large.png")))
-		{
-			fprintf(stderr, "Failed to load smoke texture!");
-			return false;
-		}
-	}
-	texture = &test_texture;
-
-	if (!init_sprite())
-		return false;
-
 	m_active_smokes.clear();
 	m_inactive_smokes.clear();
 
 	for (unsigned i = 0; i < MAX_ACTIVE_SMOKE; i++) {
 		Smoke smoke;
-		if (smoke.init()) {
+		if (smoke.init(id + i)) {
 			m_inactive_smokes.push_back(smoke);
 		}
 	}
 	return true;
 }
 
-void SmokeSystem::destroy()
+SmokeSystem::~SmokeSystem()
 {
-	for (auto& smoke : m_active_smokes)
-		smoke.destroy();
-	for (auto& smoke : m_inactive_smokes)
-		smoke.destroy();
 	m_active_smokes.clear();
 	m_inactive_smokes.clear();
 }
@@ -71,12 +54,6 @@ void SmokeSystem::update(float ms, vec2 robot_position, vec2 robot_velocity)
 			m_active_smokes.at(i).update(ms);
 		}
 	}
-}
-
-void SmokeSystem::draw(const mat3& projection, const vec2& camera_shift)
-{
-    for (auto& smoke : m_active_smokes)
-		smoke.draw(projection, camera_shift);
 }
 
 void SmokeSystem::start_smoke()

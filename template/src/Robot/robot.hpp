@@ -12,12 +12,12 @@ class Robot : public Entity
 	static Texture robot_body_texture;
 	static Texture robot_body_flying_texture;
 
+	RenderComponent rc;
+	MotionComponent mc;
+
 public:
 	// Creates all the associated render resources and default transform
-	bool init();
-
-	// Releases all the associated resources
-	void destroy();
+	bool init(int id);
 	
 	// Update robot
 	// ms represents the number of milliseconds elapsed from the previous update() call
@@ -25,10 +25,6 @@ public:
 
 	// Update robots velocity based on its current movement direction and it's acceleration
 	void update_velocity(float ms);
-
-	// Renders the robot
-	// projection is the 2D orthographic projection matrix
-	void draw(const mat3& projection, const vec2& camera_shift) override;
 
 	// Returns the current robot position
 	vec2 get_position() const;

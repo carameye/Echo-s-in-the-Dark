@@ -2,9 +2,8 @@
 
 Texture Door::s_door_texture;
 
-bool Door::init()
+bool Door::init(int id)
 {
-
     if (!s_door_texture.is_valid())
 	{
         if (!s_door_texture.load_from_file(textures_path("door.png")))
@@ -14,15 +13,15 @@ bool Door::init()
 		}
 	}
 
-    texture = &s_door_texture;
+    rc.texture = &s_door_texture;
 
-    if (!init_sprite())
+    if (!rc.init_sprite())
         return false;
 
-    if (!Interactable::init())
+    if (!Interactable::init(id))
         return false;
 
-	physics.scale = { 1.5f, 1.5f };
+	rc.physics.scale = { 1.5f, 1.5f };
 
     m_destination = "";
     m_locked = false;
@@ -44,7 +43,7 @@ Hitbox Door::get_hitbox() const
 	std::vector<Square> squares(2);
 	
 	float width = brick_size;
-	vec2 position = motion.position;
+	vec2 position = mc.position;
 	position.x -= width / 2;
 	position.y += width / 2;
     Square top(position, width);

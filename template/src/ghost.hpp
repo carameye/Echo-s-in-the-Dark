@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "hitbox.hpp"
 #include "level_graph.hpp"
+#include "components.hpp"
 
 class Ghost : public Entity
 {
@@ -11,20 +12,15 @@ class Ghost : public Entity
 	std::vector<vec2> m_path;
 	LevelGraph* m_level_graph;
 
+	RenderComponent rc;
+	MotionComponent mc;
+
 public:
 	// Creates all the associated render resources and default transform
-	bool init();
+	bool init(int id);
 
-	// Releases all the associated resources
-	void destroy();
-
-	// Update brick
-	// ms represents the number of milliseconds elapsed from the previous update() call
+	// Updates the ghost
 	void update(float ms);
-
-	// Renders the brick
-	// projection is the 2D orthographic projection matrix
-	void draw(const mat3& projection, const vec2& camera_shift) override;
 
 	// Returns the current brick position
 	vec2 get_position()const;

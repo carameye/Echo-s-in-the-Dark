@@ -1,8 +1,10 @@
 #include "text.hpp"
 
 // TODO: render actual text
-bool Text::init(std::string sign_text, vec2 position)
+bool Text::init(int id, std::string sign_text, vec2 position)
 {
+	m_id = id;
+
 	if (!m_text_texture.is_valid())
 	{
 		const char* path;
@@ -26,35 +28,22 @@ bool Text::init(std::string sign_text, vec2 position)
 			return false;
 		}
 	}
-	texture = &m_text_texture;
+	rc.texture = &m_text_texture;
 
-	if (!init_sprite())
+	if (!rc.init_sprite())
 		return false;
 
-	motion.position = position;
-	motion.position.y -= 130.f;
-	physics.scale = { 1.5f, 1.5f };
+	mc.position = position;
+	mc.position.y -= 130.f;
+	rc.physics.scale = { 1.5f, 1.5f };
+
+	s_render_components[id] = &rc;
+	s_motion_components[id] = &mc;
 
 	return true;
 }
 
-void Text::destroy()
+void Text::set_status(bool enabled)
 {
-	glDeleteBuffers(1, &mesh.vbo);
-	glDeleteBuffers(1, &mesh.ibo);
-	glDeleteBuffers(1, &mesh.vao);
-
-	glDeleteShader(effect.vertex);
-	glDeleteShader(effect.fragment);
-	glDeleteShader(effect.program);
-}
-
-void Text::draw(const mat3& projection, const vec2& camera_shift)
-{
-	transform.begin();
-	transform.translate(camera_shift);
-	transform.translate(motion.position);
-	transform.scale(physics.scale);
-	transform.end();
-	draw_sprite(projection);
+	rc.render = enabled;
 }

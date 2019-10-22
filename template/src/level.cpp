@@ -2,29 +2,37 @@
 #include "level.hpp"
 
 using json = nlohmann::json;
+static int next_entity_id = 0;
 
 bool Level::init(std::string level)
 {
     m_interactable = NULL;
+	s_motion_components.clear();
+	s_render_components.clear();
+	m_rendering_system.clear();
 	return parse_level(level) && m_light.init();
 }
 
 void Level::destroy()
 {
-    // clear all level-dependent resources
-    for (auto& brick : m_bricks) {
-        brick.destroy();
-    }
-    for (auto& interactable : m_interactables) {
-		interactable.destroy();
-    }
-    for (auto& ghost : m_ghosts) {
-        ghost.destroy();
-    }
-	for (auto& sign : m_signs) {
-		sign.destroy();
+	// clear all level-dependent resources
+	for (auto& brick : m_bricks) {
+		delete brick;
 	}
-    m_robot.destroy();
+	for (auto& interactable : m_interactables) {
+		delete interactable;
+	}
+	for (auto& ghost : m_ghosts) {
+		delete ghost;
+	}
+	for (auto& sign : m_signs) {
+		delete sign;
+	}
+
+    // clear all level-dependent resources
+	s_render_components.clear();
+	s_motion_components.clear();
+	m_rendering_system.clear();
     m_bricks.clear();
     m_ghosts.clear();
     m_interactables.clear();
@@ -33,20 +41,7 @@ void Level::destroy()
 
 void Level::draw_entities(const mat3& projection, const vec2& camera_shift)
 {
-	// Draw entities
-	for (auto& brick : m_bricks) {
-        brick.draw(projection, camera_shift);
-    }
-	for (auto& sign : m_signs) {
-		sign.draw(projection, camera_shift);
-	}
-	for(auto& interactable : m_interactables) {
-		interactable.draw(projection, camera_shift);
-    }
-	m_robot.draw(projection, camera_shift);
-	for (auto& ghost : m_ghosts) {
-        ghost.draw(projection, camera_shift);
-    }
+	m_rendering_system.render(projection, camera_shift);
 }
 
 void Level::draw_light(const mat3& projection, const vec2& camera_shift)
@@ -67,7 +62,7 @@ void Level::update(float elapsed_ms)
 	for (auto& i_brick : m_bricks) 
 	{
 		const auto& robot_hitbox_x = m_robot.get_hitbox({ translation, 0.f });
-		Brick brick = i_brick;
+		Brick brick = *i_brick;
 		if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
 			m_robot.set_velocity({ 0.f, m_robot.get_velocity().y });
 
@@ -91,7 +86,7 @@ void Level::update(float elapsed_ms)
 	for (auto& i_brick : m_bricks)
 	{
 		const auto& robot_hitbox_y = m_robot.get_hitbox({ 0.f, translation });
-		Brick brick = i_brick;
+		Brick brick = *i_brick;
 		if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
 			m_robot.set_velocity({ m_robot.get_velocity().x, 0.f });
 
@@ -129,9 +124,9 @@ void Level::update(float elapsed_ms)
 
 	for (auto& ghost : m_ghosts)
 	{
-		ghost.set_goal(m_robot.get_position());
-		ghost.update(elapsed_ms);
-		if (ghost.get_hitbox().collides_with(new_robot_hitbox))
+		ghost->set_goal(m_robot.get_position());
+		ghost->update(elapsed_ms);
+		if (ghost->get_hitbox().collides_with(new_robot_hitbox))
 		{
 			reset_level();
 		}
@@ -139,10 +134,10 @@ void Level::update(float elapsed_ms)
 
 	for (auto& sign : m_signs)
 	{
-		 if (sign.get_hitbox().collides_with(new_robot_hitbox))
-			sign.show_text();
+		 if (sign->get_hitbox().collides_with(new_robot_hitbox))
+			sign->show_text();
 		 else
-			sign.hide_text();
+			sign->hide_text();
 	}
 
 	const Hitbox robot_hitbox = m_robot.get_hitbox({0.f, 0.f});
@@ -153,8 +148,8 @@ void Level::update(float elapsed_ms)
 		m_interactable = NULL;
 		for (auto& interactable : m_interactables)
 		{
-			if (interactable.get_hitbox().collides_with(robot_hitbox)) {
-				m_interactable = &interactable;
+			if (interactable->get_hitbox().collides_with(robot_hitbox)) {
+				m_interactable = interactable;
 				break;
 			}
 		}
@@ -194,18 +189,7 @@ bool Level::parse_level(std::string level)
 	fprintf(stderr, "Opened level file\n");
 
 	// clear all level-dependent resources
-	for (auto& brick : m_bricks)
-		brick.destroy();
-	for (auto& door : m_interactables)
-		door.destroy();
-	for (auto& ghost : m_ghosts)
-		ghost.destroy();
-	for (auto& sign : m_signs)
-		sign.destroy();
-	m_bricks.clear();
-	m_ghosts.clear();
-	m_interactables.clear();
-	m_signs.clear();
+	destroy();
 
 	// Parse the json
 	json j = json::parse(file);
@@ -281,16 +265,18 @@ bool Level::parse_level(std::string level)
 
 	save_level();
 
+	m_rendering_system.process(next_entity_id);
+
 	return true;
 }
 
 bool Level::spawn_door(vec2 position, std::string next_level)
 {
-	Door door;
-	if (door.init())
+	Door *door = new Door();
+	if (door->init(next_entity_id++))
 	{
-		door.set_position(position);
-		door.set_destination(next_level);
+		door->set_position(position);
+		door->set_destination(next_level);
 		m_interactables.push_back(door);
 		return true;
 	}
@@ -300,11 +286,11 @@ bool Level::spawn_door(vec2 position, std::string next_level)
 
 bool Level::spawn_ghost(vec2 position)
 {
-	Ghost ghost;
-	if (ghost.init())
+	Ghost *ghost = new Ghost();
+	if (ghost->init(next_entity_id++))
 	{
-		ghost.set_position(position);
-		ghost.set_level_graph(&m_graph);
+		ghost->set_position(position);
+		ghost->set_level_graph(&m_graph);
 		m_ghosts.push_back(ghost);
 		return true;
 	}
@@ -313,8 +299,9 @@ bool Level::spawn_ghost(vec2 position)
 
 bool Level::spawn_robot(vec2 position)
 {
-	if (m_robot.init())
+	if (m_robot.init(next_entity_id))
 	{
+		next_entity_id += 104;
 		m_robot.set_position(position);
 		m_robot.set_head_position(position);
         m_robot.set_shoulder_position(position);
@@ -339,8 +326,8 @@ bool Level::spawn_robot(vec2 position)
 
 bool Level::spawn_sign(vec2 position, std::string text)
 {
-	Sign sign;
-	if (sign.init(text, position))
+	Sign *sign = new Sign();
+	if (sign->init(next_entity_id++, text, position))
 	{
 		m_signs.push_back(sign);
 		return true;
@@ -358,10 +345,10 @@ bool Level::spawn_brick(vec2 position, vec3 colour)
 	if (!x || !y || !z)
 		fprintf(stderr, "	brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
 
-	Brick brick;
-	if (brick.init())
+	Brick *brick = new Brick();
+	if (brick->init(next_entity_id++))
 	{
-		brick.set_position(position);
+		brick->set_position(position);
 		m_bricks.push_back(brick);
 		return true;
 	}
@@ -375,7 +362,7 @@ void Level::save_level()
 	reset_positions.push_back(m_robot.get_position());
 	for (auto ghost : m_ghosts)
 	{
-		reset_positions.push_back(ghost.get_position());
+		reset_positions.push_back(ghost->get_position());
 	}
 }
 
@@ -385,7 +372,7 @@ void Level::reset_level()
 	m_robot.set_position(reset_positions[pos_i++]);
 	for (auto& ghost : m_ghosts)
 	{
-		ghost.set_position(reset_positions[pos_i++]);
+		ghost->set_position(reset_positions[pos_i++]);
 	}
 }
 

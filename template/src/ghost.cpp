@@ -5,8 +5,10 @@
 
 Texture Ghost::s_ghost_texture;
 
-bool Ghost::init()
+bool Ghost::init(int id)
 {
+	m_id = id;
+
 	if (!s_ghost_texture.is_valid())
 	{
 		if (!s_ghost_texture.load_from_file(textures_path("ghost.png")))
@@ -16,41 +18,32 @@ bool Ghost::init()
 		}
 	}
 
-	texture = &s_ghost_texture;
+	rc.texture = &s_ghost_texture;
 
-	if (!init_sprite())
+	if (!rc.init_sprite())
 		return false;
 
-	motion.position = { 0.f, 0.f };
-	motion.velocity = { 0.f, 0.f };
-	motion.acceleration = { 0.f , 0.f };
-	motion.radians = 0.f;
+	mc.position = { 0.f, 0.f };
+	mc.velocity = { 0.f, 0.f };
+	mc.acceleration = { 0.f , 0.f };
+	mc.radians = 0.f;
 
-	physics.scale = { brick_size / texture->width, brick_size / texture->height };
-	physics.scale.x *= 47.f / 41.f;
+	rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
+	rc.physics.scale.x *= 47.f / 41.f;
+
+	s_render_components[id] = &rc;
+	s_motion_components[id] = &mc;
 
 	return true;
 }
 
-// Releases all graphics resources
-void Ghost::destroy()
-{
-	glDeleteBuffers(1, &mesh.vbo);
-	glDeleteBuffers(1, &mesh.ibo);
-	glDeleteBuffers(1, &mesh.vao);
-
-	glDeleteShader(effect.vertex);
-	glDeleteShader(effect.fragment);
-	glDeleteShader(effect.program);
-}
-
 void Ghost::update(float ms)
 {
-	if (len(sub(m_goal, motion.position)) < 800.f)
+	if (len(sub(m_goal, mc.position)) < 800.f)
 	{
 		if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > TOLERANCE)
 		{
-			m_path = m_level_graph->get_path(motion.position, m_goal);
+			m_path = m_level_graph->get_path(mc.position, m_goal);
 		}
 	}
 
@@ -61,18 +54,19 @@ void Ghost::update(float ms)
 
 		while (allowed_move > TOLERANCE)
 		{
-			vec2 disp = sub(next_pos, motion.position);
+			vec2 disp = sub(next_pos, mc.position);
+			rc.physics.scale.x *= -disp.x / abs(disp.x);
 			float dist = len(disp);
 
 			if (allowed_move < dist)
 			{
 				vec2 dir = normalize(disp);
-				motion.position = add(motion.position, mul(dir, allowed_move));
+				mc.position = add(mc.position, mul(dir, allowed_move));
 				allowed_move = 0.f;
 			}
 			else
 			{
-				motion.position = next_pos;
+				mc.position = next_pos;
 				allowed_move -= dist;
 				m_path.erase(m_path.begin() + 0);
 
@@ -85,31 +79,14 @@ void Ghost::update(float ms)
 	}
 }
 
-void Ghost::draw(const mat3& projection, const vec2& camera_shift)
-{
-	// Transformation code, see Rendering and Transformation in the template specification for more info
-	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
-	transform.begin();
-	transform.translate(camera_shift);
-	transform.translate(motion.position);
-	transform.rotate(motion.radians);
-	transform.scale(physics.scale);
-	if (motion.position.x < m_goal.x) {
-		transform.scale({ -1.f, 1.f });
-	}
-	transform.end();
-
-	draw_sprite(projection);
-}
-
 vec2 Ghost::get_position()const
 {
-	return motion.position;
+	return mc.position;
 }
 
 void Ghost::set_position(vec2 position)
 {
-	motion.position = position;
+	mc.position = position;
 	m_path.clear();
 }
 
@@ -118,7 +95,7 @@ Hitbox Ghost::get_hitbox() const
 	std::vector<Square> squares(1);
 
 	float width = brick_size;
-	vec2 position = motion.position;
+	vec2 position = mc.position;
 	position.x -= width / 2;
 	position.y += width / 2;
 	Square square(position, width);

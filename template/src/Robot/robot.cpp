@@ -15,8 +15,10 @@ namespace {
 Texture Robot::robot_body_texture;
 Texture Robot::robot_body_flying_texture;
 
-bool Robot::init()
+bool Robot::init(int id)
 {
+	m_id = id;
+
 	if (!robot_body_texture.is_valid())
 	{
 		if (!robot_body_texture.load_from_file(textures_path("body_ball.png")))
@@ -34,41 +36,28 @@ bool Robot::init()
 		}
 	}
 
-	texture = &robot_body_texture;
+	rc.texture = &robot_body_texture;
 
-	if (!init_sprite())
+	if (!rc.init_sprite())
 		return false;
 
-    motion.position = { 0.f, 0.f };
-    motion.velocity = { 0.f, 0.f };
-    motion.acceleration = { 0.f , VERTICAL_ACCELERATION };
-    motion.radians = 0.f;
+    mc.position = { 0.f, 0.f };
+    mc.velocity = { 0.f, 0.f };
+    mc.acceleration = { 0.f , VERTICAL_ACCELERATION };
+    mc.radians = 0.f;
 
-	physics.scale = { brick_size / texture->width, brick_size / texture->height };
-	bool valid = m_head.init() && m_shoulders.init() && m_smoke_system.init() && m_energy_bar.init();
-	m_head.set_scaling(physics.scale);
-	m_shoulders.set_scaling(physics.scale);
-    m_energy_bar.set_scaling(physics.scale);
+	rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
+	bool valid = m_shoulders.init(id + 1) && m_head.init(id + 2) && m_energy_bar.init(id + 3) && m_smoke_system.init(id + 4);
+	m_head.set_scaling(rc.physics.scale);
+	m_shoulders.set_scaling(rc.physics.scale);
+    m_energy_bar.set_scaling(rc.physics.scale);
 
     m_available_flight_time = MAX_FLIGHT_DURATION;
 
+	s_render_components[id] = &rc;
+	s_motion_components[id] = &mc;
+
 	return valid;
-}
-
-// Releases all graphics resources
-void Robot::destroy()
-{
-	glDeleteBuffers(1, &mesh.vbo);
-	glDeleteBuffers(1, &mesh.ibo);
-	glDeleteBuffers(1, &mesh.vao);
-
-	glDeleteShader(effect.vertex);
-	glDeleteShader(effect.fragment);
-	glDeleteShader(effect.program);
-
-	m_shoulders.destroy();
-	m_head.destroy();
-	m_smoke_system.destroy();
 }
 
 void Robot::update_velocity(float ms) {
@@ -76,28 +65,28 @@ void Robot::update_velocity(float ms) {
     float step = (ms / 1000);
 
     if (m_is_accelerating_right) {
-        float new_velocity = motion.velocity.x + motion.acceleration.x * step;
-        motion.velocity.x = new_velocity > MAX_HORIZONTAL_VELOCITY ? MAX_HORIZONTAL_VELOCITY : new_velocity;
+        float new_velocity = mc.velocity.x + mc.acceleration.x * step;
+        mc.velocity.x = new_velocity > MAX_HORIZONTAL_VELOCITY ? MAX_HORIZONTAL_VELOCITY : new_velocity;
     }
     if (m_is_accelerating_left) {
-        float new_velocity = motion.velocity.x - motion.acceleration.x * step;
-        motion.velocity.x = new_velocity < MAX_HORIZONTAL_VELOCITY * -1.f ? MAX_HORIZONTAL_VELOCITY * -1.f : new_velocity;
+        float new_velocity = mc.velocity.x - mc.acceleration.x * step;
+        mc.velocity.x = new_velocity < MAX_HORIZONTAL_VELOCITY * -1.f ? MAX_HORIZONTAL_VELOCITY * -1.f : new_velocity;
     }
-    if (!m_is_accelerating_right && motion.velocity.x > 0) {
-        float new_velocity = motion.velocity.x - motion.acceleration.x * step;
-        motion.velocity.x = new_velocity < 0 ? 0 : new_velocity;
+    if (!m_is_accelerating_right && mc.velocity.x > 0) {
+        float new_velocity = mc.velocity.x - mc.acceleration.x * step;
+        mc.velocity.x = new_velocity < 0 ? 0 : new_velocity;
     }
-    if (!m_is_accelerating_left && motion.velocity.x < 0) {
-        float new_velocity = motion.velocity.x + motion.acceleration.x * step;
-        motion.velocity.x = new_velocity > 0 ? 0 : new_velocity;
+    if (!m_is_accelerating_left && mc.velocity.x < 0) {
+        float new_velocity = mc.velocity.x + mc.acceleration.x * step;
+        mc.velocity.x = new_velocity > 0 ? 0 : new_velocity;
     }
     if (m_is_flying) {
-        float new_velocity = motion.velocity.y - motion.acceleration.y * step;
-        motion.velocity.y = new_velocity < MAX_VERTICAL_VELOCITY * -1.f ? MAX_VERTICAL_VELOCITY * -1.f : new_velocity;
+        float new_velocity = mc.velocity.y - mc.acceleration.y * step;
+        mc.velocity.y = new_velocity < MAX_VERTICAL_VELOCITY * -1.f ? MAX_VERTICAL_VELOCITY * -1.f : new_velocity;
     }
     if (!m_is_flying) {
-        float new_velocity = motion.velocity.y + motion.acceleration.y * step;
-        motion.velocity.y = new_velocity > MAX_VERTICAL_VELOCITY ? MAX_VERTICAL_VELOCITY : new_velocity;
+        float new_velocity = mc.velocity.y + mc.acceleration.y * step;
+        mc.velocity.y = new_velocity > MAX_VERTICAL_VELOCITY ? MAX_VERTICAL_VELOCITY : new_velocity;
     }
 }
 
@@ -105,14 +94,14 @@ void Robot::update(float ms)
 {
 	if (m_grounded) {
         m_available_flight_time = fmin(m_available_flight_time += (ms*2), MAX_FLIGHT_DURATION);
-	    if (std::abs(motion.velocity.x) > TOLERANCE) {
-            motion.radians += motion.velocity.x / 50;
+	    if (std::abs(mc.velocity.x) > TOLERANCE) {
+            mc.radians += mc.velocity.x / 50;
         }
     }
 
 	m_grounded = false;
-	m_head.update(ms, add(motion.position, { 0.f, -48.f }));
-    m_shoulders.update(ms, add(motion.position, { 0.f, 0.f }));
+	m_head.update(ms, add(mc.position, { 0.f, -48.f }));
+    m_shoulders.update(ms, add(mc.position, { 0.f, 0.f }));
 
 
     if (m_is_flying) {
@@ -121,74 +110,53 @@ void Robot::update(float ms)
             stop_flying();
         }
     }
-    m_energy_bar.update(ms, add(motion.position, { 0.f, -90.f }), (m_available_flight_time/MAX_FLIGHT_DURATION));
+    m_energy_bar.update(ms, add(mc.position, { 0.f, -90.f }), (m_available_flight_time/MAX_FLIGHT_DURATION));
 
-	if (motion.velocity.x != 0.f) {
-        m_head.set_direction(motion.velocity.x > 0.f);
-        m_shoulders.set_direction(motion.velocity.x > 0.f);
+	if (mc.velocity.x != 0.f) {
+        m_head.set_direction(mc.velocity.x > 0.f);
+        m_shoulders.set_direction(mc.velocity.x > 0.f);
     }
 
-	m_smoke_system.update(ms, motion.position, motion.velocity);
+	m_smoke_system.update(ms, mc.position, mc.velocity);
 
-	if (m_should_stop_smoke && motion.velocity.y >= 0) {
+	if (m_should_stop_smoke && mc.velocity.y >= 0) {
 		m_smoke_system.stop_smoke();
 	}
 }
 
-void Robot::draw(const mat3& projection, const vec2& camera_shift)
-{
-	// Transformation code, see Rendering and Transformation in the template specification for more info
-	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
-	transform.begin();
-	transform.translate(camera_shift);
-	transform.translate(motion.position);
-	transform.rotate(motion.radians);
-	transform.scale(physics.scale);
-	transform.end();
-
-	draw_sprite(projection);
-
-    m_shoulders.draw(projection, camera_shift);
-	m_head.draw(projection, camera_shift);
-	if (m_available_flight_time != MAX_FLIGHT_DURATION) {
-        m_energy_bar.draw(projection, camera_shift);
-	}
-	m_smoke_system.draw(projection, camera_shift);
-}
-
 vec2 Robot::get_position() const
 {
-	return motion.position;
+	return mc.position;
 }
 
 vec2 Robot::get_velocity() const
 {
-	return motion.velocity;
+	return mc.velocity;
 }
 
 vec2 Robot::get_acceleration() const
 {
-	return motion.acceleration;
+	return mc.acceleration;
 }
 
 vec2 Robot::get_next_position()
 {
-    return {motion.position.x + motion.velocity.x, motion.position.y + motion.velocity.y};
+    return {mc.position.x + mc.velocity.x, mc.position.y + mc.velocity.y};
 }
 
 void Robot::set_position(vec2 position)
 {
-	motion.position = position;
+	mc.position = position;
 }
 
 void Robot::set_velocity(vec2 velocity)
 {
-	motion.velocity = velocity;
+	mc.velocity = velocity;
 }
 
 void Robot::set_acceleration(vec2 acceleration)
 {
-	motion.acceleration = acceleration;
+	mc.acceleration = acceleration;
 }
 
 void Robot::set_grounded()
@@ -220,7 +188,7 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 {
 	std::vector<Circle> circles(1);
 
-	vec2 position = motion.position;
+	vec2 position = mc.position;
 
 	position.x += translation.x;
 	position.y += translation.y;
@@ -240,9 +208,9 @@ void Robot::start_flying()
     m_is_flying = true;
 	m_smoke_system.start_smoke();
 	m_should_stop_smoke = false;
-	texture = &robot_body_flying_texture;
-	physics.scale.x *= 53.f / 45.f;
-	motion.radians = 0.f;
+	rc.texture = &robot_body_flying_texture;
+	rc.physics.scale.x *= 53.f / 45.f;
+	mc.radians = 0.f;
     // If we want made robot fall faster, reset vertical acceleration here.
 }
 
@@ -251,8 +219,8 @@ void Robot::stop_flying()
     m_is_flying = false;
 	// smoke will stop in update() when velocity.y is positive
 	m_should_stop_smoke = true;
-	texture = &robot_body_texture;
-	physics.scale = { brick_size / texture->width, brick_size / texture->height };
+	rc.texture = &robot_body_texture;
+	rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 	// If we want the robot to fall a bit faster, set vertical acceleration here. Positive number, make it a const
 }
 
@@ -260,9 +228,9 @@ void Robot::set_is_accelerating_right(bool val) {
     m_is_accelerating_right = val;
 
     if (val) {
-        set_acceleration({ HORIZONTAL_ACCELERATION , motion.acceleration.y });
+        set_acceleration({ HORIZONTAL_ACCELERATION , mc.acceleration.y });
     } else {
-        set_acceleration({ HORIZONTAL_DECELERATION , motion.acceleration.y });
+        set_acceleration({ HORIZONTAL_DECELERATION , mc.acceleration.y });
     }
 }
 
@@ -270,9 +238,9 @@ void Robot::set_is_accelerating_left(bool val) {
     m_is_accelerating_left = val;
 
     if (val) {
-        set_acceleration({ HORIZONTAL_ACCELERATION , motion.acceleration.y });
+        set_acceleration({ HORIZONTAL_ACCELERATION , mc.acceleration.y });
     } else {
-        set_acceleration({ HORIZONTAL_DECELERATION , motion.acceleration.y });
+        set_acceleration({ HORIZONTAL_DECELERATION , mc.acceleration.y });
     }
 
 }

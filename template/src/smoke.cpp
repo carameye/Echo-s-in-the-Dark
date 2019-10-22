@@ -16,8 +16,10 @@ namespace
 Texture Smoke::smoke_texture_large;
 Texture Smoke::smoke_texture_small;
 
-bool Smoke::init()
+bool Smoke::init(int id)
 {
+	m_id = id;
+
 	if (!smoke_texture_large.is_valid())
 	{
 		if (!smoke_texture_large.load_from_file(textures_path("smoke_large.png")))
@@ -35,68 +37,49 @@ bool Smoke::init()
 		}
 	}
 	if (rand() % 2 == 0) {
-		texture = &smoke_texture_large;
+		rc.texture = &smoke_texture_large;
 	} else {
-		texture = &smoke_texture_small;
+		rc.texture = &smoke_texture_small;
 	}
 
 	float scale = MIN_SCALE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(MAX_SCALE-MIN_SCALE)));
     m_original_scale = { scale, scale };
-	physics.scale = m_original_scale;
+	rc.physics.scale = m_original_scale;
 
-	motion.radians = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(2 * PI)));
+	mc.radians = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(2 * PI)));
 
-	if (!init_sprite())
+	if (!rc.init_sprite())
 		return false;
+
+	s_render_components[id] = &rc;
+	s_motion_components[id] = &mc;
+
     return true;
 }
 
 void Smoke::activate(vec2 robot_position, vec2 robot_velocity)
 {
-	motion.velocity.x = robot_velocity.x * -1.f / 3.f;
-	motion.velocity.y = robot_velocity.y * -1.f / 2.f;
-	if (motion.velocity.y < 0.f) {
-		motion.velocity.y = VELOCITY_Y;
+	mc.velocity.x = robot_velocity.x * -1.f / 3.f;
+	mc.velocity.y = robot_velocity.y * -1.f / 2.f;
+	if (mc.velocity.y < 0.f) {
+		mc.velocity.y = VELOCITY_Y;
 	}
-	motion.position = { robot_position.x, robot_position.y + 25.f };
+	mc.position = { robot_position.x, robot_position.y + 25.f };
 	m_alpha = 1.f;
-}
-
-void Smoke::destroy()
-{
-	glDeleteBuffers(1, &mesh.vbo);
-	glDeleteBuffers(1, &mesh.ibo);
-	glDeleteBuffers(1, &mesh.vao);
-
-	glDeleteShader(effect.vertex);
-	glDeleteShader(effect.fragment);
-	glDeleteShader(effect.program);
 }
 
 void Smoke::update(float ms)
 {
 	float time_factor = ms / 1000.f;
-	motion.position.x += motion.velocity.x * time_factor;
-	motion.position.y += motion.velocity.y * time_factor;
+	mc.position.x += mc.velocity.x * time_factor;
+	mc.position.y += mc.velocity.y * time_factor;
 	m_alpha -= ms / FADE_OUT_MS;
 	m_size_mod_count += ms / SIZE_MOD_MS * PI;
 	if (m_size_mod_count > PI) {
 		m_size_mod_count = 0;
 	}
-	physics.scale.x = m_original_scale.x + sin(m_size_mod_count) * SIZE_MOD_AMPLITUDE;
-	physics.scale.y = m_original_scale.y + sin(m_size_mod_count) * SIZE_MOD_AMPLITUDE;
-}
-
-void Smoke::draw(const mat3& projection, const vec2& camera_shift)
-{
-	transform.begin();
-	transform.translate(camera_shift);
-	transform.translate(motion.position);
-	transform.rotate(motion.radians);
-    transform.scale(physics.scale);
-	transform.end();
-
-	draw_sprite_alpha(projection, m_alpha);
+	rc.physics.scale.x = m_original_scale.x + sin(m_size_mod_count) * SIZE_MOD_AMPLITUDE;
+	rc.physics.scale.y = m_original_scale.y + sin(m_size_mod_count) * SIZE_MOD_AMPLITUDE;
 }
 
 bool Smoke::should_destroy() {

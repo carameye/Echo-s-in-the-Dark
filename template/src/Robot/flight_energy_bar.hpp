@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "components.hpp"
 
 class FlightEnergyBar : public Entity
 {
@@ -10,19 +11,16 @@ class FlightEnergyBar : public Entity
     static Texture fuel_2;
     static Texture fuel_empty;
 
+	RenderComponent rc;
+	MotionComponent mc;
+
 public:
 
     // Initializes energy bar above the robots head
-    bool init();
-
-    // Destroys the health bar when the robot is detroyed
-    void destroy();
+    bool init(int id);
 
     // Updates the Health bar bot position and percentage health
     void update(float ms, vec2 goal, float percent);
-
-    // Renders the health bar
-    void draw(const mat3& projection, const vec2& camera_shift) override;
 
     // Returns the current energy bar position
     vec2 get_position() const;

@@ -13,7 +13,7 @@ public:
     void destroy();
 
     // Renders the water
-    void draw(const mat3& projection, const vec2& camera_shift)override;
+    void draw(const mat3& projection, const vec2& camera_shift);
 
     void set_position(vec2 pos);
 
@@ -38,4 +38,8 @@ private:
     vec2 light_position;
     float ambient = 0.f;
     std::vector<vec2> torches;
+
+	Mesh mesh;
+	Effect effect;
+	Motion motion;
 };
