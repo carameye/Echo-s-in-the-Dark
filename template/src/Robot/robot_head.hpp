@@ -1,5 +1,6 @@
 #include <common.hpp>
 #include "components.hpp"
+#include <math.h>
 
 class RobotHead : public Entity
 {
