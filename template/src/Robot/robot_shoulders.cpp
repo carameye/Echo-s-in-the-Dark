@@ -38,11 +38,11 @@ void RobotShoulders::update(float ms, vec2 goal)
     vec2 dist = sub(goal, mc.position);
 	if (m_face_right)
 	{
-		rc.physics.scale.x = -abs(rc.physics.scale.x);
+		rc.physics.scale.x = abs(rc.physics.scale.x);
 	}
 	else
 	{
-		rc.physics.scale.x = abs(rc.physics.scale.x);
+		rc.physics.scale.x = -abs(rc.physics.scale.x);
 	}
     set_position(add(get_position(), { dist.x,  dist.y }));
 }
