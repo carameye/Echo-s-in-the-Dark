@@ -46,6 +46,9 @@ bool Robot::init(int id)
     mc.acceleration = { 0.f , VERTICAL_ACCELERATION };
     mc.radians = 0.f;
 
+	s_render_components[id] = &rc;
+	s_motion_components[id] = &mc;
+
 	rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 	bool valid = m_shoulders.init(id + 1) && m_head.init(id + 2) && m_energy_bar.init(id + 3) && m_smoke_system.init(id + 4);
 	m_head.set_scaling(rc.physics.scale);
@@ -53,9 +56,6 @@ bool Robot::init(int id)
     m_energy_bar.set_scaling(rc.physics.scale);
 
     m_available_flight_time = MAX_FLIGHT_DURATION;
-
-	s_render_components[id] = &rc;
-	s_motion_components[id] = &mc;
 
 	return valid;
 }

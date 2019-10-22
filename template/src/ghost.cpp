@@ -55,7 +55,10 @@ void Ghost::update(float ms)
 		while (allowed_move > TOLERANCE)
 		{
 			vec2 disp = sub(next_pos, mc.position);
-			rc.physics.scale.x *= -disp.x / abs(disp.x);
+			if (disp.x != 0.f)
+			{
+				rc.physics.scale.x = -abs(rc.physics.scale.x) * disp.x / abs(disp.x);
+			}
 			float dist = len(disp);
 
 			if (allowed_move < dist)

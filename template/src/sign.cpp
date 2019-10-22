@@ -26,6 +26,8 @@ bool Sign::init(int id, std::string sign_text, vec2 position)
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;
 
+	hide_text();
+
 	return m_text.init(id + 1, sign_text, position);
 }
 
@@ -53,5 +55,5 @@ void Sign::show_text()
 
 void Sign::hide_text()
 {
-	m_text.set_status(true);
+	m_text.set_status(false);
 }

@@ -18,8 +18,8 @@ bool SmokeSystem::init(int id)
 	m_inactive_smokes.clear();
 
 	for (unsigned i = 0; i < MAX_ACTIVE_SMOKE; i++) {
-		Smoke smoke;
-		if (smoke.init(id + i)) {
+		Smoke *smoke = new Smoke();
+		if (smoke->init(id + i)) {
 			m_inactive_smokes.push_back(smoke);
 		}
 	}
@@ -28,6 +28,14 @@ bool SmokeSystem::init(int id)
 
 SmokeSystem::~SmokeSystem()
 {
+	for (auto& smoke : m_active_smokes)
+	{
+		delete smoke;
+	}
+	for (auto& smoke : m_inactive_smokes)
+	{
+		delete smoke;
+	}
 	m_active_smokes.clear();
 	m_inactive_smokes.clear();
 }
@@ -40,18 +48,18 @@ void SmokeSystem::update(float ms, vec2 robot_position, vec2 robot_velocity)
 		float x_interval = SMOKE_WIDTH / (SMOKE_COUNT - 1);
 		smoke_position.x -= SMOKE_WIDTH / 2.f;
 		for (unsigned i = 0; i < SMOKE_COUNT; i++) {
-			m_inactive_smokes.at(i).activate(smoke_position, robot_velocity);
+			m_inactive_smokes.at(i)->activate(smoke_position, robot_velocity);
 			m_active_smokes.push_back(m_inactive_smokes.at(i));
 			m_inactive_smokes.erase(m_inactive_smokes.begin() + i);
 			smoke_position.x += x_interval;
 		}
 	}
 	for (int i = m_active_smokes.size() - 1; i >= 0; i--) {
-		if (m_active_smokes.at(i).should_destroy()) {
+		if (m_active_smokes.at(i)->should_destroy()) {
 			m_inactive_smokes.push_back(m_active_smokes.at(i));
 			m_active_smokes.erase(m_active_smokes.begin() + i);
 		} else {
-			m_active_smokes.at(i).update(ms);
+			m_active_smokes.at(i)->update(ms);
 		}
 	}
 }

@@ -66,6 +66,7 @@ void Smoke::activate(vec2 robot_position, vec2 robot_velocity)
 	}
 	mc.position = { robot_position.x, robot_position.y + 25.f };
 	m_alpha = 1.f;
+	rc.render = true;
 }
 
 void Smoke::update(float ms)
@@ -74,6 +75,10 @@ void Smoke::update(float ms)
 	mc.position.x += mc.velocity.x * time_factor;
 	mc.position.y += mc.velocity.y * time_factor;
 	m_alpha -= ms / FADE_OUT_MS;
+	if (m_alpha < 0.f)
+	{
+		rc.render = false;
+	}
 	m_size_mod_count += ms / SIZE_MOD_MS * PI;
 	if (m_size_mod_count > PI) {
 		m_size_mod_count = 0;

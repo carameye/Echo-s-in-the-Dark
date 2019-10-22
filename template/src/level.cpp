@@ -28,11 +28,10 @@ void Level::destroy()
 	for (auto& sign : m_signs) {
 		delete sign;
 	}
-
-    // clear all level-dependent resources
 	s_render_components.clear();
 	s_motion_components.clear();
 	m_rendering_system.clear();
+	m_interactable = NULL;
     m_bricks.clear();
     m_ghosts.clear();
     m_interactables.clear();
@@ -253,7 +252,7 @@ bool Level::parse_level(std::string level)
 		spawn_brick(to_pixel_position(pos), colour);
 	}
 
-	fprintf(stderr, "	built world with %d doors, %d ghosts, and %d bricks\n",
+	fprintf(stderr, "	built world with %ld doors, %ld ghosts, and %ld bricks\n",
 		m_interactables.size(), m_ghosts.size(), m_bricks.size());
 
 	// Generate the graph
@@ -327,8 +326,9 @@ bool Level::spawn_robot(vec2 position)
 bool Level::spawn_sign(vec2 position, std::string text)
 {
 	Sign *sign = new Sign();
-	if (sign->init(next_entity_id++, text, position))
+	if (sign->init(next_entity_id, text, position))
 	{
+		next_entity_id += 2;
 		m_signs.push_back(sign);
 		return true;
 	}
