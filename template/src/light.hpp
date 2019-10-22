@@ -13,7 +13,7 @@ public:
     void destroy();
 
     // Renders the water
-    void draw(const mat3& projection, const vec2& camera_shift);
+    void draw(const mat3& projection, const vec2& camera_shift, const vec2& size);
 
     void set_position(vec2 pos);
 

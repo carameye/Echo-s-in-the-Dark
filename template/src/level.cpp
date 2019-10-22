@@ -36,6 +36,7 @@ void Level::destroy()
     m_ghosts.clear();
     m_interactables.clear();
 	m_signs.clear();
+	m_light.clear_torches();
 }
 
 void Level::draw_entities(const mat3& projection, const vec2& camera_shift)
@@ -45,7 +46,7 @@ void Level::draw_entities(const mat3& projection, const vec2& camera_shift)
 
 void Level::draw_light(const mat3& projection, const vec2& camera_shift)
 {
-	m_light.draw(projection, camera_shift);
+	m_light.draw(projection, camera_shift, { width, height });
 }
 
 void Level::update(float elapsed_ms)
@@ -193,8 +194,8 @@ bool Level::parse_level(std::string level)
 	// Parse the json
 	json j = json::parse(file);
 
-	int width = j["size"]["width"];
-	int height = j["size"]["height"];
+	width = j["size"]["width"];
+	height = j["size"]["height"];
 
 	// Get ambient light level
 	m_light.set_ambient(j["ambient_light"]);

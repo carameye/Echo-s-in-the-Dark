@@ -18,7 +18,7 @@ B                                                                         B
 B                                                                         B
 B                                                                         B
 B                                                                         B
-B                              T                            T             B
+B                                                                         B
 B          R                   D                    D                     B
-B    T     S        S       S                  T                        T B
+B         TST      TST     TST                                            B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB

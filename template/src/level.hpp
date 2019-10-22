@@ -60,6 +60,8 @@ private:
 	void reset_level();
 
 private:
+	float width, height;
+
 	// Systems
 	RenderingSystem m_rendering_system;
 

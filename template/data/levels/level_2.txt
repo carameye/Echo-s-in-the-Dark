@@ -43,5 +43,5 @@ B                                          BBBBBBBBBBBBBB
 B                                      BBBBB
 B                                  BBBBB
 B               R              BBBBB
-B               S          BBBBB
+B              TST         BBBBB
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB
