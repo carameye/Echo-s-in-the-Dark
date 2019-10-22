@@ -2,22 +2,22 @@
 
 #include "common.hpp"
 #include <vector>
+#include "components.hpp"
 
 class Smoke : public Entity
 {
 	static Texture smoke_texture_large;
 	static Texture smoke_texture_small;
 
+	RenderComponent rc;
+	MotionComponent mc;
+
 public:
-	bool init();
+	bool init(int id);
 
 	void activate(vec2 robot_position, vec2 robot_velocity);
 
-	void destroy();
-	
 	void update(float ms);
-
-	void draw(const mat3& projection, const vec2& camera_shift) override;
 
 	bool should_destroy();
 

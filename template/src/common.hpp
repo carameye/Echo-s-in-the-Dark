@@ -88,64 +88,55 @@ struct Texture
 	bool create_from_screen(GLFWwindow const * const window); // Screen texture
 };
 
+// A Mesh is a collection of a VertexBuffer and an IndexBuffer. A VAO
+// represents a Vertex Array Object and is the container for 1 or more Vertex Buffers and 
+// an Index Buffer.
+struct Mesh {
+	GLuint vao;
+	GLuint vbo;
+	GLuint ibo;
+};
+
+// Effect component of Entity for Vertex and Fragment shader, which are then put(linked) together in a
+// single program that is then bound to the pipeline.
+struct Effect {
+	GLuint vertex;
+	GLuint fragment;
+	GLuint program;
+
+	bool load_from_file(const char* vs_path, const char* fs_path); // load shaders from files and link into program
+	void release(); // release shaders and program
+};
+
+// All data relevant to the motion of the salmon.
+struct Motion {
+	vec2 position;
+	vec2 velocity;
+	vec2 acceleration;
+	float radians;
+};
+
+// Scale is used in the bounding box calculations, 
+// and so contextually belongs here (for now).
+struct Physics {
+	vec2 scale;
+};
+
+// Transform component handles transformations passed to the Vertex shader.
+// gl Immediate mode equivalent, see the Rendering and Transformations section in the
+// specification pdf.
+struct Transform {
+	mat3 out;
+
+	void begin();
+	void scale(vec2 scale);
+	void rotate(float radians);
+	void translate(vec2 offset);
+	void end();
+};
+
 // An entity boils down to a collection of components,
 // organized by their in-game context (mesh, effect, motion, etc...)
 struct Entity {
-	// projection contains the orthographic projection matrix. As every Entity::draw()
-	// renders itself it needs it to correctly bind it to its shader.
-	virtual void draw(const mat3& projection, const vec2& camera_shift) = 0;
-
-protected:
-	Texture* texture;
-	// A Mesh is a collection of a VertexBuffer and an IndexBuffer. A VAO
-	// represents a Vertex Array Object and is the container for 1 or more Vertex Buffers and 
-	// an Index Buffer.
-	struct Mesh {
-		GLuint vao;
-		GLuint vbo;
-		GLuint ibo;
-	} mesh;
-
-	// Effect component of Entity for Vertex and Fragment shader, which are then put(linked) together in a
-	// single program that is then bound to the pipeline.
-	struct Effect {
-		GLuint vertex;
-		GLuint fragment;
-		GLuint program;
-
-		bool load_from_file(const char* vs_path, const char* fs_path); // load shaders from files and link into program
-		void release(); // release shaders and program
-	} effect;
-
-	// All data relevant to the motion of the salmon.
-	struct Motion {
-		vec2 position;
-		vec2 velocity;
-		vec2 acceleration;
-		float radians;
-	} motion;
-
-	// Scale is used in the bounding box calculations, 
-	// and so contextually belongs here (for now).
-	struct Physics {
-		vec2 scale;
-	} physics;
-
-	// Transform component handles transformations passed to the Vertex shader.
-	// gl Immediate mode equivalent, see the Rendering and Transformations section in the
-	// specification pdf.
-	struct Transform {
-		mat3 out;
-
-		void begin();
-		void scale(vec2 scale);
-		void rotate(float radians);
-		void translate(vec2 offset);
-		void end();
-	} transform;
-
-protected:
-	bool init_sprite();
-	void draw_sprite(const mat3& projection);
-	void draw_sprite_alpha(const mat3& projection, float alpha);
+	int m_id;
 };

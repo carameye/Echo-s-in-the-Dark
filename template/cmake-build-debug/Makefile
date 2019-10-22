@@ -122,6 +122,60 @@ EITD/fast:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/build
 .PHONY : EITD/fast
 
+src/Interactables/door.obj: src/Interactables/door.cpp.obj
+
+.PHONY : src/Interactables/door.obj
+
+# target to build an object file
+src/Interactables/door.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Interactables/door.cpp.obj
+.PHONY : src/Interactables/door.cpp.obj
+
+src/Interactables/door.i: src/Interactables/door.cpp.i
+
+.PHONY : src/Interactables/door.i
+
+# target to preprocess a source file
+src/Interactables/door.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Interactables/door.cpp.i
+.PHONY : src/Interactables/door.cpp.i
+
+src/Interactables/door.s: src/Interactables/door.cpp.s
+
+.PHONY : src/Interactables/door.s
+
+# target to generate assembly for a file
+src/Interactables/door.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Interactables/door.cpp.s
+.PHONY : src/Interactables/door.cpp.s
+
+src/Interactables/interactable.obj: src/Interactables/interactable.cpp.obj
+
+.PHONY : src/Interactables/interactable.obj
+
+# target to build an object file
+src/Interactables/interactable.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Interactables/interactable.cpp.obj
+.PHONY : src/Interactables/interactable.cpp.obj
+
+src/Interactables/interactable.i: src/Interactables/interactable.cpp.i
+
+.PHONY : src/Interactables/interactable.i
+
+# target to preprocess a source file
+src/Interactables/interactable.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Interactables/interactable.cpp.i
+.PHONY : src/Interactables/interactable.cpp.i
+
+src/Interactables/interactable.s: src/Interactables/interactable.cpp.s
+
+.PHONY : src/Interactables/interactable.s
+
+# target to generate assembly for a file
+src/Interactables/interactable.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Interactables/interactable.cpp.s
+.PHONY : src/Interactables/interactable.cpp.s
+
 src/Robot/flight_energy_bar.obj: src/Robot/flight_energy_bar.cpp.obj
 
 .PHONY : src/Robot/flight_energy_bar.obj
@@ -284,6 +338,33 @@ src/common.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/common.cpp.s
 .PHONY : src/common.cpp.s
 
+src/components.obj: src/components.cpp.obj
+
+.PHONY : src/components.obj
+
+# target to build an object file
+src/components.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/components.cpp.obj
+.PHONY : src/components.cpp.obj
+
+src/components.i: src/components.cpp.i
+
+.PHONY : src/components.i
+
+# target to preprocess a source file
+src/components.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/components.cpp.i
+.PHONY : src/components.cpp.i
+
+src/components.s: src/components.cpp.s
+
+.PHONY : src/components.s
+
+# target to generate assembly for a file
+src/components.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/components.cpp.s
+.PHONY : src/components.cpp.s
+
 src/ghost.obj: src/ghost.cpp.obj
 
 .PHONY : src/ghost.obj
@@ -337,6 +418,33 @@ src/hitbox.s: src/hitbox.cpp.s
 src/hitbox.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/hitbox.cpp.s
 .PHONY : src/hitbox.cpp.s
+
+src/level.obj: src/level.cpp.obj
+
+.PHONY : src/level.obj
+
+# target to build an object file
+src/level.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/level.cpp.obj
+.PHONY : src/level.cpp.obj
+
+src/level.i: src/level.cpp.i
+
+.PHONY : src/level.i
+
+# target to preprocess a source file
+src/level.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/level.cpp.i
+.PHONY : src/level.cpp.i
+
+src/level.s: src/level.cpp.s
+
+.PHONY : src/level.s
+
+# target to generate assembly for a file
+src/level.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/level.cpp.s
+.PHONY : src/level.cpp.s
 
 src/level_graph.obj: src/level_graph.cpp.obj
 
@@ -419,6 +527,33 @@ src/main.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/sign.obj: src/sign.cpp.obj
+
+.PHONY : src/sign.obj
+
+# target to build an object file
+src/sign.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/sign.cpp.obj
+.PHONY : src/sign.cpp.obj
+
+src/sign.i: src/sign.cpp.i
+
+.PHONY : src/sign.i
+
+# target to preprocess a source file
+src/sign.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/sign.cpp.i
+.PHONY : src/sign.cpp.i
+
+src/sign.s: src/sign.cpp.s
+
+.PHONY : src/sign.s
+
+# target to generate assembly for a file
+src/sign.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/sign.cpp.s
+.PHONY : src/sign.cpp.s
+
 src/smoke.obj: src/smoke.cpp.obj
 
 .PHONY : src/smoke.obj
@@ -473,6 +608,60 @@ src/smoke_system.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/smoke_system.cpp.s
 .PHONY : src/smoke_system.cpp.s
 
+src/systems.obj: src/systems.cpp.obj
+
+.PHONY : src/systems.obj
+
+# target to build an object file
+src/systems.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/systems.cpp.obj
+.PHONY : src/systems.cpp.obj
+
+src/systems.i: src/systems.cpp.i
+
+.PHONY : src/systems.i
+
+# target to preprocess a source file
+src/systems.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/systems.cpp.i
+.PHONY : src/systems.cpp.i
+
+src/systems.s: src/systems.cpp.s
+
+.PHONY : src/systems.s
+
+# target to generate assembly for a file
+src/systems.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/systems.cpp.s
+.PHONY : src/systems.cpp.s
+
+src/text.obj: src/text.cpp.obj
+
+.PHONY : src/text.obj
+
+# target to build an object file
+src/text.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/text.cpp.obj
+.PHONY : src/text.cpp.obj
+
+src/text.i: src/text.cpp.i
+
+.PHONY : src/text.i
+
+# target to preprocess a source file
+src/text.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/text.cpp.i
+.PHONY : src/text.cpp.i
+
+src/text.s: src/text.cpp.s
+
+.PHONY : src/text.s
+
+# target to generate assembly for a file
+src/text.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/text.cpp.s
+.PHONY : src/text.cpp.s
+
 src/world.obj: src/world.cpp.obj
 
 .PHONY : src/world.obj
@@ -509,6 +698,12 @@ help:
 	@echo ... EITD
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... src/Interactables/door.obj
+	@echo ... src/Interactables/door.i
+	@echo ... src/Interactables/door.s
+	@echo ... src/Interactables/interactable.obj
+	@echo ... src/Interactables/interactable.i
+	@echo ... src/Interactables/interactable.s
 	@echo ... src/Robot/flight_energy_bar.obj
 	@echo ... src/Robot/flight_energy_bar.i
 	@echo ... src/Robot/flight_energy_bar.s
@@ -527,12 +722,18 @@ help:
 	@echo ... src/common.obj
 	@echo ... src/common.i
 	@echo ... src/common.s
+	@echo ... src/components.obj
+	@echo ... src/components.i
+	@echo ... src/components.s
 	@echo ... src/ghost.obj
 	@echo ... src/ghost.i
 	@echo ... src/ghost.s
 	@echo ... src/hitbox.obj
 	@echo ... src/hitbox.i
 	@echo ... src/hitbox.s
+	@echo ... src/level.obj
+	@echo ... src/level.i
+	@echo ... src/level.s
 	@echo ... src/level_graph.obj
 	@echo ... src/level_graph.i
 	@echo ... src/level_graph.s
@@ -542,12 +743,21 @@ help:
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s
+	@echo ... src/sign.obj
+	@echo ... src/sign.i
+	@echo ... src/sign.s
 	@echo ... src/smoke.obj
 	@echo ... src/smoke.i
 	@echo ... src/smoke.s
 	@echo ... src/smoke_system.obj
 	@echo ... src/smoke_system.i
 	@echo ... src/smoke_system.s
+	@echo ... src/systems.obj
+	@echo ... src/systems.i
+	@echo ... src/systems.s
+	@echo ... src/text.obj
+	@echo ... src/text.i
+	@echo ... src/text.s
 	@echo ... src/world.obj
 	@echo ... src/world.i
 	@echo ... src/world.s

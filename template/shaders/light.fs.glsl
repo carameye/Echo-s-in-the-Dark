@@ -6,7 +6,7 @@ uniform vec2 light_position;
 // pass torches size
 uniform int torches_size;
 // pass toches[] with fixed size
-uniform vec2 torches_position[5];
+uniform vec2 torches_position[100];
 
 uniform vec3 headlight_channel;
 
@@ -22,8 +22,6 @@ float illuminate_robot(vec4 in_color, vec2 coord)
 	vec4 color = in_color;
 	float light_radius = 100;
 	vec2 light_pos = vec2(600 + (light_position.x*1200 - 600) / 2.1, 400 + (light_position.y*800 - 400) / 2.1);
-	//vec2 robot_pos = vec2(640, 400); // robot is always constant
-	//vec2 pos = vec2(600 + (light_position.x*1200 - 600) / 2.1, 400 + (light_position.y*800 - 400) / 2.1);
 	float dist = sqrt(pow((light_pos.x - coord.x*1200), 2.0) + pow((light_pos.y - coord.y*800), 2.0));
 	float darkness = 1.4;
 	return (1- darkness * dist/400);
@@ -34,7 +32,7 @@ float illuminate_torches(vec4 in_color, vec2 coord, vec2 torchcoord)
 	vec4 color = in_color;
 	float light_radius = 100;
 	vec2 pos = torchcoord;
-	//vec2 pos = vec2(600, 600);
+	coord.y = 1 - coord.y;
 	float dist = sqrt(pow((pos.x - coord.x*1200), 2.0) + pow((pos.y - coord.y*800), 2.0));
 	float darkness = 1.5;
 	return (1- darkness * dist/600);
@@ -79,7 +77,7 @@ void main()
 	// illuminate for torches first
 	float illum_torch_sum = 0;
 	// todo: fix later so i < torches_size
-	for(int i = 0; i< 5 ; i++){
+	for(int i = 0; i < 100; i++){
 		float illum_torch = illuminate_torches(in_color, coord, torches_position[i]);
 		illum_torch_sum = max(illum_torch_sum, illum_torch);
 	}

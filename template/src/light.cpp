@@ -107,16 +107,7 @@ void Light::set_blue_channel(){
         headlight_channel.z = 1.0;
 }
 
-void Light::draw(const mat3& projection, const vec2& camera_shift) {
-
-    // Transformation code, see Rendering and Transformation in the template specification for more info
-    // Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
-//    transform.begin();
-//    transform.translate(camera_shift);
-//    transform.translate(motion.position);
-//    transform.rotate(motion.radians);
-//    transform.end();
-
+void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& size) {
     // Setting shaders
     glUseProgram(effect.program);
 
@@ -132,7 +123,7 @@ void Light::draw(const mat3& projection, const vec2& camera_shift) {
     // pass light position as uniform
     GLuint light_position_uloc = glGetUniformLocation(effect.program, "light_position");
     // cast light pos to array so we can pass as uniform, for some reason it doesnt like vectors
-    vec2 temp_light = add(motion.position , camera_shift);
+    vec2 temp_light = add(motion.position, camera_shift);
     temp_light = add(temp_light, vec2{300, -200});
     vec3 light_screen_position = mul(projection, vec3{temp_light.x, temp_light.y, 1});
     float light[] = {light_screen_position.x, light_screen_position.y};
@@ -154,14 +145,18 @@ void Light::draw(const mat3& projection, const vec2& camera_shift) {
         GLuint torches_size_uloc = glGetUniformLocation(effect.program, "torches_size");
         glUniform1f(torches_size_uloc, len);
 
-//        GLuint torches_position_uloc = glGetUniformLocation(effect.program, "torches_position[0]");
         // pass all torch positions
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 100; i++) {
             char s[50];
             std::sprintf(s,"torches_position[%d]", i );
-//          std::cout<< s << std::endl;
             GLuint torches_position_uloc = glGetUniformLocation(effect.program, s);
-            float torch[] = {torches[i].x + camera_shift.x, torches[i].y - camera_shift.y - 600};
+			float x = -10000.f, y = -10000.f;
+			if (i < len)
+			{
+				x = torches[i].x;
+				y = torches[i].y;
+			}
+            float torch[] = { x + camera_shift.x, y + camera_shift.y };
             glUniform2fv(torches_position_uloc, 1, torch);
         }
     }

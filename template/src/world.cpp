@@ -211,7 +211,7 @@ void World::draw()
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
 	// TODO: to fix lulus screen
-	vec2 camera_shift = { right / 2 - camera_pos.x, bottom / 2 - camera_pos.y };
+	vec2 camera_shift = { right / 2.f - camera_pos.x, bottom / 2.f - camera_pos.y };
 
 	m_level.draw_entities(projection_2D, camera_shift);
 

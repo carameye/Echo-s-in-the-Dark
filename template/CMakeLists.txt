@@ -38,6 +38,7 @@ set(SOURCE_FILES
         src/Robot/robot.cpp
         src/brick.cpp
         src/common.cpp
+        src/components.cpp
         src/ghost.cpp
         src/hitbox.cpp
         src/level_graph.cpp
@@ -50,6 +51,7 @@ set(SOURCE_FILES
         src/Interactables/interactable.cpp
 		src/text.cpp
 		src/sign.cpp
+        src/systems.cpp
         src/level.cpp
         src/world.cpp
         src/project_path.hpp
@@ -62,6 +64,7 @@ set(SOURCE_FILES
         src/Robot/robot_shoulders.hpp
         src/brick.hpp
         src/common.hpp
+        src/components.hpp
         src/ghost.hpp
         src/hitbox.hpp
         src/level_graph.hpp
@@ -71,6 +74,7 @@ set(SOURCE_FILES
         src/Interactables/interactable.hpp
 		src/text.hpp
 		src/sign.hpp
+        src/systems.hpp
         src/level.hpp
         src/world.hpp
         )

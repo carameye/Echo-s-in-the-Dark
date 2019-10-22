@@ -10,6 +10,7 @@
 #include "sign.hpp"
 #include "json.hpp"
 #include <vector>
+#include "systems.hpp"
 
 class Level
 {
@@ -58,13 +59,18 @@ private:
 	void save_level();
 	void reset_level();
 
-    private:
+private:
+	float width, height;
+
+	// Systems
+	RenderingSystem m_rendering_system;
+
     // Level entities
     Robot m_robot;
-    std::vector<Brick> m_bricks;
-	std::vector<Ghost> m_ghosts;
-    std::vector<Door> m_interactables;
-	std::vector<Sign> m_signs;
+    std::vector<Brick*> m_bricks;
+	std::vector<Ghost*> m_ghosts;
+    std::vector<Door*> m_interactables;
+	std::vector<Sign*> m_signs;
 
     LevelGraph m_graph;
     Door* m_interactable;
