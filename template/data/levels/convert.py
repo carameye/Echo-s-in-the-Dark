@@ -36,6 +36,7 @@ def convert(filepath):
         signs = []
         ghosts = []
         bricks = []
+        torches = []
 
         sizey = 0
         sizex = 0
@@ -91,18 +92,22 @@ def convert(filepath):
                     obj["colour"] = { "r": 0.0, "g": 1.0, "b": 1.0 }
                     bricks.append(obj)
                     continue
+                if char is "T":
+                    torches.append(obj)
+                    continue
 
         j["size"] = { "width": sizex + 1, "height": sizey + 1}
         j["doors"] = doors
         j["signs"] = signs
         j["ghosts"] = ghosts
         j["bricks"] = bricks
+        j["torches"] = torches
 
         dirpath = dirname(abspath(__file__))
         filename = filepath.replace(dirpath, "")
         filename = filename.replace("\\", "")
         filename = filename.replace(".txt", ".json")
-        writepath = join(dirpath, "json", filename)
+        writepath = join(dirpath, "json/"+filename)
 
         file = open(writepath, "w+")
         file.write(json.dumps(j))
