@@ -156,8 +156,8 @@ void Light::draw(const mat3& projection, const vec2& camera_shift) {
 
 //        GLuint torches_position_uloc = glGetUniformLocation(effect.program, "torches_position[0]");
         // pass all torch positions
-        for (int i = 0; i< 5 ; i++){
-            char* s;
+        for (int i = 0; i < 5; i++){
+            char s[50];
             std::sprintf(s,"torches_position[%d]", i );
 //          std::cout<< s << std::endl;
             GLuint torches_position_uloc = glGetUniformLocation(effect.program, s);
