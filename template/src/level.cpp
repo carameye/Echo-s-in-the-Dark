@@ -24,6 +24,8 @@ void Level::destroy()
 	for (auto& sign : m_signs) {
 		sign.destroy();
 	}
+	m_interactable = NULL;
+	delete m_interactable;
     m_robot.destroy();
     m_bricks.clear();
     m_ghosts.clear();
@@ -194,18 +196,7 @@ bool Level::parse_level(std::string level)
 	fprintf(stderr, "Opened level file\n");
 
 	// clear all level-dependent resources
-	for (auto& brick : m_bricks)
-		brick.destroy();
-	for (auto& door : m_interactables)
-		door.destroy();
-	for (auto& ghost : m_ghosts)
-		ghost.destroy();
-	for (auto& sign : m_signs)
-		sign.destroy();
-	m_bricks.clear();
-	m_ghosts.clear();
-	m_interactables.clear();
-	m_signs.clear();
+	destroy();
 
 	// Parse the json
 	json j = json::parse(file);
@@ -276,7 +267,7 @@ bool Level::parse_level(std::string level)
 		spawn_brick(to_pixel_position(pos), colour);
 	}
 
-	fprintf(stderr, "	built world with %d doors, %d ghosts, and %d bricks\n",
+	fprintf(stderr, "	built world with %ld doors, %ld ghosts, and %ld bricks\n",
 		m_interactables.size(), m_ghosts.size(), m_bricks.size());
 
 	// Generate the graph
