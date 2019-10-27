@@ -219,8 +219,8 @@ void main()
 		illum_torch_sum = max(illum_torch_sum, illum_torch);
 	}
 
-    light_pos.y = light_pos.y - 32;
-    float hl_light = find_light(pos, light_pos, 640);
+    vec2 temp_l = vec2(light_pos.x, screen_size.y - light_pos.y);
+    float hl_light = find_light(pos, temp_l, 640);
 
 	float illum_robot = clamp(illuminate_robot(coord), 0, 1) * hl_light;
 	float hl = clamp(headlight(coord), 0, 0.8) * hl_light;
