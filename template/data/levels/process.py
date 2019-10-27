@@ -12,41 +12,6 @@ def line_len(x1, y1, x2, y2):
     l += (y2 - y1)**2
     return sqrt(l)
 
-def inlight(x1, y1, x2, y2, bricks):
-    if x1 is x2 and y1 is y2:
-        return True
-
-    sign = lambda x: copysign(1, x)
-
-    dy = y2 - y1
-    dx = x2 - x1
-
-    x = x1
-    y = y1
-
-    if abs(dy) > abs(dx):
-        if dy is 0:
-            dx = 1
-        else:
-            dx = dx / abs(dy)
-            dy = sign(dy)
-    else:
-        if dx is 0:
-            dy = 1
-        else:
-            dy = dy / abs(dx)
-            dx = sign(dx)
-
-    while line_len(x1, y1, x, y) < line_len(x1, y1, x2, y2):
-
-        if bricks[x, y][0] == 0:
-            return False
-
-        x += 10 * dx
-        y += 10 * dy
-
-    return True
-
 def convert(filepath):
     print("Converting " + filepath)
     file = open(filepath)
@@ -178,38 +143,6 @@ def convert(filepath):
                     brickpixels[i, j] = (0, 0, 0)
 
         brickimage.save(join(dirpath, "shadow", filename + "_brickmap.png"))
-        """
-        # Might not need prerendered shadows so commenting this out for now
-        print("    Loading shadows")
-
-        shadowimage = Image.new("RGB", (sizex, sizey), color = (0, 0, 0))
-        shadowpixels = shadowimage.load()
-
-        t_num = 1
-        for t in torches:
-            print("        Assessing torch " + str(t_num) + " out of " + str(len(torches)))
-            t_num += 1
-            x = 64 * t["pos"]["x"]
-            y = 64 * t["pos"]["y"]
-            for i in range(max(0, x - 384), min(sizex, x + 384)):
-                for j in range(max(0, y - 384), min(sizey, y + 384)):
-                    if shadowpixels[i, j] is (255, 255, 255):
-                        continue;
-                    if inlight(i, j, x, y, brickpixels):
-                        shadowpixels[i, j] = (255, 255, 255)
-
-        print("    Refining shadows")
-
-        shadowimage = shadowimage.filter(ImageFilter.GaussianBlur(16))
-
-        for i in range(0, sizex):
-            for j in range(0, sizey):
-                val = min(2 * shadowpixels[i, j][0], 255)
-                shadowpixels[i, j] = (val, val, val)
-
-        print("    Saving images")
-        shadowimage.save(join(dirpath, "shadow", filename + "_shadowmap.png"))
-        """
 
 def convertall():
     path = dirname(abspath(__file__))
