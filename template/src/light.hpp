@@ -1,13 +1,18 @@
 #pragma once
 
 #include "common.hpp"
+#include "components.hpp"
+
 #include <vector>
+#include <map>
 
 class Light : public Entity
 {
+	static std::map<std::string, Texture> brickmap_textures;
+
 public:
     // Creates all the associated render resources and default transform
-    bool init();
+    bool init(std::string level);
 
     // Releases all associated resources
     void destroy();
@@ -45,6 +50,8 @@ private:
     float ambient = 0.f;
     vec3 headlight_channel;
     std::vector<vec2> torches;
+
+	RenderComponent rc;
 
 	Mesh mesh;
 	Effect effect;

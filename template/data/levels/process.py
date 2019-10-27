@@ -178,7 +178,8 @@ def convert(filepath):
                     brickpixels[i, j] = (0, 0, 0)
 
         brickimage.save(join(dirpath, "shadow", filename + "_brickmap.png"))
-
+        """
+        # Might not need prerendered shadows so commenting this out for now
         print("    Loading shadows")
 
         shadowimage = Image.new("RGB", (sizex, sizey), color = (0, 0, 0))
@@ -208,6 +209,7 @@ def convert(filepath):
 
         print("    Saving images")
         shadowimage.save(join(dirpath, "shadow", filename + "_shadowmap.png"))
+        """
 
 def convertall():
     path = dirname(abspath(__file__))

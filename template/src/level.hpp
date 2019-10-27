@@ -60,6 +60,7 @@ private:
 	void reset_level();
 
 private:
+	std::string m_level;
 	float width, height;
 
 	// Systems

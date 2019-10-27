@@ -10,7 +10,7 @@ bool Level::init(std::string level)
 	s_motion_components.clear();
 	s_render_components.clear();
 	m_rendering_system.clear();
-	return parse_level(level) && m_light.init();
+	return parse_level(level);
 }
 
 void Level::destroy()
@@ -175,6 +175,8 @@ void Level::interact()
 
 bool Level::parse_level(std::string level)
 {
+	m_level = level;
+
 	// Construct file name with path
 	std::string filename = level_path;
 	filename.append(level);
@@ -312,7 +314,7 @@ bool Level::spawn_robot(vec2 position)
 		m_robot.set_position(position);
 		m_robot.set_head_position(position);
         m_robot.set_shoulder_position(position);
-        if (m_light.init()) {
+        if (m_light.init(m_level)) {
             m_light.set_position(m_robot.get_position());
 
 //            // TODO: init light when robot is spawned
