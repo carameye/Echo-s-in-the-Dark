@@ -4,11 +4,13 @@
 #include <cmath>
 
 namespace {
-    const float VERTICAL_ACCELERATION = 10.f;
+    const float FLIGHT_ACCELERATION = 10.f;
+    const float GRAVITY_ACCELERATION = 25.f;
     const float HORIZONTAL_ACCELERATION = 10.f;
     const float HORIZONTAL_DECELERATION = 30.f;
     const float MAX_HORIZONTAL_VELOCITY = 15.f;
-    const float MAX_VERTICAL_VELOCITY = 15.f;
+    const float MAX_FLIGHT_VELOCITY = 15.f;
+    const float MAX_GRAVITY_VELOCITY = 25.f;
     const float MAX_FLIGHT_DURATION = 1500.f;
 }
 
@@ -43,7 +45,7 @@ bool Robot::init(int id)
 
     mc.position = { 0.f, 0.f };
     mc.velocity = { 0.f, 0.f };
-    mc.acceleration = { 0.f , VERTICAL_ACCELERATION };
+    mc.acceleration = { 0.f , GRAVITY_ACCELERATION };
     mc.radians = 0.f;
 
 	s_render_components[id] = &rc;
@@ -82,11 +84,14 @@ void Robot::update_velocity(float ms) {
     }
     if (m_is_flying) {
         float new_velocity = mc.velocity.y - mc.acceleration.y * step;
-        mc.velocity.y = new_velocity < MAX_VERTICAL_VELOCITY * -1.f ? MAX_VERTICAL_VELOCITY * -1.f : new_velocity;
+        mc.velocity.y = new_velocity < MAX_FLIGHT_VELOCITY * -1.f ? MAX_FLIGHT_VELOCITY * -1.f : new_velocity;
     }
     if (!m_is_flying) {
         float new_velocity = mc.velocity.y + mc.acceleration.y * step;
-        mc.velocity.y = new_velocity > MAX_VERTICAL_VELOCITY ? MAX_VERTICAL_VELOCITY : new_velocity;
+        mc.velocity.y = new_velocity;
+
+        // Not sure if we want to limit fall speed. looks unnatural to do so.
+        // mc.velocity.y = new_velocity > MAX_GRAVITY_VELOCITY ? MAX_GRAVITY_VELOCITY : new_velocity;
     }
 }
 
@@ -208,6 +213,7 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 void Robot::start_flying()
 {
     m_is_flying = true;
+    set_acceleration({mc.acceleration.x, FLIGHT_ACCELERATION});
 	m_smoke_system.start_smoke();
 	m_should_stop_smoke = false;
 	rc.texture = &robot_body_flying_texture;
@@ -219,6 +225,7 @@ void Robot::start_flying()
 void Robot::stop_flying()
 {
     m_is_flying = false;
+    set_acceleration({mc.acceleration.x, GRAVITY_ACCELERATION});
 	// smoke will stop in update() when velocity.y is positive
 	m_should_stop_smoke = true;
 	rc.texture = &robot_body_texture;
