@@ -2,7 +2,18 @@ from os import listdir
 from os.path import dirname, abspath, isfile, join
 import json
 
+from PIL import Image
+from PIL import ImageFilter
+
+from math import sqrt, copysign
+
+def line_len(x1, y1, x2, y2):
+    l = (x2 - x1)**2
+    l += (y2 - y1)**2
+    return sqrt(l)
+
 def convert(filepath):
+    print("Converting " + filepath)
     file = open(filepath)
     if file.mode == "r":
         # setup
@@ -96,7 +107,10 @@ def convert(filepath):
                     torches.append(obj)
                     continue
 
-        j["size"] = { "width": sizex + 1, "height": sizey + 1}
+        sizex += 1
+        sizey += 1
+
+        j["size"] = { "width": sizex, "height": sizey}
         j["doors"] = doors
         j["signs"] = signs
         j["ghosts"] = ghosts
@@ -106,12 +120,29 @@ def convert(filepath):
         dirpath = dirname(abspath(__file__))
         filename = filepath.replace(dirpath, "")
         filename = filename.replace("\\", "")
-        filename = filename.replace(".txt", ".json")
-        writepath = join(dirpath, "json/"+filename)
+        filename = filename.replace(".txt", "")
+        writepath = join(dirpath, "json", filename + ".json")
 
         file = open(writepath, "w+")
         file.write(json.dumps(j))
         file.close()
+
+        sizex *= 64
+        sizey *= 64
+
+        print("    Loading bricks")
+
+        brickimage = Image.new("RGB", (sizex, sizey), color = (255, 255, 255))
+        brickpixels = brickimage.load()
+
+        for b in bricks:
+            startx = 64 * b["pos"]["x"]
+            starty = 64 * b["pos"]["y"]
+            for i in range(startx, startx + 64):
+                for j in range(starty, starty + 64):
+                    brickpixels[i, j] = (0, 0, 0)
+
+        brickimage.save(join(dirpath, "shadow", filename + "_brickmap.png"))
 
 def convertall():
     path = dirname(abspath(__file__))

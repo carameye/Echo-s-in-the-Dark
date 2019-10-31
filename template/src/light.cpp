@@ -2,7 +2,9 @@
 #include <math.h>
 #include <iostream>
 
-bool Light::init() {
+std::map<std::string, Texture> Light::brickmap_textures;
+
+bool Light::init(std::string level) {
     // Since we are not going to apply transformation to this screen geometry
     // The coordinates are set to fill the standard openGL window [-1, -1 .. 1, 1]
     // Make the size slightly larger then the screen to crop the boundary.
@@ -29,6 +31,23 @@ bool Light::init() {
     // Loading shaders
     if (!effect.load_from_file(shader_path("light.vs.glsl"), shader_path("light.fs.glsl")))
         return false;
+
+	if (brickmap_textures.find(level) == brickmap_textures.end()
+		|| !brickmap_textures[level].is_valid())
+	{
+		std::string path = shadow_path;
+		path = path.append(level).append("_brickmap.png");
+		if (!brickmap_textures[level].load_from_file(path.c_str()))
+		{
+			fprintf(stderr, "Failed to load brickmap texture!");
+			return false;
+		}
+	}
+
+	rc.texture = &brickmap_textures[level];
+
+	if (!rc.init_sprite())
+		return false;
 
     return true;
 }
@@ -120,12 +139,23 @@ void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& s
     GLuint screen_text_uloc = glGetUniformLocation(effect.program, "screen_texture");
     glUniform1i(screen_text_uloc, 0);
 
+	// Set brick_map sampler uniform
+	GLuint brickmap_uloc = glGetUniformLocation(effect.program, "brick_map");
+	glUniform1i(brickmap_uloc, 1);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, rc.texture->id);
+	glActiveTexture(GL_TEXTURE0);
+
+	// Pass camera position
+	GLuint camera_pos_uloc = glGetUniformLocation(effect.program, "camera_pos");
+	float cam[] = { camera_shift.x, camera_shift.y };
+	glUniform2fv(camera_pos_uloc, 1, cam);
+
     // pass light position as uniform
     GLuint light_position_uloc = glGetUniformLocation(effect.program, "light_position");
     // cast light pos to array so we can pass as uniform, for some reason it doesnt like vectors
-    vec2 temp_light = add(motion.position, camera_shift);
-    temp_light = add(temp_light, vec2{300, -200});
-    vec3 light_screen_position = mul(projection, vec3{temp_light.x, temp_light.y, 1});
+    vec2 light_screen_position = add(motion.position, camera_shift);
     float light[] = {light_screen_position.x, light_screen_position.y};
     glUniform2fv(light_position_uloc, 1, light);
 
@@ -139,29 +169,25 @@ void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& s
     float channel[] = {headlight_channel.x, headlight_channel.y, headlight_channel.z};
     glUniform3fv(headlight_channel_uloc, 1, channel);
 
-    if(!(torches.empty())) {
-        // pass torches size
-        int len = torches.size();
-        GLuint torches_size_uloc = glGetUniformLocation(effect.program, "torches_size");
-        glUniform1f(torches_size_uloc, len);
+	// pass torches size
+	int len = torches.size();
+	GLuint torches_size_uloc = glGetUniformLocation(effect.program, "torches_size");
+	glUniform1i(torches_size_uloc, len);
 
-        // pass all torch positions
-        for (int i = 0; i < 100; i++) {
-            char s[50];
-            std::sprintf(s,"torches_position[%d]", i );
-            GLuint torches_position_uloc = glGetUniformLocation(effect.program, s);
-			float x = -10000.f, y = -10000.f;
-			if (i < len)
-			{
-				x = torches[i].x;
-				y = torches[i].y;
-			}
-            float torch[] = { x + camera_shift.x, y + camera_shift.y };
-            glUniform2fv(torches_position_uloc, 1, torch);
-        }
-    }
-
-
+	// pass all torch positions
+	for (int i = 0; i < len && i < 256; i++) {
+		char s[50];
+		std::sprintf(s, "torches_position[%d]", i);
+		GLuint torches_position_uloc = glGetUniformLocation(effect.program, s);
+		float x = -10000.f, y = -10000.f;
+		if (i < len)
+		{
+			x = torches[i].x;
+			y = torches[i].y;
+		}
+		float torch[] = { x + camera_shift.x, y + camera_shift.y };
+		glUniform2fv(torches_position_uloc, 1, torch);
+	}
 
     // Draw the screen texture on the quad geometry
     // Setting vertices
