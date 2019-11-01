@@ -62,7 +62,7 @@ bool Robot::init(int id)
 	return valid;
 }
 
-void Robot::update_velocity(float ms) {
+vec2 Robot::update_velocity(float ms) {
 
     float step = (ms / 1000);
 
@@ -93,6 +93,8 @@ void Robot::update_velocity(float ms) {
         // Not sure if we want to limit fall speed. looks unnatural to do so.
         // mc.velocity.y = new_velocity > MAX_GRAVITY_VELOCITY ? MAX_GRAVITY_VELOCITY : new_velocity;
     }
+
+    return {mc.position.x + mc.velocity.x, mc.position.y + mc.velocity.y};
 }
 
 void Robot::update(float ms)
@@ -144,11 +146,6 @@ vec2 Robot::get_velocity() const
 vec2 Robot::get_acceleration() const
 {
 	return mc.acceleration;
-}
-
-vec2 Robot::get_next_position()
-{
-    return {mc.position.x + mc.velocity.x, mc.position.y + mc.velocity.y};
 }
 
 void Robot::set_position(vec2 position)
