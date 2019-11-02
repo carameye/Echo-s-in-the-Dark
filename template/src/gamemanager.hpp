@@ -32,9 +32,10 @@ private:
 	GLFWwindow* m_window;
 
 	// Information about the state
-	bool m_world_valid;
-	bool m_in_menu;
+	bool m_world_valid = true;
+	bool m_in_menu = false;
 
 	// Game states
 	World m_world;
+	Menu m_menu;
 };

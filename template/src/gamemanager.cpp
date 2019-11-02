@@ -61,30 +61,69 @@ bool GameManager::init(vec2 screen)
 
 void GameManager::update(float elapsed_ms)
 {
-	m_world.update(elapsed_ms);
+	if (!m_in_menu)
+	{
+		m_world.update(elapsed_ms);
+	}
 }
 
 void GameManager::draw()
 {
-	m_world.draw();
+	if (m_in_menu)
+	{
+		m_menu.draw();
+	}
+	else
+	{
+		m_world.draw();
+	}
 }
 
 bool GameManager::game_over()
 {
-	return m_world.is_over();
+	if (m_in_menu)
+	{
+		return m_menu.is_over();
+	}
+	else 
+	{
+		return m_world.is_over();
+	}
 }
 
 void GameManager::destroy()
 {
-	m_world.destroy();
+	if (m_in_menu)
+	{
+		m_menu.destroy();
+	}
+
+	if (m_world_valid)
+	{
+		m_world.destroy();
+	}	
 }
 
 void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, int mod)
 {
-	m_world.handle_key_press(window, key, scancode, action, mod);
+	if (m_in_menu)
+	{
+		m_menu.handle_key_press(window, key, scancode, action, mod);
+	}
+	else
+	{
+		m_world.handle_key_press(window, key, scancode, action, mod);
+	}
 }
 
 void GameManager::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
-	m_world.handle_mouse_move(window, xpos, ypos);
+	if (m_in_menu)
+	{
+		m_menu.handle_mouse_move(window, xpos, ypos);
+	}
+	else 
+	{
+		m_world.handle_mouse_move(window, xpos, ypos);
+	}
 }
