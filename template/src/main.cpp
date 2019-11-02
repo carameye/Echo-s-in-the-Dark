@@ -1,6 +1,6 @@
 // internal
 #include "common.hpp"
-#include "world.hpp"
+#include "gamemanager.hpp"
 
 #define GL3W_IMPLEMENTATION
 #include <gl3w.h>
@@ -12,7 +12,7 @@
 using Clock = std::chrono::high_resolution_clock;
 
 // Global 
-World world;
+GameManager gm;
 const int width = 1200;
 const int height = 800;
 
@@ -20,7 +20,7 @@ const int height = 800;
 int main(int argc, char* argv[])
 {
 	// Initializing world (after renderer.init().. sorry)
-	if (!world.init({ (float)width, (float)height }))
+	if (!gm.init({ (float)width, (float)height }))
 	{
 		// Time to read the error message
 		std::cout << "Press any key to exit" << std::endl;
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 	auto t = Clock::now();
 
 	// variable timestep loop.. can be improved (:
-	while (!world.is_over())
+	while (!gm.game_over())
 	{
 		// Processes system messages, if this wasn't present the window would become unresponsive
 		glfwPollEvents();
@@ -42,13 +42,13 @@ int main(int argc, char* argv[])
 		t = now;
 
 		for (float b = 100.f; elapsed_sec > b; elapsed_sec -= b)
-			world.update(b);
+			gm.update(b);
 		if (elapsed_sec > 0)
-			world.update(elapsed_sec);
-		world.draw();
+			gm.update(elapsed_sec);
+		gm.draw();
 	}
 
-	world.destroy();
+	gm.destroy();
 
 	return EXIT_SUCCESS;
 }

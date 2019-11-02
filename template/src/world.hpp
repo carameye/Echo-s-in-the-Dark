@@ -21,24 +21,23 @@ public:
 	~World();
 
 	// Creates a window, sets up events and begins the game
-	bool init(vec2 screen);
+	bool init(GLFWwindow *window, vec2 screen);
 
 	// Releases all associated resources
 	void destroy();
 
 	// Steps the game ahead by ms milliseconds
-	bool update(float ms);
+	void update(float ms);
 
 	// Renders our scene
 	void draw();
 
 	// Should the game be over ?
-	bool is_over()const;
+	bool is_over() const;
 
-private:
-	// !!! INPUT CALLBACK FUNCTIONS
-	void on_key(GLFWwindow*, int key, int, int action, int mod);
-	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
+	// Handle input
+	void handle_key_press(GLFWwindow*, int key, int, int action, int mod);
+	void handle_mouse_move(GLFWwindow* window, double xpos, double ypos);
 
 private:
 	// Window handle
