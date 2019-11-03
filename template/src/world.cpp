@@ -151,34 +151,11 @@ bool World::is_over() const
 // On key callback
 bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 {
-	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
-		return false;
-	}
-
-	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-		m_level.get_player()->start_flying();
-	}
-	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-        m_level.get_player()->set_is_accelerating_left(true);
-	}
-	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-        m_level.get_player()->set_is_accelerating_right(true);
-	}
 	if (action == GLFW_PRESS && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
 		camera_offset -= 100;
 	}
 	if (action == GLFW_PRESS && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
 		camera_offset += 100;
-	}
-
-	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
-		m_level.get_player()->stop_flying();
-	}
-	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-	    m_level.get_player()->set_is_accelerating_left(false);
-	}
-	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-	    m_level.get_player()->set_is_accelerating_right(false);
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
 		camera_offset += 100;
@@ -186,30 +163,12 @@ bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
 		camera_offset -= 100;
 	}
-
-	if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
-		m_level.interact();
-	}
-
-	// headlight toggle
-    if (action == GLFW_PRESS && key == GLFW_KEY_1) {
-        m_level.get_light()->set_red_channel();
-    }
-    if (action == GLFW_PRESS && key == GLFW_KEY_2) {
-        m_level.get_light()->set_green_channel();
-    }
-    if (action == GLFW_PRESS && key == GLFW_KEY_3) {
-        m_level.get_light()->set_blue_channel();
-    }
-
-	return true;
+	return m_level.handle_key_press(key, action);
 }
 
 void World::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
-    float radians = atan2(-ypos + 300, xpos- 600);
-    Light* m_light = m_level.get_light();
-    m_light->set_radians(radians);
+	m_level.handle_mouse_move(xpos, ypos);
 }
 
 void World::start_music()
@@ -262,4 +221,12 @@ void World::start_level(std::string level)
 void World::reset()
 {
 	m_level.reset_level();
+}
+
+void World::load()
+{
+}
+
+void World::save()
+{
 }

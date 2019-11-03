@@ -49,6 +49,10 @@ public:
 	// Reset the level
 	void reset();
 
+	// Load/save state from/to save file
+	void load();
+	void save();
+
 private:
 	// Window handle
 	GLFWwindow* m_window;

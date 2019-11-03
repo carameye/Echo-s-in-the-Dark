@@ -21,7 +21,6 @@ class Level
     // Renders level
     // projection is the 2D orthographic projection matrix
 	void draw_entities(const mat3& projection, const vec2& camera_shift);
-
     void draw_light(const mat3& projection, const vec2& camera_shift);
 
     // Releases all level-associated resources
@@ -39,16 +38,17 @@ class Level
     // Interact with the current level interactable
     void interact();
 
-    // Light effect
-	Light m_light;
-
-	Light* get_light();
-
+	// Resets the level
 	void reset_level();
 
-private:
-    // Generate a level from a text file
+	// Generate a level from a text file
 	bool parse_level(std::string level);
+
+	// Handle input
+	bool handle_key_press(int key, int action);
+	void handle_mouse_move(double xpos, double ypos);
+
+private:
 
     // Spawn entities
 	bool spawn_robot(vec2 position);
@@ -66,6 +66,9 @@ private:
 
 	// Systems
 	RenderingSystem m_rendering_system;
+
+	// Light effect
+	Light m_light;
 
     // Level entities
     Robot m_robot;

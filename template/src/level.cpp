@@ -275,6 +275,56 @@ bool Level::parse_level(std::string level)
 	return true;
 }
 
+bool Level::handle_key_press(int key, int action)
+{
+	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
+		return false;
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+		m_robot.start_flying();
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+		m_robot.set_is_accelerating_left(true);
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+		m_robot.set_is_accelerating_right(true);
+	}
+
+	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
+		m_robot.stop_flying();
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+		m_robot.set_is_accelerating_left(false);
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+		m_robot.set_is_accelerating_right(false);
+	}
+
+	if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
+		interact();
+	}
+
+	// headlight toggle
+	if (action == GLFW_PRESS && key == GLFW_KEY_1) {
+		m_light.set_red_channel();
+	}
+	if (action == GLFW_PRESS && key == GLFW_KEY_2) {
+		m_light.set_green_channel();
+	}
+	if (action == GLFW_PRESS && key == GLFW_KEY_3) {
+		m_light.set_blue_channel();
+	}
+
+	return true;
+}
+
+void Level::handle_mouse_move(double xpos, double ypos)
+{
+	float radians = atan2(-ypos + 300, xpos - 600);
+	m_light.set_radians(radians);
+}
+
 bool Level::spawn_door(vec2 position, std::string next_level)
 {
 	Door *door = new Door();
@@ -379,8 +429,4 @@ void Level::reset_level()
 	{
 		ghost->set_position(reset_positions[pos_i++]);
 	}
-}
-
-Light* Level::get_light() {
-    return &m_light;
 }
