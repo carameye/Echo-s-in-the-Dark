@@ -44,6 +44,8 @@ class Level
 
 	Light* get_light();
 
+	void reset_level();
+
 private:
     // Generate a level from a text file
 	bool parse_level(std::string level);
@@ -57,7 +59,6 @@ private:
 
 	// For resetting the level
 	void save_level();
-	void reset_level();
 
 private:
 	std::string m_level;

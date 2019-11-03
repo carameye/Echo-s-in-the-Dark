@@ -39,6 +39,7 @@ set(SOURCE_FILES
         src/brick.cpp
         src/common.cpp
         src/components.cpp
+        src/gamemanager.cpp
         src/ghost.cpp
         src/hitbox.cpp
         src/level_graph.cpp
@@ -50,6 +51,8 @@ set(SOURCE_FILES
         src/Interactables/door.cpp
         src/Interactables/interactable.cpp
 		src/text.cpp
+        src/UI/menu.cpp
+        src/UI/menuentity.cpp
 		src/sign.cpp
         src/systems.cpp
         src/level.cpp
@@ -66,6 +69,7 @@ set(SOURCE_FILES
         src/common.hpp
         src/components.hpp
         src/ghost.hpp
+        src/gamemanager.hpp
         src/hitbox.hpp
         src/level_graph.hpp
         src/light.hpp
@@ -73,6 +77,8 @@ set(SOURCE_FILES
         src/Interactables/door.hpp
         src/Interactables/interactable.hpp
 		src/text.hpp
+        src/UI/menu.hpp
+        src/UI/menuentity.hpp
 		src/sign.hpp
         src/systems.hpp
         src/level.hpp

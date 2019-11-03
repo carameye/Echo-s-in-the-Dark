@@ -4,6 +4,9 @@
 #include <vector>
 #include <map>
 
+extern int next_entity_id;
+extern int next_ui_id;
+
 struct MotionComponent
 {
 	vec2 position;
@@ -12,6 +15,7 @@ struct MotionComponent
 	float radians;
 };
 extern std::map<int, MotionComponent*> s_motion_components;
+extern std::map<int, MotionComponent*> s_ui_motion_components;
 
 struct RenderComponent
 {
@@ -27,3 +31,7 @@ struct RenderComponent
 	void draw_sprite_alpha(const mat3& projection, float alpha);
 };
 extern std::map<int, RenderComponent*> s_render_components;
+extern std::map<int, RenderComponent*> s_ui_render_components;
+
+extern void clear_level_components();
+extern void clear_ui_components();
