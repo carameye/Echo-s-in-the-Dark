@@ -26,8 +26,6 @@ protected:
 
 class Button : public MenuEntity
 {
-	static Texture button_texture;
-
 public:
 	// Initialize
 	bool init(int id, vec2 position) override;
@@ -50,4 +48,5 @@ public:
 private:
 	Status m_status;
 	bool m_hover = false;
+	Texture button_texture;
 };

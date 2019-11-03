@@ -210,17 +210,17 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 void GameManager::load_main_menu()
 {
 	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("tile_brick.png", Status::new_game));
-	buttons.push_back(std::make_pair("tile_brick.png", Status::load_game));
-	buttons.push_back(std::make_pair("tile_brick.png", Status::exit));
+	buttons.push_back(std::make_pair("new_game.png", Status::new_game));
+	buttons.push_back(std::make_pair("load_game.png", Status::load_game));
+	buttons.push_back(std::make_pair("exit.png", Status::exit));
 	m_menu.setup(buttons);
 }
 
 void GameManager::load_pause_menu()
 {
 	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("tile_brick.png", Status::resume));
-	buttons.push_back(std::make_pair("tile_brick.png", Status::reset));
-	buttons.push_back(std::make_pair("tile_brick.png", Status::main_menu));
+	buttons.push_back(std::make_pair("resume.png", Status::resume));
+	buttons.push_back(std::make_pair("reset.png", Status::reset));
+	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
 	m_menu.setup(buttons);
 }

@@ -1,7 +1,5 @@
 #include "menuentity.hpp"
 
-Texture Button::button_texture;
-
 bool MenuEntity::init(int id, vec2 position)
 {
 	m_id = id;
