@@ -35,6 +35,9 @@ public:
 	// Returns the current robot acceleration
 	vec2 get_acceleration() const;
 
+    // Calculates and return next position with out updating robot
+    vec2 get_next_position();
+
 	// Sets the new robot position
 	void set_position(vec2 position);
 

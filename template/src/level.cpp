@@ -53,9 +53,9 @@ void Level::update(float elapsed_ms)
 {
 	vec2 robot_pos = m_robot.get_position();
 
-    vec2 new_robot_pos = m_robot.update_velocity(elapsed_ms);
+    vec2 new_robot_vel = m_robot.update_velocity(elapsed_ms);
 
-    vec2 new_robot_vel = m_robot.get_velocity();
+    vec2 new_robot_pos = m_robot.get_next_position();
 
 	float translation = new_robot_vel.x;
 	for (auto& i_brick : m_bricks) 
