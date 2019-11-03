@@ -36,8 +36,18 @@ public:
 	bool is_over() const;
 
 	// Handle input
-	void handle_key_press(GLFWwindow*, int key, int, int action, int mod);
+	bool handle_key_press(GLFWwindow*, int key, int, int action, int mod);
 	void handle_mouse_move(GLFWwindow* window, double xpos, double ypos);
+
+	// Manage music
+	void start_music();
+	void stop_music();
+
+	// Begin level
+	void start_level(std::string level);
+
+	// Reset the level
+	void reset();
 
 private:
 	// Window handle
@@ -45,7 +55,7 @@ private:
 	float m_screen_scale; // Screen to pixel coordinates scale factor
 
 	// Screen texture
-	// The draw loop first renders to this texture, then it is used for the water shader
+	// The draw loop first renders to this texture, then it is used for the light shader
 	GLuint m_frame_buffer;
 	Texture m_screen_tex;
 

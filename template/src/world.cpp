@@ -51,47 +51,7 @@ bool World::init(GLFWwindow* window, vec2 screen)
 	// Initialize the screen texture
 	m_screen_tex.create_from_screen(m_window);
 
-	//-------------------------------------------------------------------------
-	// Loading music and sounds
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	{
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return false;
-	}
-
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return false;
-	}
-
-	m_background_music = Mix_LoadMUS(audio_path("goldleaf.wav"));
-
-	if (m_background_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
-			audio_path("goldleaf.wav"),
-			audio_path("salmon_dead.wav"),
-			audio_path("salmon_eat.wav"));
-		return false;
-	}
-
-	// Playing background music indefinitely
-	Mix_PlayMusic(m_background_music, -1);
-
-	fprintf(stderr, "Loaded music\n");
-
-	bool valid = m_level.init("level_select");
-
-	if (valid) {
-		camera_pos = m_level.get_camera_position();
-	}
-	else
-		camera_pos = { 0.f, 0.f };
-
-	camera_offset = 0.f;
-
-	return valid;
+	return true;
 }
 
 // Releases all the associated resources
@@ -99,14 +59,9 @@ void World::destroy()
 {
 	glDeleteFramebuffers(1, &m_frame_buffer);
 
-	if (m_background_music != nullptr)
-		Mix_FreeMusic(m_background_music);
-
-	Mix_CloseAudio();
+	stop_music();
 
 	m_level.destroy();
-
-	glfwDestroyWindow(m_window);
 }
 
 // Update our game world
@@ -194,8 +149,12 @@ bool World::is_over() const
 }
 
 // On key callback
-void World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
+bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 {
+	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
+		return false;
+	}
+
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 		m_level.get_player()->start_flying();
 	}
@@ -243,6 +202,7 @@ void World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
         m_level.get_light()->set_blue_channel();
     }
 
+	return true;
 }
 
 void World::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
@@ -250,4 +210,56 @@ void World::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
     float radians = atan2(-ypos + 300, xpos- 600);
     Light* m_light = m_level.get_light();
     m_light->set_radians(radians);
+}
+
+void World::start_music()
+{
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
+	{
+		fprintf(stderr, "Failed to open audio device");
+		return;
+	}
+
+	m_background_music = Mix_LoadMUS(audio_path("goldleaf.wav"));
+
+	if (m_background_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
+			audio_path("goldleaf.wav"),
+			audio_path("salmon_dead.wav"),
+			audio_path("salmon_eat.wav"));
+		return;
+	}
+
+	// Playing background music indefinitely
+	Mix_PlayMusic(m_background_music, -1);
+}
+
+void World::stop_music()
+{
+	if (m_background_music != nullptr)
+		Mix_FreeMusic(m_background_music);
+
+	Mix_CloseAudio();
+}
+
+void World::start_level(std::string level)
+{
+	bool valid = m_level.init(level);
+
+	if (valid) 
+	{
+		camera_pos = m_level.get_camera_position();
+	}
+	else
+	{
+		camera_pos = { 0.f, 0.f };
+	}
+
+	camera_offset = 0.f;
+}
+
+void World::reset()
+{
+	m_level.reset_level();
 }

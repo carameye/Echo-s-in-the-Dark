@@ -1,6 +1,8 @@
 #include "gamemanager.hpp"
 
 #include <sstream>
+#include <vector>
+#include <utility>
 
 namespace
 {
@@ -46,10 +48,22 @@ bool GameManager::init(vec2 screen)
 	glfwSetWindowUserPointer(m_window, this);
 	auto key_redirect = [](GLFWwindow* wnd, int _0, int _1, int _2, int _3) { ((GameManager*)glfwGetWindowUserPointer(wnd))->on_key(wnd, _0, _1, _2, _3); };
 	auto cursor_pos_redirect = [](GLFWwindow* wnd, double _0, double _1) { ((GameManager*)glfwGetWindowUserPointer(wnd))->on_mouse_move(wnd, _0, _1); };
+	auto mouse_button_redirect = [](GLFWwindow* wnd, int _0, int _1, int _2) { ((GameManager*)glfwGetWindowUserPointer(wnd))->on_click(wnd, _0, _1, _2); };
 	glfwSetKeyCallback(m_window, key_redirect);
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
+	glfwSetMouseButtonCallback(m_window, mouse_button_redirect);
+
+	// Initialize audio
+	if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	{
+		fprintf(stderr, "Failed to initialize SDL Audio");
+		return false;
+	}
 
 	bool success = m_world.init(m_window, screen);
+	success &= m_menu.init(m_window, screen);
+	m_in_menu = true;
+	load_main_menu();
 
 	// Setting window title
 	std::stringstream title_ss;
@@ -81,6 +95,11 @@ void GameManager::draw()
 
 bool GameManager::game_over()
 {
+	if (m_is_over)
+	{
+		return true;
+	}
+
 	if (m_in_menu)
 	{
 		return m_menu.is_over();
@@ -93,26 +112,31 @@ bool GameManager::game_over()
 
 void GameManager::destroy()
 {
-	if (m_in_menu)
-	{
-		m_menu.destroy();
-	}
+	m_menu.destroy();
+	m_world.destroy();
 
-	if (m_world_valid)
-	{
-		m_world.destroy();
-	}	
+	glfwDestroyWindow(m_window);
 }
 
 void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, int mod)
 {
 	if (m_in_menu)
 	{
-		m_menu.handle_key_press(window, key, scancode, action, mod);
+		if (!m_menu.handle_key_press(window, key, scancode, action, mod))
+		{
+			m_menu.stop_music();
+			m_in_menu = false;
+			m_world.start_music();
+		}
 	}
 	else
 	{
-		m_world.handle_key_press(window, key, scancode, action, mod);
+		if (!m_world.handle_key_press(window, key, scancode, action, mod))
+		{
+			m_world.stop_music();
+			m_in_menu = true;
+			m_menu.start_music();
+		}
 	}
 }
 
@@ -126,4 +150,77 @@ void GameManager::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	{
 		m_world.handle_mouse_move(window, xpos, ypos);
 	}
+}
+
+void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
+{
+	if (m_in_menu)
+	{
+		Status s = m_menu.handle_mouse_button(button, action);
+
+		switch (s)
+		{
+		case Status::nothing:
+			return;
+			break;
+		case Status::resume:
+			m_menu.stop_music();
+			m_in_menu = false;
+			m_world.start_music();
+			break;
+		case Status::new_game:
+			m_menu.stop_music(); 
+			m_menu.destroy();
+			clear_ui_components();
+			load_pause_menu();
+			m_in_menu = false;
+			m_world.start_level("level_select");
+			m_world.start_music();
+			break;
+		case Status::load_game:
+			m_menu.stop_music();
+			m_menu.destroy();
+			clear_ui_components();
+			load_pause_menu();
+			m_in_menu = false;
+			m_world.start_level("level_select");
+			m_world.start_music();
+			break;
+		case Status::main_menu:
+			m_menu.destroy();
+			clear_ui_components();
+			load_main_menu();
+			break;
+		case Status::reset:
+			m_menu.stop_music();
+			m_in_menu = false;
+			m_world.reset();
+			m_world.start_music();
+			break;
+		case Status::exit:
+			destroy();
+			m_is_over = true;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void GameManager::load_main_menu()
+{
+	std::vector<std::pair<std::string, Status>> buttons;
+	buttons.push_back(std::make_pair("tile_brick.png", Status::new_game));
+	buttons.push_back(std::make_pair("tile_brick.png", Status::load_game));
+	buttons.push_back(std::make_pair("tile_brick.png", Status::exit));
+	m_menu.setup(buttons);
+}
+
+void GameManager::load_pause_menu()
+{
+	std::vector<std::pair<std::string, Status>> buttons;
+	buttons.push_back(std::make_pair("tile_brick.png", Status::resume));
+	buttons.push_back(std::make_pair("tile_brick.png", Status::reset));
+	buttons.push_back(std::make_pair("tile_brick.png", Status::main_menu));
+	m_menu.setup(buttons);
 }

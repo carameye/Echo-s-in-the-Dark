@@ -14,3 +14,15 @@ public:
 	void destroy();
 	void clear();
 };
+
+class UISystem
+{
+private:
+	std::vector<int> entities;
+
+public:
+	void render(const mat3& projection);
+	void process(int max);
+	void destroy();
+	void clear();
+};

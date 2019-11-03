@@ -2,14 +2,11 @@
 #include "level.hpp"
 
 using json = nlohmann::json;
-static int next_entity_id = 0;
 
 bool Level::init(std::string level)
 {
     m_interactable = NULL;
-	s_motion_components.clear();
-	s_render_components.clear();
-	m_rendering_system.clear();
+	clear_level_components();
 	return parse_level(level);
 }
 
@@ -28,8 +25,7 @@ void Level::destroy()
 	for (auto& sign : m_signs) {
 		delete sign;
 	}
-	s_render_components.clear();
-	s_motion_components.clear();
+	clear_level_components();
 	m_rendering_system.clear();
 	m_interactable = NULL;
     m_bricks.clear();

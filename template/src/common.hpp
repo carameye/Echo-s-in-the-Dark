@@ -24,6 +24,8 @@
 #define level_path data_path "/levels/json/"
 #define shadow_path data_path "/levels/shadow/"
 
+enum class Status { nothing, resume, new_game, load_game, main_menu, reset, exit };
+
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..
 struct vec2 { float x, y; };
