@@ -174,7 +174,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			clear_ui_components();
 			load_pause_menu();
 			m_in_menu = false;
-			m_world.start_level("level_select");
+			m_world.start_level(true);
 			m_world.start_music();
 			break;
 		case Status::load_game:
@@ -183,13 +183,16 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			clear_ui_components();
 			load_pause_menu();
 			m_in_menu = false;
-			m_world.start_level("level_select");
+			m_world.start_level(false);
 			m_world.start_music();
 			break;
 		case Status::main_menu:
 			m_menu.destroy();
 			clear_ui_components();
 			load_main_menu();
+			break;
+		case Status::save_game:
+			m_world.save();
 			break;
 		case Status::reset:
 			m_menu.stop_music();
@@ -221,6 +224,7 @@ void GameManager::load_pause_menu()
 	std::vector<std::pair<std::string, Status>> buttons;
 	buttons.push_back(std::make_pair("resume.png", Status::resume));
 	buttons.push_back(std::make_pair("reset.png", Status::reset));
+	buttons.push_back(std::make_pair("save_game.png", Status::save_game));
 	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
 	m_menu.setup(buttons);
 }

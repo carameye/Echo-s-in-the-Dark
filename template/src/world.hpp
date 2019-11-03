@@ -3,6 +3,7 @@
 // internal
 #include "common.hpp"
 #include "level.hpp"
+#include "UI/menu.hpp"
 
 // stlib
 #include <vector>
@@ -44,16 +45,25 @@ public:
 	void stop_music();
 
 	// Begin level
-	void start_level(std::string level);
+	void start_level(bool new_game);
 
 	// Reset the level
 	void reset();
 
-	// Load/save state from/to save file
-	void load();
+	// Save the game to save file
 	void save();
 
 private:
+	// Draw loading screen, parse level, set camera pos
+	void load_level(std::string level);
+
+	// Load state from save file
+	void load();
+
+private:
+	// Loading screen
+	Menu m_loading_screen;
+
 	// Window handle
 	GLFWwindow* m_window;
 	float m_screen_scale; // Screen to pixel coordinates scale factor
@@ -74,4 +84,7 @@ private:
 	// C++ rng
 	std::default_random_engine m_rng;
 	std::uniform_real_distribution<float> m_dist; // default 0..1
+
+	// Saved level data
+	std::vector<std::string> m_unlocked;
 };

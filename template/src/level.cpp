@@ -3,13 +3,6 @@
 
 using json = nlohmann::json;
 
-bool Level::init(std::string level)
-{
-    m_interactable = NULL;
-	clear_level_components();
-	return parse_level(level);
-}
-
 void Level::destroy()
 {
 	// clear all level-dependent resources
@@ -162,14 +155,16 @@ Robot* Level::get_player()
     return &m_robot;
 }
 
-void Level::interact()
+std::string Level::interact()
 {
     if (m_interactable != NULL) {
-		m_interactable->perform_action(std::bind(&Level::parse_level, this, std::placeholders::_1));
+		return m_interactable->perform_action();
 	}
+
+	return "";
 }
 
-bool Level::parse_level(std::string level)
+bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 {
 	m_level = level;
 
@@ -204,6 +199,17 @@ bool Level::parse_level(std::string level)
 	{
 		vec2 pos = { door["pos"]["x"], door["pos"]["y"] };
 		spawn_door(to_pixel_position(pos), door["next_level"]);
+	}
+
+	if (m_level == "level_select")
+	{
+		for (auto& d : m_interactables)
+		{
+			if (find(unlocked.begin(), unlocked.end(), d->get_destination()) == unlocked.end())
+			{
+				d->lock();
+			}
+		}
 	}
 
 	fprintf(stderr, "   getting torches\n");
@@ -262,7 +268,10 @@ bool Level::parse_level(std::string level)
 		m_interactables.size(), m_ghosts.size(), m_bricks.size());
 
 	// Generate the graph
-	m_graph.generate(potential_cp, bricks, width, height);
+	if (m_ghosts.size() > 0)
+	{
+		m_graph.generate(potential_cp, bricks, width, height);
+	}
 
 	// Spawn the robot
 	vec2 pos = { j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"] };
@@ -275,12 +284,8 @@ bool Level::parse_level(std::string level)
 	return true;
 }
 
-bool Level::handle_key_press(int key, int action)
+std::string Level::handle_key_press(int key, int action)
 {
-	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
-		return false;
-	}
-
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 		m_robot.start_flying();
 	}
@@ -302,7 +307,7 @@ bool Level::handle_key_press(int key, int action)
 	}
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
-		interact();
+		return interact();
 	}
 
 	// headlight toggle
@@ -316,13 +321,18 @@ bool Level::handle_key_press(int key, int action)
 		m_light.set_blue_channel();
 	}
 
-	return true;
+	return "";
 }
 
 void Level::handle_mouse_move(double xpos, double ypos)
 {
 	float radians = atan2(-ypos + 300, xpos - 600);
 	m_light.set_radians(radians);
+}
+
+std::string Level::get_current_level()
+{
+	return m_level;
 }
 
 bool Level::spawn_door(vec2 position, std::string next_level)

@@ -15,9 +15,6 @@
 class Level
 {
     public:
-    // Creates all the associated render resources and default transform
-	bool init(std::string level);
-
     // Renders level
     // projection is the 2D orthographic projection matrix
 	void draw_entities(const mat3& projection, const vec2& camera_shift);
@@ -36,17 +33,20 @@ class Level
     Robot* get_player();
 
     // Interact with the current level interactable
-    void interact();
+    std::string interact();
 
 	// Resets the level
 	void reset_level();
 
 	// Generate a level from a text file
-	bool parse_level(std::string level);
+	bool parse_level(std::string level, std::vector<std::string> unlocked);
 
 	// Handle input
-	bool handle_key_press(int key, int action);
+	std::string handle_key_press(int key, int action);
 	void handle_mouse_move(double xpos, double ypos);
+
+	// Get the name of the current level
+	std::string get_current_level();
 
 private:
 
