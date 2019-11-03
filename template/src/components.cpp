@@ -1,7 +1,12 @@
 #include "components.hpp"
 
+int next_entity_id = 0;
+int next_ui_id = 0;
+
 std::map<int, MotionComponent*> s_motion_components;
+std::map<int, MotionComponent*> s_ui_motion_components;
 std::map<int, RenderComponent*> s_render_components;
+std::map<int, RenderComponent*> s_ui_render_components;
 
 bool RenderComponent::init_sprite()
 {
@@ -91,4 +96,16 @@ void RenderComponent::draw_sprite_alpha(const mat3& projection, float alpha)
 
 	// Drawing!
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+}
+
+void clear_level_components()
+{
+	s_motion_components.clear();
+	s_render_components.clear();
+}
+
+void clear_ui_components()
+{
+	s_ui_motion_components.clear();
+	s_ui_render_components.clear();
 }

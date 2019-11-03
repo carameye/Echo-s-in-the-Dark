@@ -169,13 +169,8 @@ float find_light_brick(vec2 p1, vec2 p2)
     return sqrt(c);
 }
 
-float find_light(vec2 p1, vec2 p2, float radius)
+float find_light(vec2 p1, vec2 p2)
 {
-    if (dist(p1, p2) > radius)
-    {
-        return 0;
-    }
-
     if (p1.x == p2.x && p1.y == p2.y)
     {
         return 1;
@@ -214,13 +209,16 @@ void main()
 	// illuminate for torches first
 	float illum_torch_sum = 0;
 	for (int i = 0; i < torches_size; i++) {
-        float t_light = find_light(pos, torches_position[i], 640);
+        if (dist(pos, torches_position[i]) > 384) {
+            continue;
+        }
+        float t_light = find_light(pos, torches_position[i]);
 		float illum_torch = illuminate_torches(coord, torches_position[i]) * t_light;
 		illum_torch_sum = max(illum_torch_sum, illum_torch);
 	}
 
     vec2 temp_l = vec2(light_pos.x, screen_size.y - light_pos.y);
-    float hl_light = find_light(pos, temp_l, 640);
+    float hl_light = find_light(pos, temp_l);
 
 	float illum_robot = clamp(illuminate_robot(coord), 0, 1) * hl_light;
 	float hl = clamp(headlight(coord), 0, 0.8) * hl_light;

@@ -40,7 +40,7 @@ B                                                                            B
 B                                                                            B
 B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B                          B
-B                          B
 B          R               B
-B         TST      TST     B
+B          T        T      B
+B          S        S      B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB
