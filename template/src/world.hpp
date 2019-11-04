@@ -24,7 +24,7 @@ public:
 	bool init(GLFWwindow *window, vec2 screen);
 
 	// Set pause and load functions
-	void set_pl_functions(void (*p)(), void (*l)());
+	void set_pl_functions(void (*l)());
 
 	// Releases all associated resources
 	void destroy();
@@ -63,8 +63,7 @@ private:
 	void load();
 
 private:
-	// Load and pause menu access
-	void (*m_pause)();
+	// Load menu access
 	void (*m_load)();
 
 	// Window handle

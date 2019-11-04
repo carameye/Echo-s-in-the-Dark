@@ -55,9 +55,8 @@ bool World::init(GLFWwindow* window, vec2 screen)
 	return true;
 }
 
-void World::set_pl_functions(void (*p)(), void (*l)())
+void World::set_pl_functions(void (*l)())
 {
-	m_pause = p;
 	m_load = l;
 }
 

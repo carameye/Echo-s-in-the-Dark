@@ -189,7 +189,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_menu.stop_music(); 
 			m_in_menu = false;
 			m_world.init(m_window, m_screen);
-			m_world.set_pl_functions(pause, load);
+			m_world.set_pl_functions(load);
 			m_world.start_music();
 			m_world.start_level(true);
 			break;
@@ -197,7 +197,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_menu.stop_music();
 			m_in_menu = false;
 			m_world.init(m_window, m_screen);
-			m_world.set_pl_functions(pause, load);
+			m_world.set_pl_functions(load);
 			m_world.start_level(false);
 			m_world.start_music();
 			break;
