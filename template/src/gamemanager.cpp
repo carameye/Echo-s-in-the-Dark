@@ -12,8 +12,23 @@ namespace
 	}
 }
 
+static GameManager* gm;
+
+static void pause()
+{
+	gm->load_pause_menu();
+}
+
+static void load()
+{
+	gm->draw_loading_screen();
+}
+
 bool GameManager::init(vec2 screen)
 {
+	gm = this;
+	m_screen = screen;
+
 	//-------------------------------------------------------------------------
 	// GLFW / OGL Initialization
 	// Core Opengl 3.
@@ -60,8 +75,7 @@ bool GameManager::init(vec2 screen)
 		return false;
 	}
 
-	bool success = m_world.init(m_window, screen);
-	success &= m_menu.init(m_window, screen);
+	bool success = m_menu.init(m_window, screen);
 	m_in_menu = true;
 	load_main_menu();
 
@@ -125,6 +139,8 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 		if (!m_menu.handle_key_press(window, key, scancode, action, mod))
 		{
 			m_menu.stop_music();
+			clear_ui_components();
+			m_menu.destroy();
 			m_in_menu = false;
 			m_world.start_music();
 		}
@@ -134,6 +150,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 		if (!m_world.handle_key_press(window, key, scancode, action, mod))
 		{
 			m_world.stop_music();
+			load_pause_menu();
 			m_in_menu = true;
 			m_menu.start_music();
 		}
@@ -170,25 +187,21 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			break;
 		case Status::new_game:
 			m_menu.stop_music(); 
-			m_menu.destroy();
-			clear_ui_components();
-			load_pause_menu();
 			m_in_menu = false;
-			m_world.start_level(true);
+			m_world.init(m_window, m_screen);
+			m_world.set_pl_functions(pause, load);
 			m_world.start_music();
+			m_world.start_level(true);
 			break;
 		case Status::load_game:
 			m_menu.stop_music();
-			m_menu.destroy();
-			clear_ui_components();
-			load_pause_menu();
 			m_in_menu = false;
+			m_world.init(m_window, m_screen);
+			m_world.set_pl_functions(pause, load);
 			m_world.start_level(false);
 			m_world.start_music();
 			break;
 		case Status::main_menu:
-			m_menu.destroy();
-			clear_ui_components();
 			load_main_menu();
 			break;
 		case Status::save_game:
@@ -212,6 +225,8 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 
 void GameManager::load_main_menu()
 {
+	m_menu.destroy();
+	clear_ui_components();
 	std::vector<std::pair<std::string, Status>> buttons;
 	buttons.push_back(std::make_pair("new_game.png", Status::new_game));
 	buttons.push_back(std::make_pair("load_game.png", Status::load_game));
@@ -221,10 +236,24 @@ void GameManager::load_main_menu()
 
 void GameManager::load_pause_menu()
 {
+	m_menu.destroy();
+	clear_ui_components();
 	std::vector<std::pair<std::string, Status>> buttons;
 	buttons.push_back(std::make_pair("resume.png", Status::resume));
 	buttons.push_back(std::make_pair("reset.png", Status::reset));
 	buttons.push_back(std::make_pair("save_game.png", Status::save_game));
 	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
 	m_menu.setup(buttons);
+}
+
+void GameManager::draw_loading_screen()
+{
+	m_menu.destroy();
+	clear_ui_components();
+	std::vector<std::pair<std::string, Status>> buttons;
+	buttons.push_back(std::make_pair("loading.png", Status::nothing));
+	m_menu.setup(buttons);
+	m_menu.draw();
+	m_menu.destroy();
+	clear_ui_components();
 }

@@ -1,7 +1,6 @@
 #include "components.hpp"
 
-int next_entity_id = 0;
-int next_ui_id = 0;
+int next_id = 0;
 
 std::map<int, MotionComponent*> s_motion_components;
 std::map<int, MotionComponent*> s_ui_motion_components;
@@ -73,8 +72,26 @@ void RenderComponent::draw_sprite_alpha(const mat3& projection, float alpha)
 
 	// Setting vertices and indices
 	glBindVertexArray(mesh.vao);
+
+	if (gl_has_errors())
+	{
+		fprintf(stderr, "errors in vao\n");
+		gl_flush_errors();
+	}
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+
+	if (gl_has_errors())
+	{
+		fprintf(stderr, "errors in vbo\n");
+		gl_flush_errors();
+	}
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
+
+	if (gl_has_errors())
+	{
+		fprintf(stderr, "errors in ibo\n");
+		gl_flush_errors();
+	}
 
 	// Input data location as in the vertex buffer
 	GLint in_position_loc = glGetAttribLocation(effect.program, "in_position");

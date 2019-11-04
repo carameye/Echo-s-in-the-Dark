@@ -3,7 +3,6 @@
 // internal
 #include "common.hpp"
 #include "level.hpp"
-#include "UI/menu.hpp"
 
 // stlib
 #include <vector>
@@ -23,6 +22,9 @@ public:
 
 	// Creates a window, sets up events and begins the game
 	bool init(GLFWwindow *window, vec2 screen);
+
+	// Set pause and load functions
+	void set_pl_functions(void (*p)(), void (*l)());
 
 	// Releases all associated resources
 	void destroy();
@@ -61,11 +63,13 @@ private:
 	void load();
 
 private:
-	// Loading screen
-	Menu m_loading_screen;
+	// Load and pause menu access
+	void (*m_pause)();
+	void (*m_load)();
 
 	// Window handle
 	GLFWwindow* m_window;
+	vec2 m_screen;
 	float m_screen_scale; // Screen to pixel coordinates scale factor
 
 	// Screen texture

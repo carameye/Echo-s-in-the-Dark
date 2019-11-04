@@ -28,14 +28,15 @@ public:
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
 	void on_click(GLFWwindow* window, int button, int action, int mods);
 
-private:
 	// Load menus
 	void load_main_menu();
 	void load_pause_menu();
+	void draw_loading_screen();
 
 private:
 	// Window information
 	GLFWwindow* m_window;
+	vec2 m_screen;
 
 	// Information about the state
 	bool m_world_valid = true;

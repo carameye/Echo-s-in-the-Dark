@@ -279,7 +279,7 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
 	save_level();
 
-	m_rendering_system.process(next_entity_id);
+	m_rendering_system.process(next_id);
 
 	return true;
 }
@@ -338,7 +338,7 @@ std::string Level::get_current_level()
 bool Level::spawn_door(vec2 position, std::string next_level)
 {
 	Door *door = new Door();
-	if (door->init(next_entity_id++))
+	if (door->init(next_id++))
 	{
 		door->set_position(position);
 		door->set_destination(next_level);
@@ -352,7 +352,7 @@ bool Level::spawn_door(vec2 position, std::string next_level)
 bool Level::spawn_ghost(vec2 position)
 {
 	Ghost *ghost = new Ghost();
-	if (ghost->init(next_entity_id++))
+	if (ghost->init(next_id++))
 	{
 		ghost->set_position(position);
 		ghost->set_level_graph(&m_graph);
@@ -364,9 +364,9 @@ bool Level::spawn_ghost(vec2 position)
 
 bool Level::spawn_robot(vec2 position)
 {
-	if (m_robot.init(next_entity_id))
+	if (m_robot.init(next_id))
 	{
-		next_entity_id += 104;
+		next_id += 104;
 		m_robot.set_position(position);
 		m_robot.set_head_position(position);
         m_robot.set_shoulder_position(position);
@@ -391,9 +391,9 @@ bool Level::spawn_robot(vec2 position)
 bool Level::spawn_sign(vec2 position, std::string text)
 {
 	Sign *sign = new Sign();
-	if (sign->init(next_entity_id, text, position))
+	if (sign->init(next_id, text, position))
 	{
-		next_entity_id += 2;
+		next_id += 2;
 		m_signs.push_back(sign);
 		return true;
 	}
@@ -411,7 +411,7 @@ bool Level::spawn_brick(vec2 position, vec3 colour)
 		fprintf(stderr, "	brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
 
 	Brick *brick = new Brick();
-	if (brick->init(next_entity_id++))
+	if (brick->init(next_id++))
 	{
 		brick->set_position(position);
 		m_bricks.push_back(brick);

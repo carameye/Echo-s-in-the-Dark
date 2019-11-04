@@ -36,6 +36,7 @@ World::~World()
 bool World::init(GLFWwindow* window, vec2 screen)
 {
 	m_window = window;
+	m_screen = screen;
 
 	// Create a frame buffer
 	m_frame_buffer = 0;
@@ -51,17 +52,18 @@ bool World::init(GLFWwindow* window, vec2 screen)
 	// Initialize the screen texture
 	m_screen_tex.create_from_screen(m_window);
 
-	m_loading_screen.init(window, screen);
-	m_loading_screen.setup({});
-
 	return true;
+}
+
+void World::set_pl_functions(void (*p)(), void (*l)())
+{
+	m_pause = p;
+	m_load = l;
 }
 
 // Releases all the associated resources
 void World::destroy()
 {
-	m_loading_screen.destroy();
-
 	glDeleteFramebuffers(1, &m_frame_buffer);
 
 	stop_music();
@@ -240,8 +242,10 @@ void World::reset()
 
 void World::load_level(std::string level)
 {
-	m_loading_screen.draw();
+	stop_music();
+	m_load();
 	bool valid = m_level.parse_level(level, m_unlocked);
+	start_music();
 
 	if (valid)
 	{

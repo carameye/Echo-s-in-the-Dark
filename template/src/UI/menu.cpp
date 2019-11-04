@@ -56,12 +56,12 @@ bool Menu::setup(std::vector<std::pair<std::string, Status>> buttons)
 		Button* b = new Button();
 		b->set_texture_name(s.first);
 		b->set_status(s.second);
-		b->init(next_ui_id++, { 600.f, start + brick_size });
+		b->init(next_id++, { 600.f, start + brick_size });
 		m_entities.push_back(b);
 		start += brick_size * 3.f;
 	}
 
-	m_rs.process(next_ui_id);
+	m_rs.process(next_id);
 
 	return true;
 }
