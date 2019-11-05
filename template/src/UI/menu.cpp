@@ -51,6 +51,8 @@ bool Menu::setup(std::vector<std::pair<std::string, Status>> buttons)
 {
 	float start = 400.f - (buttons.size() * 2.f * brick_size + (buttons.size() - 1) * brick_size) / 2.f;
 
+	int first = next_id;
+
 	for (auto& s : buttons)
 	{
 		Button* b = new Button();
@@ -61,7 +63,7 @@ bool Menu::setup(std::vector<std::pair<std::string, Status>> buttons)
 		start += brick_size * 3.f;
 	}
 
-	m_rs.process(next_id);
+	m_rs.process(first, next_id);
 
 	return true;
 }

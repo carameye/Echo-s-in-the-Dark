@@ -75,16 +75,24 @@ bool GameManager::init(vec2 screen)
 		return false;
 	}
 
-	bool success = m_menu.init(m_window, screen);
-	m_in_menu = true;
+	m_main_menu.init(m_window, screen);
 	load_main_menu();
+
+	m_pause_menu.init(m_window, screen);
+	load_pause_menu();
+
+	m_load_menu.init(m_window, screen);
+	load_loading_menu();
+
+	m_in_menu = true;
+	m_menu = &m_main_menu;
 
 	// Setting window title
 	std::stringstream title_ss;
 	title_ss << "ECHO's in the Dark";
 	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
-	return success;
+	return true;
 }
 
 void GameManager::update(float elapsed_ms)
@@ -97,9 +105,14 @@ void GameManager::update(float elapsed_ms)
 
 void GameManager::draw()
 {
+	if (game_over())
+	{
+		return;
+	}
+
 	if (m_in_menu)
 	{
-		m_menu.draw();
+		m_menu->draw();
 	}
 	else
 	{
@@ -116,7 +129,7 @@ bool GameManager::game_over()
 
 	if (m_in_menu)
 	{
-		return m_menu.is_over();
+		return m_menu->is_over();
 	}
 	else 
 	{
@@ -126,7 +139,9 @@ bool GameManager::game_over()
 
 void GameManager::destroy()
 {
-	m_menu.destroy();
+	m_main_menu.destroy();
+	m_pause_menu.destroy();
+	m_load_menu.destroy();
 	m_world.destroy();
 
 	glfwDestroyWindow(m_window);
@@ -136,11 +151,9 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 {
 	if (m_in_menu)
 	{
-		if (!m_menu.handle_key_press(window, key, scancode, action, mod))
+		if (!m_menu->handle_key_press(window, key, scancode, action, mod))
 		{
-			m_menu.stop_music();
-			clear_ui_components();
-			m_menu.destroy();
+			m_menu->stop_music();
 			m_in_menu = false;
 			m_world.start_music();
 		}
@@ -150,9 +163,9 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 		if (!m_world.handle_key_press(window, key, scancode, action, mod))
 		{
 			m_world.stop_music();
-			load_pause_menu();
 			m_in_menu = true;
-			m_menu.start_music();
+			m_menu = &m_pause_menu;
+			m_menu->start_music();
 		}
 	}
 }
@@ -161,7 +174,7 @@ void GameManager::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
 	if (m_in_menu)
 	{
-		m_menu.handle_mouse_move(window, xpos, ypos);
+		m_menu->handle_mouse_move(window, xpos, ypos);
 	}
 	else 
 	{
@@ -173,7 +186,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 {
 	if (m_in_menu)
 	{
-		Status s = m_menu.handle_mouse_button(button, action);
+		Status s = m_menu->handle_mouse_button(button, action);
 
 		switch (s)
 		{
@@ -181,12 +194,12 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			return;
 			break;
 		case Status::resume:
-			m_menu.stop_music();
+			m_menu->stop_music();
 			m_in_menu = false;
 			m_world.start_music();
 			break;
 		case Status::new_game:
-			m_menu.stop_music(); 
+			m_menu->stop_music();
 			m_in_menu = false;
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load);
@@ -194,7 +207,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_world.start_level(true);
 			break;
 		case Status::load_game:
-			m_menu.stop_music();
+			m_menu->stop_music();
 			m_in_menu = false;
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load);
@@ -202,19 +215,18 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_world.start_music();
 			break;
 		case Status::main_menu:
-			load_main_menu();
+			m_menu = &m_main_menu;
 			break;
 		case Status::save_game:
 			m_world.save();
 			break;
 		case Status::reset:
-			m_menu.stop_music();
+			m_menu->stop_music();
 			m_in_menu = false;
 			m_world.reset();
 			m_world.start_music();
 			break;
 		case Status::exit:
-			destroy();
 			m_is_over = true;
 			break;
 		default:
@@ -225,35 +237,31 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 
 void GameManager::load_main_menu()
 {
-	m_menu.destroy();
-	clear_ui_components();
 	std::vector<std::pair<std::string, Status>> buttons;
 	buttons.push_back(std::make_pair("new_game.png", Status::new_game));
 	buttons.push_back(std::make_pair("load_game.png", Status::load_game));
 	buttons.push_back(std::make_pair("exit.png", Status::exit));
-	m_menu.setup(buttons);
+	m_main_menu.setup(buttons);
 }
 
 void GameManager::load_pause_menu()
 {
-	m_menu.destroy();
-	clear_ui_components();
 	std::vector<std::pair<std::string, Status>> buttons;
 	buttons.push_back(std::make_pair("resume.png", Status::resume));
 	buttons.push_back(std::make_pair("reset.png", Status::reset));
 	buttons.push_back(std::make_pair("save_game.png", Status::save_game));
 	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
-	m_menu.setup(buttons);
+	m_pause_menu.setup(buttons);
+}
+
+void GameManager::load_loading_menu()
+{
+	std::vector<std::pair<std::string, Status>> buttons;
+	buttons.push_back(std::make_pair("loading.png", Status::nothing));
+	m_load_menu.setup(buttons);
 }
 
 void GameManager::draw_loading_screen()
 {
-	m_menu.destroy();
-	clear_ui_components();
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("loading.png", Status::nothing));
-	m_menu.setup(buttons);
-	m_menu.draw();
-	m_menu.destroy();
-	clear_ui_components();
+	m_load_menu.draw();
 }

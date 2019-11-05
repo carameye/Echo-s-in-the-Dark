@@ -31,6 +31,7 @@ public:
 	// Load menus
 	void load_main_menu();
 	void load_pause_menu();
+	void load_loading_menu();
 	void draw_loading_screen();
 
 private:
@@ -44,7 +45,10 @@ private:
 
 	// Game states
 	World m_world;
-	Menu m_menu;
+	Menu* m_menu;
+	Menu m_main_menu;
+	Menu m_pause_menu;
+	Menu m_load_menu;
 
 	// Should end game
 	bool m_is_over = false;
