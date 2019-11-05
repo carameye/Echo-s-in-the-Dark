@@ -90,6 +90,7 @@ void Level::update(float elapsed_ms) {
     }
 
     m_robot.set_position({new_robot_pos.x, robot_pos.y});
+    m_robot.set_head_position({new_robot_head_pos.x, new_robot_head_pos.y});
 
     translation = new_robot_vel.y;
     for (auto &i_brick : m_bricks) {
