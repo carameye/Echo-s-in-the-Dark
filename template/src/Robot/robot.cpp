@@ -264,7 +264,7 @@ vec2 Robot::get_head_position() {
 }
 
 vec2 Robot::get_next_head_position() {
-    return m_head.get_next_position();
+	return m_head.get_next_position(add(mc.position, { 0.f, -48.f }));
 }
 
 vec2 Robot::get_head_velocity() {

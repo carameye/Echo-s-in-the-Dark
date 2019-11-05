@@ -35,7 +35,6 @@ bool RobotHead::init(int id)
 
 void RobotHead::update(float ms, vec2 goal)
 {
-    vec2 dist = sub(goal, mc.position);
 	if (m_face_right)
 	{
 		rc.physics.scale.x = abs(rc.physics.scale.x);
@@ -44,7 +43,6 @@ void RobotHead::update(float ms, vec2 goal)
 	{
 		rc.physics.scale.x = -abs(rc.physics.scale.x);
 	}
-    set_position(add(get_position(), { 0.65f * dist.x, 0.65f * dist.y }));
 }
 
 Hitbox RobotHead::get_hitbox(vec2 translation) const
@@ -89,8 +87,9 @@ bool RobotHead::get_direction()
     return m_face_right;
 }
 
-vec2 RobotHead::get_next_position() {
-    return {mc.position.x + mc.velocity.x, mc.position.y + mc.velocity.y};
+vec2 RobotHead::get_next_position(vec2 goal) {
+	vec2 dist = sub(goal, mc.position);
+    return add(get_position(), { 0.65f * dist.x, 0.65f * dist.y });
 }
 
 vec2 RobotHead::get_velocity() {

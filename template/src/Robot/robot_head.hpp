@@ -36,7 +36,7 @@ public:
 
     bool get_direction();
 
-    vec2 get_next_position();
+    vec2 get_next_position(vec2 goal);
 
     vec2 get_velocity();
 

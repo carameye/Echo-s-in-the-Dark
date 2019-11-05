@@ -52,10 +52,11 @@ void Level::update(float elapsed_ms) {
     vec2 new_robot_head_pos = m_robot.get_next_head_position();
 
     float translation = new_robot_vel.x;
+	float translation_head = new_robot_head_pos.x - robot_head_pos.x;
     for (auto &i_brick : m_bricks) {
 
         const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
-        const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({translation, 0.f});
+        const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
         Brick brick = *i_brick;
         if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
             m_robot.set_velocity({0.f, m_robot.get_velocity().y});
@@ -84,18 +85,19 @@ void Level::update(float elapsed_ms) {
             }
 
             new_robot_head_pos.x = get_closest_point(robot_head_pos.x, brick.get_position().x, circle_width,
-                                                     brick_size / 2.f);
-            translation = new_robot_head_pos.x - robot_head_pos.x;
+                                                     21);
+			translation_head = new_robot_head_pos.x - robot_head_pos.x;
         }
     }
 
     m_robot.set_position({new_robot_pos.x, robot_pos.y});
-    m_robot.set_head_position({new_robot_head_pos.x, new_robot_head_pos.y});
+    m_robot.set_head_position({new_robot_head_pos.x, robot_head_pos.y});
 
     translation = new_robot_vel.y;
+	translation_head = new_robot_head_pos.y - robot_head_pos.y;
     for (auto &i_brick : m_bricks) {
         const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
-        const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation});
+        const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
         Brick brick = *i_brick;
         if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
             m_robot.set_velocity({m_robot.get_velocity().x, 0.f});
@@ -126,13 +128,14 @@ void Level::update(float elapsed_ms) {
             }
 
             new_robot_head_pos.y = get_closest_point(robot_head_pos.y, brick.get_position().y, circle_width,
-                                                     brick_size / 2.f);
-            translation = new_robot_head_pos.y - robot_head_pos.y;
+                                                     21);
+			translation_head = new_robot_head_pos.y - robot_head_pos.y;
         }
 
     }
 
     m_robot.set_position(new_robot_pos);
+	m_robot.set_head_position(new_robot_head_pos);
     m_robot.update(elapsed_ms);
     m_light.set_position(new_robot_pos);
 
