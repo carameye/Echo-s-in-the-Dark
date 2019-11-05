@@ -47,6 +47,23 @@ void RobotHead::update(float ms, vec2 goal)
     set_position(add(get_position(), { 0.65f * dist.x, 0.65f * dist.y }));
 }
 
+Hitbox RobotHead::get_hitbox(vec2 translation) const
+{
+    std::vector<Circle> circles(1);
+
+    vec2 position = mc.position;
+
+    position.x += translation.x;
+    position.y += translation.y;
+
+    int radius = rc.texture->height/2;
+    Circle circle(position, radius);
+    circles[0] = circle;
+
+    Hitbox hitbox(circles, {});
+    return hitbox;
+}
+
 vec2 RobotHead::get_position() const
 {
     return mc.position;
@@ -70,4 +87,16 @@ void RobotHead::set_direction(bool right)
 bool RobotHead::get_direction()
 {
     return m_face_right;
+}
+
+vec2 RobotHead::get_next_position() {
+    return {mc.position.x + mc.velocity.x, mc.position.y + mc.velocity.y};
+}
+
+vec2 RobotHead::get_velocity() {
+    return mc.velocity;
+}
+
+void RobotHead::set_velocity(vec2 velocity) {
+    mc.velocity = velocity;
 }

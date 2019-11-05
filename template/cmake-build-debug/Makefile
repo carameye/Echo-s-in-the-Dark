@@ -284,6 +284,60 @@ src/Robot/robot_shoulders.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/Robot/robot_shoulders.cpp.s
 .PHONY : src/Robot/robot_shoulders.cpp.s
 
+src/UI/menu.obj: src/UI/menu.cpp.obj
+
+.PHONY : src/UI/menu.obj
+
+# target to build an object file
+src/UI/menu.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/UI/menu.cpp.obj
+.PHONY : src/UI/menu.cpp.obj
+
+src/UI/menu.i: src/UI/menu.cpp.i
+
+.PHONY : src/UI/menu.i
+
+# target to preprocess a source file
+src/UI/menu.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/UI/menu.cpp.i
+.PHONY : src/UI/menu.cpp.i
+
+src/UI/menu.s: src/UI/menu.cpp.s
+
+.PHONY : src/UI/menu.s
+
+# target to generate assembly for a file
+src/UI/menu.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/UI/menu.cpp.s
+.PHONY : src/UI/menu.cpp.s
+
+src/UI/menuentity.obj: src/UI/menuentity.cpp.obj
+
+.PHONY : src/UI/menuentity.obj
+
+# target to build an object file
+src/UI/menuentity.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/UI/menuentity.cpp.obj
+.PHONY : src/UI/menuentity.cpp.obj
+
+src/UI/menuentity.i: src/UI/menuentity.cpp.i
+
+.PHONY : src/UI/menuentity.i
+
+# target to preprocess a source file
+src/UI/menuentity.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/UI/menuentity.cpp.i
+.PHONY : src/UI/menuentity.cpp.i
+
+src/UI/menuentity.s: src/UI/menuentity.cpp.s
+
+.PHONY : src/UI/menuentity.s
+
+# target to generate assembly for a file
+src/UI/menuentity.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/UI/menuentity.cpp.s
+.PHONY : src/UI/menuentity.cpp.s
+
 src/brick.obj: src/brick.cpp.obj
 
 .PHONY : src/brick.obj
@@ -364,6 +418,33 @@ src/components.s: src/components.cpp.s
 src/components.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/components.cpp.s
 .PHONY : src/components.cpp.s
+
+src/gamemanager.obj: src/gamemanager.cpp.obj
+
+.PHONY : src/gamemanager.obj
+
+# target to build an object file
+src/gamemanager.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/gamemanager.cpp.obj
+.PHONY : src/gamemanager.cpp.obj
+
+src/gamemanager.i: src/gamemanager.cpp.i
+
+.PHONY : src/gamemanager.i
+
+# target to preprocess a source file
+src/gamemanager.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/gamemanager.cpp.i
+.PHONY : src/gamemanager.cpp.i
+
+src/gamemanager.s: src/gamemanager.cpp.s
+
+.PHONY : src/gamemanager.s
+
+# target to generate assembly for a file
+src/gamemanager.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/gamemanager.cpp.s
+.PHONY : src/gamemanager.cpp.s
 
 src/ghost.obj: src/ghost.cpp.obj
 
@@ -716,6 +797,12 @@ help:
 	@echo ... src/Robot/robot_shoulders.obj
 	@echo ... src/Robot/robot_shoulders.i
 	@echo ... src/Robot/robot_shoulders.s
+	@echo ... src/UI/menu.obj
+	@echo ... src/UI/menu.i
+	@echo ... src/UI/menu.s
+	@echo ... src/UI/menuentity.obj
+	@echo ... src/UI/menuentity.i
+	@echo ... src/UI/menuentity.s
 	@echo ... src/brick.obj
 	@echo ... src/brick.i
 	@echo ... src/brick.s
@@ -725,6 +812,9 @@ help:
 	@echo ... src/components.obj
 	@echo ... src/components.i
 	@echo ... src/components.s
+	@echo ... src/gamemanager.obj
+	@echo ... src/gamemanager.i
+	@echo ... src/gamemanager.s
 	@echo ... src/ghost.obj
 	@echo ... src/ghost.i
 	@echo ... src/ghost.s

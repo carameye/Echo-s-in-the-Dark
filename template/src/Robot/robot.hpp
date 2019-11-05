@@ -70,11 +70,22 @@ public:
 	// Returns the robots hitbox for collision detection
 	Hitbox get_hitbox(vec2 translation) const;
 
+    // Returns the robots head hitbox for collision detection
+    Hitbox get_head_hitbox(vec2 translation) const;
+
 	// Starts smoke system and changes to flying sprite
 	void start_flying();
 
 	// Stops smoke system and changes to normal sprite
 	void stop_flying();
+
+    vec2 get_head_position();
+
+    vec2 get_next_head_position();
+
+    vec2 get_head_velocity();
+
+    void set_head_velocity(vec2 velocity);
 
 private:
 	RobotHead m_head;

@@ -11,7 +11,7 @@ namespace {
     const float MAX_HORIZONTAL_VELOCITY = 15.f;
     const float MAX_FLIGHT_VELOCITY = 15.f;
     const float MAX_GRAVITY_VELOCITY = 25.f;
-    const float MAX_FLIGHT_DURATION = 1500.f;
+    const float MAX_FLIGHT_DURATION = 5500.f;
 }
 
 Texture Robot::robot_body_texture;
@@ -210,6 +210,11 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 	return hitbox;
 }
 
+Hitbox Robot::get_head_hitbox(vec2 translation) const
+{
+    return m_head.get_hitbox(translation);
+}
+
 void Robot::start_flying()
 {
     m_is_flying = true;
@@ -252,4 +257,20 @@ void Robot::set_is_accelerating_left(bool val) {
         set_acceleration({ HORIZONTAL_DECELERATION , mc.acceleration.y });
     }
 
+}
+
+vec2 Robot::get_head_position() {
+    return m_head.get_position();
+}
+
+vec2 Robot::get_next_head_position() {
+    return m_head.get_next_position();
+}
+
+vec2 Robot::get_head_velocity() {
+    return m_head.get_velocity();
+}
+
+void Robot::set_head_velocity(vec2 velocity) {
+    m_head.set_velocity(velocity);
 }
