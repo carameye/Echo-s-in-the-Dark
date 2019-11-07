@@ -42,6 +42,4 @@ public:
     vec2 get_velocity();
 
     void set_velocity(vec2 vec2);
-
-    void handle_brick_collision(Brick brick, vec2 nextPosition);
 };
