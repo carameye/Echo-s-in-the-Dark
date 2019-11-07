@@ -23,8 +23,9 @@
 #define mesh_path(name) data_path  "/meshes/" name
 #define level_path data_path "/levels/json/"
 #define shadow_path data_path "/levels/shadow/"
+#define save_file data_path "/save/save_file.json"
 
-enum class Status { nothing, resume, new_game, load_game, main_menu, reset, exit };
+enum class Status { nothing, main_menu, new_game, load_game, resume, reset, save_game, exit };
 
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..

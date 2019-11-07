@@ -36,6 +36,7 @@ World::~World()
 bool World::init(GLFWwindow* window, vec2 screen)
 {
 	m_window = window;
+	m_screen = screen;
 
 	// Create a frame buffer
 	m_frame_buffer = 0;
@@ -52,6 +53,11 @@ bool World::init(GLFWwindow* window, vec2 screen)
 	m_screen_tex.create_from_screen(m_window);
 
 	return true;
+}
+
+void World::set_pl_functions(void (*l)())
+{
+	m_load = l;
 }
 
 // Releases all the associated resources
@@ -155,30 +161,11 @@ bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 		return false;
 	}
 
-	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-		m_level.get_player()->start_flying();
-	}
-	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-        m_level.get_player()->set_is_accelerating_left(true);
-	}
-	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-        m_level.get_player()->set_is_accelerating_right(true);
-	}
 	if (action == GLFW_PRESS && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
 		camera_offset -= 100;
 	}
 	if (action == GLFW_PRESS && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
 		camera_offset += 100;
-	}
-
-	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
-		m_level.get_player()->stop_flying();
-	}
-	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-	    m_level.get_player()->set_is_accelerating_left(false);
-	}
-	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-	    m_level.get_player()->set_is_accelerating_right(false);
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
 		camera_offset += 100;
@@ -186,30 +173,20 @@ bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
 		camera_offset -= 100;
 	}
-
-	if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
-		m_level.interact();
+	std::string r = m_level.handle_key_press(key, action);
+	if (r.length() > 0) {
+		if (find(m_unlocked.begin(), m_unlocked.end(), r) == m_unlocked.end())
+		{
+			m_unlocked.push_back(r);
+		}
+		load_level(r);
 	}
-
-	// headlight toggle
-    if (action == GLFW_PRESS && key == GLFW_KEY_1) {
-        m_level.get_light()->set_red_channel();
-    }
-    if (action == GLFW_PRESS && key == GLFW_KEY_2) {
-        m_level.get_light()->set_green_channel();
-    }
-    if (action == GLFW_PRESS && key == GLFW_KEY_3) {
-        m_level.get_light()->set_blue_channel();
-    }
-
 	return true;
 }
 
 void World::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
-    float radians = atan2(-ypos + 300, xpos- 600);
-    Light* m_light = m_level.get_light();
-    m_light->set_radians(radians);
+	m_level.handle_mouse_move(xpos, ypos);
 }
 
 void World::start_music()
@@ -243,11 +220,33 @@ void World::stop_music()
 	Mix_CloseAudio();
 }
 
-void World::start_level(std::string level)
+void World::start_level(bool new_game)
 {
-	bool valid = m_level.init(level);
+	if (new_game)
+	{
+		m_unlocked = { "level_select", "level_1" };
+		load_level("level_select");
+	}
+	else
+	{
+		load();
+		load_level("level_select");
+	}
+}
 
-	if (valid) 
+void World::reset()
+{
+	m_level.reset_level();
+}
+
+void World::load_level(std::string level)
+{
+	stop_music();
+	m_load();
+	bool valid = m_level.parse_level(level, m_unlocked);
+	start_music();
+
+	if (valid)
 	{
 		camera_pos = m_level.get_camera_position();
 	}
@@ -259,7 +258,32 @@ void World::start_level(std::string level)
 	camera_offset = 0.f;
 }
 
-void World::reset()
+void World::load()
 {
-	m_level.reset_level();
+	std::ifstream file(save_file);
+	if (file.good() && file.is_open())
+	{
+		json j = json::parse(file);
+		file.close();
+		m_unlocked.clear();
+		for (auto& i : j)
+		{
+			m_unlocked.push_back(i);
+		}
+	}
+	else
+	{
+		m_unlocked = { "level_select", "level_1" };
+	}
+}
+
+void World::save()
+{
+	json j(m_unlocked);
+	std::ofstream o(save_file);
+	if (o.is_open())
+	{
+		o << j.dump() << std::endl;
+		o.close();
+	}
 }

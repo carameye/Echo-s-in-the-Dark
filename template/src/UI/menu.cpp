@@ -51,17 +51,19 @@ bool Menu::setup(std::vector<std::pair<std::string, Status>> buttons)
 {
 	float start = 400.f - (buttons.size() * 2.f * brick_size + (buttons.size() - 1) * brick_size) / 2.f;
 
+	int first = next_id;
+
 	for (auto& s : buttons)
 	{
 		Button* b = new Button();
 		b->set_texture_name(s.first);
 		b->set_status(s.second);
-		b->init(next_ui_id++, { 600.f, start + brick_size });
+		b->init(next_id++, { 600.f, start + brick_size });
 		m_entities.push_back(b);
 		start += brick_size * 3.f;
 	}
 
-	m_rs.process(next_ui_id);
+	m_rs.process(first, next_id);
 
 	return true;
 }
@@ -109,7 +111,7 @@ void Menu::draw()
 	// Clearing backbuffer
 	glViewport(0, 0, w, h);
 	glDepthRange(0, 10);
-	glClearColor(1.0, 0, 0, 1.0);
+	glClearColor(0, 0, 0, 1.0);
 	glClearDepth(1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

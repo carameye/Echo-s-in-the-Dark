@@ -28,14 +28,16 @@ public:
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
 	void on_click(GLFWwindow* window, int button, int action, int mods);
 
-private:
 	// Load menus
 	void load_main_menu();
 	void load_pause_menu();
+	void load_loading_menu();
+	void draw_loading_screen();
 
 private:
 	// Window information
 	GLFWwindow* m_window;
+	vec2 m_screen;
 
 	// Information about the state
 	bool m_world_valid = true;
@@ -43,7 +45,10 @@ private:
 
 	// Game states
 	World m_world;
-	Menu m_menu;
+	Menu* m_menu;
+	Menu m_main_menu;
+	Menu m_pause_menu;
+	Menu m_load_menu;
 
 	// Should end game
 	bool m_is_over = false;

@@ -17,9 +17,10 @@ class Door: public Interactable
 
         Hitbox get_hitbox() const;
 
-        bool perform_action(actionFunction go_to_dest);
+        std::string perform_action();
+
+		void lock();
 
     private:
-        std::string m_destination;
         bool m_locked;
 };

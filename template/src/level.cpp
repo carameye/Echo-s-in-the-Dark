@@ -3,29 +3,24 @@
 
 using json = nlohmann::json;
 
-bool Level::init(std::string level) {
-    m_interactable = NULL;
-    clear_level_components();
-    return parse_level(level);
-}
-
-void Level::destroy() {
-    // clear all level-dependent resources
-    for (auto &brick : m_bricks) {
-        delete brick;
-    }
-    for (auto &interactable : m_interactables) {
-        delete interactable;
-    }
-    for (auto &ghost : m_ghosts) {
-        delete ghost;
-    }
-    for (auto &sign : m_signs) {
-        delete sign;
-    }
-    clear_level_components();
-    m_rendering_system.clear();
-    m_interactable = NULL;
+void Level::destroy()
+{
+	// clear all level-dependent resources
+	for (auto& brick : m_bricks) {
+		delete brick;
+	}
+	for (auto& interactable : m_interactables) {
+		delete interactable;
+	}
+	for (auto& ghost : m_ghosts) {
+		delete ghost;
+	}
+	for (auto& sign : m_signs) {
+		delete sign;
+	}
+	clear_level_components();
+	m_rendering_system.clear();
+	m_interactable = NULL;
     m_bricks.clear();
     m_ghosts.clear();
     m_interactables.clear();
@@ -187,14 +182,18 @@ Robot *Level::get_player() {
     return &m_robot;
 }
 
-void Level::interact() {
+std::string Level::interact()
+{
     if (m_interactable != NULL) {
-        m_interactable->perform_action(std::bind(&Level::parse_level, this, std::placeholders::_1));
-    }
+		return m_interactable->perform_action();
+	}
+
+	return "";
 }
 
-bool Level::parse_level(std::string level) {
-    m_level = level;
+bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
+{
+	m_level = level;
 
     // Construct file name with path
     std::string filename = level_path;
@@ -227,10 +226,22 @@ bool Level::parse_level(std::string level) {
         spawn_door(to_pixel_position(pos), door["next_level"]);
     }
 
-    fprintf(stderr, "   getting torches\n");
-    for (json torch : j["torches"]) {
-        vec2 pos = {torch["pos"]["x"], torch["pos"]["y"]};
-        m_light.add_torch(to_pixel_position(pos));
+	if (m_level == "level_select")
+	{
+		for (auto& d : m_interactables)
+		{
+			if (find(unlocked.begin(), unlocked.end(), d->get_destination()) == unlocked.end())
+			{
+				d->lock();
+			}
+		}
+	}
+
+	fprintf(stderr, "   getting torches\n");
+	for (json torch : j["torches"])
+    {
+	    vec2 pos = {torch["pos"]["x"], torch["pos"]["y"]};
+	    m_light.add_torch(to_pixel_position(pos));
     }
 
     // Get the signs
@@ -279,8 +290,11 @@ bool Level::parse_level(std::string level) {
     fprintf(stderr, "	built world with %ld doors, %ld ghosts, and %ld bricks\n",
             m_interactables.size(), m_ghosts.size(), m_bricks.size());
 
-    // Generate the graph
-    m_graph.generate(potential_cp, bricks, width, height);
+	// Generate the graph
+	if (m_ghosts.size() > 0)
+	{
+		m_graph.generate(potential_cp, bricks, width, height);
+	}
 
     // Spawn the robot
     vec2 pos = {j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"]};
@@ -288,39 +302,96 @@ bool Level::parse_level(std::string level) {
 
     save_level();
 
-    m_rendering_system.process(next_entity_id);
+	m_rendering_system.process(next_id);
 
     return true;
 }
 
-bool Level::spawn_door(vec2 position, std::string next_level) {
-    Door *door = new Door();
-    if (door->init(next_entity_id++)) {
-        door->set_position(position);
-        door->set_destination(next_level);
-        m_interactables.push_back(door);
-        return true;
-    }
-    fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
-    return false;
+std::string Level::handle_key_press(int key, int action)
+{
+	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+		m_robot.start_flying();
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+		m_robot.set_is_accelerating_left(true);
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+		m_robot.set_is_accelerating_right(true);
+	}
+
+	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
+		m_robot.stop_flying();
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+		m_robot.set_is_accelerating_left(false);
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+		m_robot.set_is_accelerating_right(false);
+	}
+
+	if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
+		return interact();
+	}
+
+	// headlight toggle
+	if (action == GLFW_PRESS && key == GLFW_KEY_1) {
+		m_light.set_red_channel();
+	}
+	if (action == GLFW_PRESS && key == GLFW_KEY_2) {
+		m_light.set_green_channel();
+	}
+	if (action == GLFW_PRESS && key == GLFW_KEY_3) {
+		m_light.set_blue_channel();
+	}
+
+	return "";
 }
 
-bool Level::spawn_ghost(vec2 position) {
-    Ghost *ghost = new Ghost();
-    if (ghost->init(next_entity_id++)) {
-        ghost->set_position(position);
-        ghost->set_level_graph(&m_graph);
-        m_ghosts.push_back(ghost);
-        return true;
-    }
-    return false;
+void Level::handle_mouse_move(double xpos, double ypos)
+{
+	float radians = atan2(-ypos + 300, xpos - 600);
+	m_light.set_radians(radians);
 }
 
-bool Level::spawn_robot(vec2 position) {
-    if (m_robot.init(next_entity_id)) {
-        next_entity_id += 104;
-        m_robot.set_position(position);
-        m_robot.set_head_position(position);
+std::string Level::get_current_level()
+{
+	return m_level;
+}
+
+bool Level::spawn_door(vec2 position, std::string next_level)
+{
+	Door *door = new Door();
+	if (door->init(next_id++))
+	{
+		door->set_position(position);
+		door->set_destination(next_level);
+		m_interactables.push_back(door);
+		return true;
+	}
+	fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
+	return false;
+}
+
+bool Level::spawn_ghost(vec2 position)
+{
+	Ghost *ghost = new Ghost();
+	if (ghost->init(next_id++))
+	{
+		ghost->set_position(position);
+		ghost->set_level_graph(&m_graph);
+		m_ghosts.push_back(ghost);
+		return true;
+	}
+	return false;
+}
+
+bool Level::spawn_robot(vec2 position)
+{
+	if (m_robot.init(next_id))
+	{
+		next_id += 104;
+		m_robot.set_position(position);
+		m_robot.set_head_position(position);
         m_robot.set_shoulder_position(position);
         if (m_light.init(m_level)) {
             m_light.set_position(m_robot.get_position());
@@ -340,15 +411,17 @@ bool Level::spawn_robot(vec2 position) {
     return false;
 }
 
-bool Level::spawn_sign(vec2 position, std::string text) {
-    Sign *sign = new Sign();
-    if (sign->init(next_entity_id, text, position)) {
-        next_entity_id += 2;
-        m_signs.push_back(sign);
-        return true;
-    }
-    fprintf(stderr, "	sign spawn failed\n");
-    return false;
+bool Level::spawn_sign(vec2 position, std::string text)
+{
+	Sign *sign = new Sign();
+	if (sign->init(next_id, text, position))
+	{
+		next_id += 2;
+		m_signs.push_back(sign);
+		return true;
+	}
+	fprintf(stderr, "	sign spawn failed\n");
+	return false;
 }
 
 bool Level::spawn_brick(vec2 position, vec3 colour) {
@@ -359,14 +432,15 @@ bool Level::spawn_brick(vec2 position, vec3 colour) {
     if (!x || !y || !z)
         fprintf(stderr, "	brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
 
-    Brick *brick = new Brick();
-    if (brick->init(next_entity_id++)) {
-        brick->set_position(position);
-        m_bricks.push_back(brick);
-        return true;
-    }
-    fprintf(stderr, "	brick spawn failed\n");
-    return false;
+	Brick *brick = new Brick();
+	if (brick->init(next_id++))
+	{
+		brick->set_position(position);
+		m_bricks.push_back(brick);
+		return true;
+	}
+	fprintf(stderr, "	brick spawn failed\n");
+	return false;
 }
 
 void Level::save_level() {
@@ -383,8 +457,4 @@ void Level::reset_level() {
     for (auto &ghost : m_ghosts) {
         ghost->set_position(reset_positions[pos_i++]);
     }
-}
-
-Light *Level::get_light() {
-    return &m_light;
 }
