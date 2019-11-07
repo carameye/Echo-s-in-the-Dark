@@ -11,7 +11,7 @@ namespace {
     const float MAX_HORIZONTAL_VELOCITY = 15.f;
     const float MAX_FLIGHT_VELOCITY = 15.f;
     const float MAX_GRAVITY_VELOCITY = 25.f;
-    const float MAX_FLIGHT_DURATION = 5500.f;
+    const float MAX_FLIGHT_DURATION = 1500.f;
 }
 
 Texture Robot::robot_body_texture;
