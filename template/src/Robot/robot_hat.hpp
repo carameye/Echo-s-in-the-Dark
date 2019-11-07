@@ -2,15 +2,13 @@
 #include "components.hpp"
 #include <math.h>
 
-#include "robot_hat.hpp"
-
-class RobotHead : public Entity
+class RobotHat : public Entity
 {
-    static Texture robot_head_texture;
+    static Texture robot_hat_texture;
     bool m_face_right = true;
 
-	RenderComponent rc;
-	MotionComponent mc;
+    RenderComponent rc;
+    MotionComponent mc;
 
 public:
     // Creates all the associated render resources and default transform

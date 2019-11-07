@@ -81,6 +81,7 @@ private:
 	RobotShoulders m_shoulders;
 	SmokeSystem m_smoke_system;
 	FlightEnergyBar m_energy_bar;
+    RobotHat m_hat;
 	bool m_grounded = false;
 	bool m_should_stop_smoke = false;
 	bool m_is_accelerating_right = false;
