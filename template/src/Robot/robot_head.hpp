@@ -2,6 +2,7 @@
 #include "components.hpp"
 #include <math.h>
 #include <hitbox.hpp>
+#include <brick.hpp>
 
 class RobotHead : public Entity
 {
@@ -41,4 +42,6 @@ public:
     vec2 get_velocity();
 
     void set_velocity(vec2 vec2);
+
+    void handle_brick_collision(Brick brick, vec2 nextPosition);
 };

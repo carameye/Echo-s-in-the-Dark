@@ -1,5 +1,6 @@
 #pragma once
 
+#include <brick.hpp>
 #include "common.hpp"
 #include "hitbox.hpp"
 #include "smoke_system.hpp"

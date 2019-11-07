@@ -89,7 +89,7 @@ bool RobotHead::get_direction()
 
 vec2 RobotHead::get_next_position(vec2 goal) {
 	vec2 dist = sub(goal, mc.position);
-    return add(get_position(), { 0.65f * dist.x, 0.65f * dist.y });
+    return add(get_position(), dist);
 }
 
 vec2 RobotHead::get_velocity() {
