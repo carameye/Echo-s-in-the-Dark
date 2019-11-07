@@ -1,7 +1,6 @@
 #include "components.hpp"
 
-int next_entity_id = 0;
-int next_ui_id = 0;
+int next_id = 0;
 
 std::map<int, MotionComponent*> s_motion_components;
 std::map<int, MotionComponent*> s_ui_motion_components;

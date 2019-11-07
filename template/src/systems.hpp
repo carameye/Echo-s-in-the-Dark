@@ -22,7 +22,7 @@ private:
 
 public:
 	void render(const mat3& projection);
-	void process(int max);
+	void process(int min, int max);
 	void destroy();
 	void clear();
 };

@@ -11,7 +11,7 @@
 class Interactable: public Entity
 {
 protected: 
-	typedef std::function<bool(std::string)> actionFunction;
+	std::string action;
 
 	RenderComponent rc;
 	MotionComponent mc;
@@ -24,5 +24,5 @@ public:
     virtual Hitbox get_hitbox() const = 0;
 
     // perform_action is abstract, as implementation is dependent on child classes
-    virtual bool perform_action(actionFunction action) = 0;
+    virtual std::string perform_action() = 0;
 };

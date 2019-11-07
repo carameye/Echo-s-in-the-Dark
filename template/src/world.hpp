@@ -23,6 +23,9 @@ public:
 	// Creates a window, sets up events and begins the game
 	bool init(GLFWwindow *window, vec2 screen);
 
+	// Set pause and load functions
+	void set_pl_functions(void (*l)());
+
 	// Releases all associated resources
 	void destroy();
 
@@ -44,14 +47,28 @@ public:
 	void stop_music();
 
 	// Begin level
-	void start_level(std::string level);
+	void start_level(bool new_game);
 
 	// Reset the level
 	void reset();
 
+	// Save the game to save file
+	void save();
+
 private:
+	// Draw loading screen, parse level, set camera pos
+	void load_level(std::string level);
+
+	// Load state from save file
+	void load();
+
+private:
+	// Load menu access
+	void (*m_load)();
+
 	// Window handle
 	GLFWwindow* m_window;
+	vec2 m_screen;
 	float m_screen_scale; // Screen to pixel coordinates scale factor
 
 	// Screen texture
@@ -70,4 +87,7 @@ private:
 	// C++ rng
 	std::default_random_engine m_rng;
 	std::uniform_real_distribution<float> m_dist; // default 0..1
+
+	// Saved level data
+	std::vector<std::string> m_unlocked;
 };
