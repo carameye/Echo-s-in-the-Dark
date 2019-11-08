@@ -2,7 +2,28 @@
 
 void RenderingSystem::render(const mat3& projection, const vec2& camera_shift)
 {
-	for (auto& entity : entities)
+	for (auto& entity : menu_entities)
+	{
+		RenderComponent* rc = s_ui_render_components[entity];
+		MotionComponent* mc = s_ui_motion_components[entity];
+
+		if (!rc->render)
+		{
+			continue;
+		}
+
+		// Transformation code, see Rendering and Transformation in the template specification for more info
+		// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
+		rc->transform.begin();
+		rc->transform.translate(mc->position);
+		rc->transform.rotate(mc->radians);
+		rc->transform.scale(mc->physics.scale);
+		rc->transform.end();
+
+		rc->draw_sprite_alpha(projection, rc->alpha);
+	}
+
+	for (auto& entity : level_entities)
 	{
 		RenderComponent* rc = s_render_components[entity];
 		MotionComponent* mc = s_motion_components[entity];
@@ -25,23 +46,42 @@ void RenderingSystem::render(const mat3& projection, const vec2& camera_shift)
 	}
 }
 
-void RenderingSystem::process(int max)
+void RenderingSystem::process(int min, int max)
 {
-	for (int i = 0; i < max; i++)
+	for (int i = min; i < max; i++)
 	{
 		if (s_render_components.find(i) != s_render_components.end() &&
 			s_motion_components.find(i) != s_motion_components.end())
 		{
-			entities.push_back(i);
+			level_entities.push_back(i);
+		}
+
+		if (s_ui_render_components.find(i) != s_ui_render_components.end() &&
+			s_ui_motion_components.find(i) != s_ui_motion_components.end())
+		{
+			menu_entities.push_back(i);
 		}
 	}
 }
 
 void RenderingSystem::destroy()
 {
-	for (auto& entity : entities)
+	for (auto& entity : level_entities)
 	{
 		RenderComponent* rc = s_render_components[entity];
+
+		glDeleteBuffers(1, &rc->mesh.vbo);
+		glDeleteBuffers(1, &rc->mesh.ibo);
+		glDeleteBuffers(1, &rc->mesh.vao);
+
+		glDeleteShader(rc->effect.vertex);
+		glDeleteShader(rc->effect.fragment);
+		glDeleteShader(rc->effect.program);
+	}
+
+	for (auto& entity : menu_entities)
+	{
+		RenderComponent* rc = s_ui_render_components[entity];
 
 		glDeleteBuffers(1, &rc->mesh.vbo);
 		glDeleteBuffers(1, &rc->mesh.ibo);
@@ -55,68 +95,6 @@ void RenderingSystem::destroy()
 
 void RenderingSystem::clear()
 {
-	entities.clear();
-}
-
-void UISystem::render(const mat3& projection)
-{
-	for (auto& entity : entities)
-	{
-		RenderComponent* rc = s_ui_render_components[entity];
-		MotionComponent* mc = s_ui_motion_components[entity];
-
-		if (!rc->render)
-		{
-			continue;
-		}
-
-		// Transformation code, see Rendering and Transformation in the template specification for more info
-		// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
-		rc->transform.begin();
-		rc->transform.translate(mc->position);
-		rc->transform.rotate(mc->radians);
-		rc->transform.scale(mc->physics.scale);
-		rc->transform.end();
-
-		rc->draw_sprite_alpha(projection, rc->alpha);
-
-		if (gl_has_errors())
-		{
-			fprintf(stderr, "\nerrors for entity %d\n", entity);
-			gl_flush_errors();
-		}
-	}
-}
-
-void UISystem::process(int min, int max)
-{
-	for (int i = min; i < max; i++)
-	{
-		if (s_ui_render_components.find(i) != s_ui_render_components.end() &&
-			s_ui_motion_components.find(i) != s_ui_motion_components.end())
-		{
-			entities.push_back(i);
-		}
-	}
-}
-
-void UISystem::destroy()
-{
-	for (auto& entity : entities)
-	{
-		RenderComponent* rc = s_ui_render_components[entity];
-
-		glDeleteBuffers(1, &rc->mesh.vbo);
-		glDeleteBuffers(1, &rc->mesh.ibo);
-		glDeleteBuffers(1, &rc->mesh.vao);
-
-		glDeleteShader(rc->effect.vertex);
-		glDeleteShader(rc->effect.fragment);
-		glDeleteShader(rc->effect.program);
-	}
-}
-
-void UISystem::clear()
-{
-	entities.clear();
+	level_entities.clear();
+	menu_entities.clear();
 }
