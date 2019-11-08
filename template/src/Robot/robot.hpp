@@ -82,7 +82,7 @@ public:
 
     vec2 get_head_position();
 
-    vec2 get_next_head_position();
+    vec2 get_next_head_position(vec2 next_body_position);
 
     vec2 get_head_velocity();
 

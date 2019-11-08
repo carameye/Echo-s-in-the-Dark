@@ -44,7 +44,7 @@ void Level::update(float elapsed_ms) {
 
     vec2 new_robot_vel = m_robot.get_velocity();
     vec2 new_robot_pos = m_robot.get_next_position();
-    vec2 new_robot_head_pos = m_robot.get_next_head_position();
+    vec2 new_robot_head_pos = m_robot.get_next_head_position(new_robot_pos);
 
     float translation = new_robot_vel.x;
 	float translation_head = new_robot_head_pos.x - robot_head_pos.x;
