@@ -5,7 +5,7 @@ bool Interactable::init(int id)
 	m_id = id;
 
     mc.position = { 0.f, 0.f };
-    rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
+    mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;

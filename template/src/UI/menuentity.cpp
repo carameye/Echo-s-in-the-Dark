@@ -14,7 +14,7 @@ bool MenuEntity::init(int id, vec2 position)
 
 	width = 8.f * brick_size;
 	height = 2.f * brick_size;
-	m_rc.physics.scale = { width / m_rc.texture->width, height / m_rc.texture->height };
+	m_mc.physics.scale = { width / m_rc.texture->width, height / m_rc.texture->height };
 
 	s_ui_render_components[id] = &m_rc;
 	s_ui_motion_components[id] = &m_mc;

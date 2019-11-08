@@ -25,7 +25,7 @@ bool RobotHat::init(int id)
     mc.acceleration = { 0.f , 0.f };
     mc.radians = 0.f;
 
-    rc.physics.scale = { 1.0f, 1.0f };
+    mc.physics.scale = { 1.0f, 1.0f };
 
     s_render_components[id] = &rc;
     s_motion_components[id] = &mc;
@@ -38,11 +38,11 @@ void RobotHat::update(float ms, vec2 goal)
     vec2 dist = sub(goal, mc.position);
     if (m_face_right)
     {
-        rc.physics.scale.x = abs(rc.physics.scale.x);
+        mc.physics.scale.x = abs(mc.physics.scale.x);
     }
     else
     {
-        rc.physics.scale.x = -abs(rc.physics.scale.x);
+        mc.physics.scale.x = -abs(mc.physics.scale.x);
     }
     set_position(add(get_position(), dist));
 }
@@ -59,7 +59,7 @@ void RobotHat::set_position(vec2 position)
 
 void RobotHat::set_scaling(vec2 scaling)
 {
-    rc.physics.scale = scaling;
+    mc.physics.scale = scaling;
 }
 
 void RobotHat::set_direction(bool right)

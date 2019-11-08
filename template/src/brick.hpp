@@ -7,8 +7,8 @@
 class Brick : public Entity
 {
 	static Texture brick_texture;
+	static RenderComponent rc;
 
-	RenderComponent rc;
 	MotionComponent mc;
 
 public:
@@ -29,6 +29,8 @@ public:
 	Hitbox get_hitbox() const;
 
     void set_colour(vec3 colour);
+
+    bool get_is_visible();
 
 private:
     vec3 m_colour;

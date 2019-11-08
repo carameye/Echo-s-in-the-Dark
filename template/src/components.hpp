@@ -12,6 +12,7 @@ struct MotionComponent
 	vec2 velocity;
 	vec2 acceleration;
 	float radians;
+	Physics physics;
 };
 extern std::map<int, MotionComponent*> s_motion_components;
 extern std::map<int, MotionComponent*> s_ui_motion_components;
@@ -21,7 +22,6 @@ struct RenderComponent
 	Texture* texture;
 	Mesh mesh;
 	Effect effect;
-	Physics physics;
 	Transform transform;
 	bool render = true;
 	float alpha;
