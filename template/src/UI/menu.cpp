@@ -115,7 +115,7 @@ void Menu::draw()
 	glClearDepth(1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	m_rs.render(projection_2D);
+	m_rs.render(projection_2D, { 0.f, 0.f });
 	//////////////////
 	// Presenting
 	glfwSwapBuffers(m_window);

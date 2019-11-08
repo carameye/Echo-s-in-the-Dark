@@ -95,6 +95,11 @@ void RenderComponent::draw_sprite_alpha(const mat3& projection, float alpha)
 
 	// Drawing!
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+
+	if (gl_has_errors())
+	{
+		gl_flush_errors();
+	}
 }
 
 void clear_level_components()

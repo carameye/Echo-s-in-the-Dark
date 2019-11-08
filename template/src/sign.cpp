@@ -21,7 +21,7 @@ bool Sign::init(int id, std::string sign_text, vec2 position)
 		return false;
 
 	mc.position = position;
-	rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
+	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;

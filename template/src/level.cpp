@@ -219,6 +219,9 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     // Get ambient light level
     m_light.set_ambient(j["ambient_light"]);
 
+	// Get first entity in this group
+	int min = next_id;
+
     // Get the doors
     fprintf(stderr, "	getting doors\n");
     for (json door : j["doors"]) {
@@ -302,7 +305,7 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
     save_level();
 
-	m_rendering_system.process(next_id);
+	m_rendering_system.process(min, next_id);
 
     return true;
 }
