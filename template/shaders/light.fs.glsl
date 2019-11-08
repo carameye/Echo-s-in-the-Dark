@@ -35,7 +35,7 @@ float illuminate_robot(vec2 coord)
 {
 	float dist = dist(light_pos, vec2(coord.x * screen_size.x, coord.y * screen_size.y));
 	float darkness = 1.5;
-	return sqrt(1 - darkness * dist / 300) / 1.2;
+	return sqrt(max(1 - darkness * dist / 300, 0)) / 1.2;
 }
 
 float illuminate_torches(vec2 coord, vec2 pos)
@@ -43,7 +43,7 @@ float illuminate_torches(vec2 coord, vec2 pos)
 	coord.y = 1 - coord.y;
 	float dist = dist(pos, vec2(coord.x * screen_size.x, coord.y * screen_size.y));
 	float darkness = 1.5;
-	return sqrt(1 - darkness * dist / 400);
+	return sqrt(max(1 - darkness * dist / 400, 0));
 }
 
 float headlight(vec2 coord) 
@@ -56,7 +56,7 @@ float headlight(vec2 coord)
 
     float angle_diff = acos(dot(cone_dir, line));
 
-    float max_diff = 3.1415 / 6;
+    float max_diff = 3.1415 / 8;
     if (abs(angle_diff) > max_diff) {
         return 0;
     }
