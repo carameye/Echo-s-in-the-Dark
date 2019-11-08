@@ -17,7 +17,7 @@ public:
 
 	// Update brick
 	// ms represents the number of milliseconds elapsed from the previous update() call
-	void update(float ms);
+	void update(vec3 hl_colour);
 
 	// Returns the current brick position
 	vec2 get_position()const;
@@ -27,4 +27,10 @@ public:
 
 	// Returns the bricks hitbox for collision detection
 	Hitbox get_hitbox() const;
+
+    void set_colour(vec3 colour);
+
+private:
+    vec3 m_colour;
+    bool m_is_visible = true;
 };

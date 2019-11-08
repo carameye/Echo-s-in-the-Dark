@@ -27,6 +27,7 @@ bool Brick::init(int id)
 	mc.velocity = { 0.f, 0.f };
 	mc.acceleration = { 0.f , 0.f };
 	mc.radians = 0.f;
+	m_colour = {1.f, 1.f, 1.f};
 
 	rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 
@@ -36,9 +37,13 @@ bool Brick::init(int id)
 	return true;
 }
 
-void Brick::update(float ms)
+void Brick::update(vec3 hl_colour)
 {
-	// probably don't really need much here...
+    if (m_colour.x == 1.f && m_colour.y == 1.f && m_colour.z == 1.f) {
+        m_is_visible = true;
+        return;
+    }
+    m_is_visible = m_colour.x == hl_colour.x && m_colour.y == hl_colour.y && m_colour.z == hl_colour.z;
 }
 
 vec2 Brick::get_position()const
@@ -51,16 +56,23 @@ void Brick::set_position(vec2 position)
 	mc.position = position;
 }
 
+void Brick::set_colour(vec3 colour)
+{
+    m_colour = colour;
+}
+
 Hitbox Brick::get_hitbox() const
 {
 	std::vector<Square> squares(1);
-	
-	float width = brick_size;
-	vec2 position = mc.position;
-	position.x -= width / 2;
-	position.y += width / 2;
-	Square square(position, width);
-	squares[0] = square;
+
+	if (m_is_visible) {
+        float width = brick_size;
+        vec2 position = mc.position;
+        position.x -= width / 2;
+        position.y += width / 2;
+        Square square(position, width);
+        squares[0] = square;
+    }
 
 	Hitbox hitbox({}, squares);
 	return hitbox;

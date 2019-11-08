@@ -44,6 +44,7 @@ bool Light::init(std::string level) {
 		}
 	}
 
+    m_headlight_channel = {1.f, 1.f, 1.f};
 	rc.texture = &brickmap_textures[level];
 
 	if (!rc.init_sprite())
@@ -104,26 +105,41 @@ void Light::add_torch(vec2 torch)
 }
 
 vec3 Light::get_headlight_channel(){
-    return headlight_channel;
+    return m_headlight_channel;
 }
 
 void Light::set_red_channel(){
-    if  (headlight_channel.x == 1.0){
-        headlight_channel.x = 0.0;
-    } else
-    headlight_channel.x = 1.0;
+    if  (m_headlight_channel.x == 1.0 && m_headlight_channel.y == 0.0 && m_headlight_channel.z == 0.0){
+        m_headlight_channel.x = 1.0;
+        m_headlight_channel.y = 1.0;
+        m_headlight_channel.z = 1.0;
+    } else{
+        m_headlight_channel.x = 1.0;
+        m_headlight_channel.y = 0.0;
+        m_headlight_channel.z = 0.0;
+    }
 }
 void Light::set_green_channel(){
-    if  (headlight_channel.y == 1.0){
-        headlight_channel.y = 0.0;
-    } else
-        headlight_channel.y = 1.0;
+    if  (m_headlight_channel.x == 0.0 && m_headlight_channel.y == 1.0 && m_headlight_channel.z == 0.0){
+        m_headlight_channel.x = 1.0;
+        m_headlight_channel.y = 1.0;
+        m_headlight_channel.z = 1.0;
+    } else{
+        m_headlight_channel.x = 0.0;
+        m_headlight_channel.y = 1.0;
+        m_headlight_channel.z = 0.0;
+    }
 }
 void Light::set_blue_channel(){
-    if  (headlight_channel.z == 1.0){
-        headlight_channel.z = 0.0;
-    } else
-        headlight_channel.z = 1.0;
+    if  (m_headlight_channel.x == 0.0 && m_headlight_channel.y == 0.0 && m_headlight_channel.z == 1.0){
+        m_headlight_channel.x = 1.0;
+        m_headlight_channel.y = 1.0;
+        m_headlight_channel.z = 1.0;
+    } else{
+        m_headlight_channel.x = 0.0;
+        m_headlight_channel.y = 0.0;
+        m_headlight_channel.z = 1.0;
+    }
 }
 
 void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& size) {
@@ -166,7 +182,7 @@ void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& s
 
     // pass headlight channel
     GLuint headlight_channel_uloc = glGetUniformLocation(effect.program, "headlight_channel");
-    float channel[] = {headlight_channel.x, headlight_channel.y, headlight_channel.z};
+    float channel[] = {m_headlight_channel.x, m_headlight_channel.y, m_headlight_channel.z};
     glUniform3fv(headlight_channel_uloc, 1, channel);
 
 	// pass torches size

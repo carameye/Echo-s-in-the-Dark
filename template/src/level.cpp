@@ -42,6 +42,12 @@ void Level::update(float elapsed_ms) {
 
     m_robot.update_velocity(elapsed_ms);
 
+    for (auto &i_brick : m_bricks) {
+        Brick brick = *i_brick;
+        vec3 headlight_channel = m_light.get_headlight_channel();
+        brick.update(headlight_channel);
+    }
+
     vec2 new_robot_vel = m_robot.get_velocity();
     vec2 new_robot_pos = m_robot.get_next_position();
     vec2 new_robot_head_pos = m_robot.get_next_head_position(new_robot_pos);
@@ -426,16 +432,17 @@ bool Level::spawn_sign(vec2 position, std::string text)
 
 bool Level::spawn_brick(vec2 position, vec3 colour) {
     // TODO: make bricks respond to different colours
-    bool x = colour.x == 1.f;
-    bool y = colour.y == 1.f;
-    bool z = colour.z == 1.f;
-    if (!x || !y || !z)
+    bool r = colour.x == 1.f;
+    bool g = colour.y == 1.f;
+    bool b = colour.z == 1.f;
+    if (!r || !g || !b)
         fprintf(stderr, "	brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
 
 	Brick *brick = new Brick();
 	if (brick->init(next_id++))
 	{
 		brick->set_position(position);
+		brick->set_colour(colour);
 		m_bricks.push_back(brick);
 		return true;
 	}
