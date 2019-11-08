@@ -7,8 +7,8 @@
 class Brick : public Entity
 {
 	static Texture brick_texture;
+	static RenderComponent rc;
 
-	RenderComponent rc;
 	MotionComponent mc;
 
 public:

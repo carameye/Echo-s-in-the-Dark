@@ -25,7 +25,7 @@ bool RobotHead::init(int id)
     mc.acceleration = { 0.f , 0.f };
     mc.radians = 0.f;
 
-	rc.physics.scale = { 1.0f, 1.0f };
+	mc.physics.scale = { 1.0f, 1.0f };
 
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;
@@ -35,16 +35,31 @@ bool RobotHead::init(int id)
 
 void RobotHead::update(float ms, vec2 goal)
 {
-    vec2 dist = sub(goal, mc.position);
 	if (m_face_right)
 	{
-		rc.physics.scale.x = abs(rc.physics.scale.x);
+		mc.physics.scale.x = abs(mc.physics.scale.x);
 	}
 	else
 	{
-		rc.physics.scale.x = -abs(rc.physics.scale.x);
+		mc.physics.scale.x = -abs(mc.physics.scale.x);
 	}
-    set_position(add(get_position(), { 0.65f * dist.x, 0.65f * dist.y }));
+}
+
+Hitbox RobotHead::get_hitbox(vec2 translation) const
+{
+    std::vector<Circle> circles(1);
+
+    vec2 position = mc.position;
+
+    position.x += translation.x;
+    position.y += translation.y;
+
+    int radius = rc.texture->height/2;
+    Circle circle(position, radius);
+    circles[0] = circle;
+
+    Hitbox hitbox(circles, {});
+    return hitbox;
 }
 
 vec2 RobotHead::get_position() const
@@ -59,7 +74,7 @@ void RobotHead::set_position(vec2 position)
 
 void RobotHead::set_scaling(vec2 scaling)
 {
-	rc.physics.scale = scaling;
+	mc.physics.scale = scaling;
 }
 
 void RobotHead::set_direction(bool right)
@@ -70,4 +85,17 @@ void RobotHead::set_direction(bool right)
 bool RobotHead::get_direction()
 {
     return m_face_right;
+}
+
+vec2 RobotHead::get_next_position(vec2 goal) {
+	vec2 dist = sub(goal, mc.position);
+    return add(get_position(), dist);
+}
+
+vec2 RobotHead::get_velocity() {
+    return mc.velocity;
+}
+
+void RobotHead::set_velocity(vec2 velocity) {
+    mc.velocity = velocity;
 }

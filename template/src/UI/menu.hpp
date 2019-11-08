@@ -47,7 +47,7 @@ private:
 	std::vector<Button*> m_entities;
 
 	// Rendering system
-	UISystem m_rs;
+	RenderingSystem m_rs;
 
 	// Music
 	Mix_Music* m_background_music;

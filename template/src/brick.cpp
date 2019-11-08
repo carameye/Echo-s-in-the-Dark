@@ -4,6 +4,7 @@
 #include <cmath>
 
 Texture Brick::brick_texture;
+RenderComponent Brick::rc;
 
 bool Brick::init(int id)
 {
@@ -16,19 +17,18 @@ bool Brick::init(int id)
 			fprintf(stderr, "Failed to load brick texture!");
 			return false;
 		}
+
+		rc.texture = &brick_texture;
+
+		if (!rc.init_sprite())
+			return false;
 	}
-
-	rc.texture = &brick_texture;
-
-	if (!rc.init_sprite())
-		return false;
 
 	mc.position = { 0.f, 0.f };
 	mc.velocity = { 0.f, 0.f };
 	mc.acceleration = { 0.f , 0.f };
 	mc.radians = 0.f;
-
-	rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
+	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;

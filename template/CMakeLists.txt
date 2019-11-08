@@ -47,6 +47,7 @@ set(SOURCE_FILES
         src/main.cpp
         src/Robot/flight_energy_bar.cpp
         src/Robot/robot_head.cpp
+        src/Robot/robot_hat.cpp
         src/Robot/robot_shoulders.cpp
         src/Interactables/door.cpp
         src/Interactables/interactable.cpp
@@ -63,6 +64,7 @@ set(SOURCE_FILES
         src/smoke_system.hpp
         src/Robot/flight_energy_bar.hpp
         src/Robot/robot.hpp
+        src/Robot/robot_hat.hpp
         src/Robot/robot_head.hpp
         src/Robot/robot_shoulders.hpp
         src/brick.hpp

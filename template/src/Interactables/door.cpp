@@ -21,7 +21,7 @@ bool Door::init(int id)
     if (!Interactable::init(id))
         return false;
 
-	rc.physics.scale = { 1.5f, 1.5f };
+	mc.physics.scale = { 1.5f, 1.5f };
 
 	action = "";
     m_locked = false;

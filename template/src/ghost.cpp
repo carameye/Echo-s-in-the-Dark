@@ -28,8 +28,8 @@ bool Ghost::init(int id)
 	mc.acceleration = { 0.f , 0.f };
 	mc.radians = 0.f;
 
-	rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
-	rc.physics.scale.x *= 47.f / 41.f;
+	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
+	mc.physics.scale.x *= 47.f / 41.f;
 
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;
@@ -57,7 +57,7 @@ void Ghost::update(float ms)
 			vec2 disp = sub(next_pos, mc.position);
 			if (disp.x != 0.f)
 			{
-				rc.physics.scale.x = -abs(rc.physics.scale.x) * disp.x / abs(disp.x);
+				mc.physics.scale.x = -abs(mc.physics.scale.x) * disp.x / abs(disp.x);
 			}
 			float dist = len(disp);
 

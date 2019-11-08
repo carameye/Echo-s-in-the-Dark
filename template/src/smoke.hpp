@@ -9,7 +9,9 @@ class Smoke : public Entity
 	static Texture smoke_texture_large;
 	static Texture smoke_texture_small;
 
-	RenderComponent rc;
+	static RenderComponent rc_large;
+	static RenderComponent rc_small;
+
 	MotionComponent mc;
 
 public:
