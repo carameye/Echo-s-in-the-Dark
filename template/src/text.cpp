@@ -35,7 +35,7 @@ bool Text::init(int id, std::string sign_text, vec2 position)
 
 	mc.position = position;
 	mc.position.y -= 130.f;
-	rc.physics.scale = { 1.5f, 1.5f };
+	mc.physics.scale = { 1.5f, 1.5f };
 
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;

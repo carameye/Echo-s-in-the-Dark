@@ -61,7 +61,7 @@ bool FlightEnergyBar::init(int id)
     mc.acceleration = { 0.f , 0.f };
     mc.radians = 0.f;
 
-	rc.physics.scale = { 1.0f, 1.0f };
+	mc.physics.scale = { 1.0f, 1.0f };
 
 	rc.texture = &fuel_full;
 
@@ -104,7 +104,7 @@ void FlightEnergyBar::set_position(vec2 position)
 
 void FlightEnergyBar::set_scaling(vec2 scaling)
 {
-	rc.physics.scale = scaling;
+	mc.physics.scale = scaling;
 }
 
 void FlightEnergyBar::set_status(bool visible)

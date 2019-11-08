@@ -18,7 +18,7 @@ void RenderingSystem::render(const mat3& projection, const vec2& camera_shift)
 		rc->transform.translate(camera_shift);
 		rc->transform.translate(mc->position);
 		rc->transform.rotate(mc->radians);
-		rc->transform.scale(rc->physics.scale);
+		rc->transform.scale(mc->physics.scale);
 		rc->transform.end();
 
 		rc->draw_sprite_alpha(projection, rc->alpha);
@@ -75,7 +75,7 @@ void UISystem::render(const mat3& projection)
 		rc->transform.begin();
 		rc->transform.translate(mc->position);
 		rc->transform.rotate(mc->radians);
-		rc->transform.scale(rc->physics.scale);
+		rc->transform.scale(mc->physics.scale);
 		rc->transform.end();
 
 		rc->draw_sprite_alpha(projection, rc->alpha);

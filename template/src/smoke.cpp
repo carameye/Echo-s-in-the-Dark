@@ -16,6 +16,9 @@ namespace
 Texture Smoke::smoke_texture_large;
 Texture Smoke::smoke_texture_small;
 
+RenderComponent Smoke::rc_large;
+RenderComponent Smoke::rc_small;
+
 bool Smoke::init(int id)
 {
 	m_id = id;
@@ -27,6 +30,13 @@ bool Smoke::init(int id)
 			fprintf(stderr, "Failed to load smoke texture large!");
 			return false;
 		}
+
+		rc_large.texture = &smoke_texture_large;
+
+		if (!rc_large.init_sprite())
+			return false;
+
+		rc_large.render = true;
 	}
 	if (!smoke_texture_small.is_valid())
 	{
@@ -35,23 +45,28 @@ bool Smoke::init(int id)
 			fprintf(stderr, "Failed to load smoke texture small");
 			return false;
 		}
-	}
-	if (rand() % 2 == 0) {
-		rc.texture = &smoke_texture_large;
-	} else {
-		rc.texture = &smoke_texture_small;
+
+		rc_small.texture = &smoke_texture_small;
+
+		if (!rc_small.init_sprite())
+			return false;
+
+		rc_small.render = true;
 	}
 
-	float scale = MIN_SCALE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(MAX_SCALE-MIN_SCALE)));
-    m_original_scale = { scale, scale };
-	rc.physics.scale = m_original_scale;
-
+	float scale = MIN_SCALE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (MAX_SCALE - MIN_SCALE)));
+	m_original_scale = { scale, scale };
 	mc.radians = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(2 * PI)));
+	mc.physics.scale = m_original_scale;
 
-	if (!rc.init_sprite())
-		return false;
-
-	s_render_components[id] = &rc;
+	if (rand() % 2 == 0) 
+	{
+		s_render_components[id] = &rc_large;
+	}
+	else 
+	{
+		s_render_components[id] = &rc_small;
+	}
 	s_motion_components[id] = &mc;
 
     return true;
@@ -66,7 +81,6 @@ void Smoke::activate(vec2 robot_position, vec2 robot_velocity)
 	}
 	mc.position = { robot_position.x, robot_position.y + 25.f };
 	m_alpha = 1.f;
-	rc.render = true;
 }
 
 void Smoke::update(float ms)
@@ -77,14 +91,14 @@ void Smoke::update(float ms)
 	m_alpha -= ms / FADE_OUT_MS;
 	if (m_alpha < 0.f)
 	{
-		rc.render = false;
+		mc.position = { -1000.f, -1000.f };
 	}
 	m_size_mod_count += ms / SIZE_MOD_MS * PI;
 	if (m_size_mod_count > PI) {
 		m_size_mod_count = 0;
 	}
-	rc.physics.scale.x = m_original_scale.x + sin(m_size_mod_count) * SIZE_MOD_AMPLITUDE;
-	rc.physics.scale.y = m_original_scale.y + sin(m_size_mod_count) * SIZE_MOD_AMPLITUDE;
+	mc.physics.scale.x = m_original_scale.x + sin(m_size_mod_count) * SIZE_MOD_AMPLITUDE;
+	mc.physics.scale.y = m_original_scale.y + sin(m_size_mod_count) * SIZE_MOD_AMPLITUDE;
 }
 
 bool Smoke::should_destroy() {
