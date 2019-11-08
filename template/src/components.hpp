@@ -4,8 +4,7 @@
 #include <vector>
 #include <map>
 
-extern int next_entity_id;
-extern int next_ui_id;
+extern int next_id;	
 
 struct MotionComponent
 {

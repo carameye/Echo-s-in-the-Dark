@@ -23,19 +23,19 @@ bool Door::init(int id)
 
 	rc.physics.scale = { 1.5f, 1.5f };
 
-    m_destination = "";
+	action = "";
     m_locked = false;
     return true;
 }
 
 void Door::set_destination(std::string dest)
 {
-    m_destination = dest;
+    action = dest;
 }
 
 std::string Door::get_destination()
 {
-    return m_destination;
+    return action;
 }
 
 Hitbox Door::get_hitbox() const
@@ -55,13 +55,18 @@ Hitbox Door::get_hitbox() const
     return hitbox;
 }
 
-bool Door::perform_action(actionFunction go_to_dest)
+std::string Door::perform_action()
 {
-    if (!m_locked && m_destination.length() > 0) {
+    if (!m_locked && action.length() > 0) {
         // go to destination
-        return go_to_dest(m_destination);
+        return action;
     }
     // otherwise, door is locked or no destination specified
     // so, stay at current location
-    return false;
-};
+    return "";
+}
+
+void Door::lock()
+{
+	m_locked = true;
+}

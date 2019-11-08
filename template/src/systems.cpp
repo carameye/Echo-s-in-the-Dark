@@ -79,12 +79,18 @@ void UISystem::render(const mat3& projection)
 		rc->transform.end();
 
 		rc->draw_sprite_alpha(projection, rc->alpha);
+
+		if (gl_has_errors())
+		{
+			fprintf(stderr, "\nerrors for entity %d\n", entity);
+			gl_flush_errors();
+		}
 	}
 }
 
-void UISystem::process(int max)
+void UISystem::process(int min, int max)
 {
-	for (int i = 0; i < max; i++)
+	for (int i = min; i < max; i++)
 	{
 		if (s_ui_render_components.find(i) != s_ui_render_components.end() &&
 			s_ui_motion_components.find(i) != s_ui_motion_components.end())
