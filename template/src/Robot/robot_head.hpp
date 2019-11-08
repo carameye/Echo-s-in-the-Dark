@@ -1,6 +1,8 @@
 #include <common.hpp>
 #include "components.hpp"
 #include <math.h>
+#include <hitbox.hpp>
+#include <brick.hpp>
 
 #include "robot_hat.hpp"
 
@@ -20,6 +22,9 @@ public:
     // ms represents the number of milliseconds elapsed from the previous update() call
     void update(float ms, vec2 goal);
 
+    // Returns the robots hitbox for collision detection
+    Hitbox get_hitbox(vec2 translation) const;
+
     // Returns the current robot position
     vec2 get_position() const;
 
@@ -33,4 +38,10 @@ public:
     void set_direction(bool right);
 
     bool get_direction();
+
+    vec2 get_next_position(vec2 goal);
+
+    vec2 get_velocity();
+
+    void set_velocity(vec2 vec2);
 };

@@ -212,6 +212,11 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 	return hitbox;
 }
 
+Hitbox Robot::get_head_hitbox(vec2 translation) const
+{
+    return m_head.get_hitbox(translation);
+}
+
 void Robot::start_flying()
 {
     m_is_flying = true;
@@ -255,3 +260,21 @@ void Robot::set_is_accelerating_left(bool val) {
     }
 
 }
+
+vec2 Robot::get_head_position() {
+    return m_head.get_position();
+}
+
+vec2 Robot::get_next_head_position(vec2 next_body_position) {
+	return m_head.get_next_position(add(next_body_position, { 0.f, -48.f }));
+}
+
+vec2 Robot::get_head_velocity() {
+    return m_head.get_velocity();
+}
+
+void Robot::set_head_velocity(vec2 velocity) {
+    m_head.set_velocity(velocity);
+}
+
+
