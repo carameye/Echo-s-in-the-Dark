@@ -443,7 +443,6 @@ bool Level::spawn_sign(vec2 position, std::string text)
 }
 
 bool Level::spawn_brick(vec2 position, vec3 colour) {
-    // TODO: make bricks respond to different colours
     bool r = colour.x == 1.f;
     bool g = colour.y == 1.f;
     bool b = colour.z == 1.f;
