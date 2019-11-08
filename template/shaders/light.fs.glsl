@@ -35,7 +35,7 @@ float illuminate_robot(vec2 coord)
 {
 	float dist = dist(light_pos, vec2(coord.x * screen_size.x, coord.y * screen_size.y));
 	float darkness = 1.5;
-	return (1 - darkness * dist/400);
+	return sqrt(max(1 - darkness * dist / 300, 0)) / 1.2;
 }
 
 float illuminate_torches(vec2 coord, vec2 pos)
@@ -43,36 +43,25 @@ float illuminate_torches(vec2 coord, vec2 pos)
 	coord.y = 1 - coord.y;
 	float dist = dist(pos, vec2(coord.x * screen_size.x, coord.y * screen_size.y));
 	float darkness = 1.5;
-	return (1 - darkness * dist/600);
+	return sqrt(max(1 - darkness * dist / 384, 0));
 }
 
 float headlight(vec2 coord) 
 {
-	// if the cord inside the area covered by headlight?
-	// hardcoded light info
 	vec2 cone_dir = vec2(cos(light_angle), sin(light_angle));
-	// TODO: cone_dir comes from cone angle
 	cone_dir = normalize(cone_dir);
 
-	// coord in pixels
 	vec2 coord_px = vec2(coord.x * screen_size.x, coord.y * screen_size.y);
-	// make a line from light pos to coord
-	vec2 line =  coord_px - light_pos;
-	line = normalize(line);
-	float slope_line = line.y / line.x;
-	float dot_pr = dot(line, cone_dir);
-	float darkness = 0.6;
+	vec2 line =  normalize(coord_px - light_pos);
 
-	float dist = dist(light_pos, coord_px);
+    float angle_diff = acos(dot(cone_dir, line));
 
-	if (dot_pr < 0) {
-		return 0;
-	}
-	if (dot_pr > 0.8) {
-		return (1 - dist/600) * pow(dot_pr,5);
-	}
-	return 0;
+    float max_diff = 3.1415 / 8;
+    if (abs(angle_diff) > max_diff) {
+        return 0;
+    }
 
+    return sqrt(1 - angle_diff / max_diff);
 }
 
 float get_light_at_pixel(vec2 pixel)
