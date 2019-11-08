@@ -43,7 +43,7 @@ float illuminate_torches(vec2 coord, vec2 pos)
 	coord.y = 1 - coord.y;
 	float dist = dist(pos, vec2(coord.x * screen_size.x, coord.y * screen_size.y));
 	float darkness = 1.5;
-	return sqrt(max(1 - darkness * dist / 400, 0));
+	return sqrt(max(1 - darkness * dist / 384, 0));
 }
 
 float headlight(vec2 coord) 
