@@ -72,7 +72,7 @@ void RenderingSystem::destroy()
 
 		glDeleteBuffers(1, &rc->mesh.vbo);
 		glDeleteBuffers(1, &rc->mesh.ibo);
-		glDeleteBuffers(1, &rc->mesh.vao);
+		glDeleteVertexArrays(1, &rc->mesh.vao);
 
 		glDeleteShader(rc->effect.vertex);
 		glDeleteShader(rc->effect.fragment);
@@ -85,7 +85,7 @@ void RenderingSystem::destroy()
 
 		glDeleteBuffers(1, &rc->mesh.vbo);
 		glDeleteBuffers(1, &rc->mesh.ibo);
-		glDeleteBuffers(1, &rc->mesh.vao);
+		glDeleteVertexArrays(1, &rc->mesh.vao);
 
 		glDeleteShader(rc->effect.vertex);
 		glDeleteShader(rc->effect.fragment);
