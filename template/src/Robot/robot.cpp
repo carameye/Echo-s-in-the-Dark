@@ -4,13 +4,12 @@
 #include <cmath>
 
 namespace {
-    const float FLIGHT_ACCELERATION = 10.f;
-    const float GRAVITY_ACCELERATION = 25.f;
-    const float HORIZONTAL_ACCELERATION = 10.f;
-    const float HORIZONTAL_DECELERATION = 30.f;
-    const float MAX_HORIZONTAL_VELOCITY = 15.f;
-    const float MAX_FLIGHT_VELOCITY = 15.f;
-    const float MAX_GRAVITY_VELOCITY = 25.f;
+    const float FLIGHT_ACCELERATION = 30.f;
+    const float GRAVITY_ACCELERATION = 75.f;
+    const float HORIZONTAL_ACCELERATION = 30.f;
+    const float HORIZONTAL_DECELERATION = 90.f;
+    const float MAX_HORIZONTAL_VELOCITY = 45.f;
+    const float MAX_FLIGHT_VELOCITY = 45.f;
     const float MAX_FLIGHT_DURATION = 1500.f;
 }
 
@@ -89,9 +88,6 @@ vec2 Robot::update_velocity(float ms) {
     if (!m_is_flying) {
         float new_velocity = mc.velocity.y + mc.acceleration.y * step;
         mc.velocity.y = new_velocity;
-
-        // Not sure if we want to limit fall speed. looks unnatural to do so.
-        // mc.velocity.y = new_velocity > MAX_GRAVITY_VELOCITY ? MAX_GRAVITY_VELOCITY : new_velocity;
     }
 
     return {mc.velocity.x, mc.velocity.y};
@@ -102,7 +98,7 @@ void Robot::update(float ms)
 	if (m_grounded) {
         m_available_flight_time = fmin(m_available_flight_time += (ms*2), MAX_FLIGHT_DURATION);
 	    if (std::abs(mc.velocity.x) > TOLERANCE) {
-            mc.radians += mc.velocity.x / 50;
+            mc.radians += mc.velocity.x / 150;
         }
     }
 
@@ -148,9 +144,10 @@ vec2 Robot::get_acceleration() const
 	return mc.acceleration;
 }
 
-vec2 Robot::get_next_position()
+vec2 Robot::get_next_position(float elapsed_ms)
 {
-    return {mc.position.x + mc.velocity.x, mc.position.y + mc.velocity.y};
+    float step = elapsed_ms/100;
+    return {mc.position.x + mc.velocity.x * step, mc.position.y + mc.velocity.y * step};
 }
 
 void Robot::set_position(vec2 position)

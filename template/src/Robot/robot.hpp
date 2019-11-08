@@ -36,7 +36,7 @@ public:
 	vec2 get_acceleration() const;
 
     // Calculates and return next position with out updating robot
-    vec2 get_next_position();
+    vec2 get_next_position(float elapsed_ms);
 
 	// Sets the new robot position
 	void set_position(vec2 position);
