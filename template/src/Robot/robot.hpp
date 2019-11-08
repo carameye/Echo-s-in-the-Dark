@@ -1,5 +1,6 @@
 #pragma once
 
+#include <brick.hpp>
 #include "common.hpp"
 #include "hitbox.hpp"
 #include "smoke_system.hpp"
@@ -70,17 +71,29 @@ public:
 	// Returns the robots hitbox for collision detection
 	Hitbox get_hitbox(vec2 translation) const;
 
+    // Returns the robots head hitbox for collision detection
+    Hitbox get_head_hitbox(vec2 translation) const;
+
 	// Starts smoke system and changes to flying sprite
 	void start_flying();
 
 	// Stops smoke system and changes to normal sprite
 	void stop_flying();
 
+    vec2 get_head_position();
+
+    vec2 get_next_head_position(vec2 next_body_position);
+
+    vec2 get_head_velocity();
+
+    void set_head_velocity(vec2 velocity);
+
 private:
 	RobotHead m_head;
 	RobotShoulders m_shoulders;
 	SmokeSystem m_smoke_system;
 	FlightEnergyBar m_energy_bar;
+    RobotHat m_hat;
 	bool m_grounded = false;
 	bool m_should_stop_smoke = false;
 	bool m_is_accelerating_right = false;

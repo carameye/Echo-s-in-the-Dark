@@ -52,11 +52,11 @@ bool Robot::init(int id)
 	s_motion_components[id] = &mc;
 
 	rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
-	bool valid = m_shoulders.init(id + 1) && m_head.init(id + 2) && m_energy_bar.init(id + 3) && m_smoke_system.init(id + 4);
+	bool valid = m_shoulders.init(id + 1) && m_head.init(id + 2) && m_energy_bar.init(id + 3) && m_smoke_system.init(id + 4) && m_hat.init(id + 5);
 	m_head.set_scaling(rc.physics.scale);
 	m_shoulders.set_scaling(rc.physics.scale);
     m_energy_bar.set_scaling(rc.physics.scale);
-
+    m_hat.set_scaling(rc.physics.scale);
     m_available_flight_time = MAX_FLIGHT_DURATION;
 
 	return valid;
@@ -106,6 +106,7 @@ void Robot::update(float ms)
 
 	m_grounded = false;
 	m_head.update(ms, add(mc.position, { 0.f, -48.f }));
+    m_hat.update(ms, add(mc.position, { 0.f, -56.f }));
     m_shoulders.update(ms, add(mc.position, { 0.f, 0.f }));
 
 
@@ -119,6 +120,7 @@ void Robot::update(float ms)
 
 	if (mc.velocity.x != 0.f) {
         m_head.set_direction(mc.velocity.x > 0.f);
+        m_hat.set_direction(mc.velocity.x > 0);
         m_shoulders.set_direction(mc.velocity.x > 0.f);
     }
 
@@ -210,6 +212,11 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 	return hitbox;
 }
 
+Hitbox Robot::get_head_hitbox(vec2 translation) const
+{
+    return m_head.get_hitbox(translation);
+}
+
 void Robot::start_flying()
 {
     m_is_flying = true;
@@ -253,3 +260,21 @@ void Robot::set_is_accelerating_left(bool val) {
     }
 
 }
+
+vec2 Robot::get_head_position() {
+    return m_head.get_position();
+}
+
+vec2 Robot::get_next_head_position(vec2 next_body_position) {
+	return m_head.get_next_position(add(next_body_position, { 0.f, -48.f }));
+}
+
+vec2 Robot::get_head_velocity() {
+    return m_head.get_velocity();
+}
+
+void Robot::set_head_velocity(vec2 velocity) {
+    m_head.set_velocity(velocity);
+}
+
+
