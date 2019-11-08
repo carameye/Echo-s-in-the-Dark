@@ -44,7 +44,7 @@ void RobotHat::update(float ms, vec2 goal)
     {
         rc.physics.scale.x = -abs(rc.physics.scale.x);
     }
-    set_position(add(get_position(), { 0.65f * dist.x, 0.65f * dist.y }));
+    set_position(add(get_position(), dist));
 }
 
 vec2 RobotHat::get_position() const
