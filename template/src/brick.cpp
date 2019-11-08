@@ -28,7 +28,7 @@ bool Brick::init(int id)
 	mc.acceleration = { 0.f , 0.f };
 	mc.radians = 0.f;
 	m_colour = {1.f, 1.f, 1.f};
-
+	m_is_visible = m_colour.x == 1.f && m_colour.y == 1.f && m_colour.z == 1.f;
 	rc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 
 	s_render_components[id] = &rc;
@@ -63,17 +63,19 @@ void Brick::set_colour(vec3 colour)
 
 Hitbox Brick::get_hitbox() const
 {
-	std::vector<Square> squares(1);
-
+    std::vector<Square> squares(1);
+    float width = brick_size;
+    // TODO: return a hitbox off screen if brick is not visible?
 	if (m_is_visible) {
-        float width = brick_size;
         vec2 position = mc.position;
         position.x -= width / 2;
         position.y += width / 2;
         Square square(position, width);
         squares[0] = square;
-    }
-
-	Hitbox hitbox({}, squares);
-	return hitbox;
+    } else {
+        Square square({-100.f, -100.f}, width);
+        squares[0] = square;
+	}
+    Hitbox hitbox({}, squares);
+    return hitbox;
 }

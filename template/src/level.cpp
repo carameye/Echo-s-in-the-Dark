@@ -43,9 +43,9 @@ void Level::update(float elapsed_ms) {
     m_robot.update_velocity(elapsed_ms);
 
     for (auto &i_brick : m_bricks) {
-        Brick brick = *i_brick;
         vec3 headlight_channel = m_light.get_headlight_channel();
-        brick.update(headlight_channel);
+        i_brick->update(headlight_channel);
+        bool test = true;
     }
 
     vec2 new_robot_vel = m_robot.get_velocity();

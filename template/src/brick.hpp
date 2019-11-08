@@ -32,5 +32,5 @@ public:
 
 private:
     vec3 m_colour;
-    bool m_is_visible = true;
+    bool m_is_visible;
 };
