@@ -42,10 +42,12 @@ void Level::update(float elapsed_ms) {
 
     m_robot.update_velocity(elapsed_ms);
 
-    for (auto &i_brick : m_bricks) {
-        vec3 headlight_channel = m_light.get_headlight_channel();
-        i_brick->update(headlight_channel);
-        bool test = true;
+    if (m_has_colour_changed) {
+        for (auto &i_brick : m_bricks) {
+            vec3 headlight_channel = m_light.get_headlight_channel();
+            i_brick->update(headlight_channel);
+        }
+        m_has_colour_changed = false;
     }
 
     vec2 new_robot_vel = m_robot.get_velocity();
@@ -354,12 +356,15 @@ std::string Level::handle_key_press(int key, int action)
 	// headlight toggle
 	if (action == GLFW_PRESS && key == GLFW_KEY_1) {
 		m_light.set_red_channel();
+        m_has_colour_changed = true;
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_2) {
 		m_light.set_green_channel();
+        m_has_colour_changed = true;
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_3) {
 		m_light.set_blue_channel();
+        m_has_colour_changed = true;
 	}
 
 	return "";

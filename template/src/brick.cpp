@@ -45,6 +45,7 @@ void Brick::update(vec3 hl_colour)
         m_is_visible = true;
         return;
     }
+
     m_is_visible = m_colour.x == hl_colour.x && m_colour.y == hl_colour.y && m_colour.z == hl_colour.z;
 }
 
