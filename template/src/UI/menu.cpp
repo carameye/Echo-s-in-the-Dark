@@ -185,6 +185,5 @@ void Menu::stop_music()
 		m_background_music = nullptr;
 	}
 
-	fprintf(stderr, "closing audio\n");
 	Mix_CloseAudio();
 }
