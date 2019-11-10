@@ -214,8 +214,10 @@ void World::start_music()
 
 void World::stop_music()
 {
-	if (m_background_music != nullptr)
+	if (m_background_music != nullptr) {
 		Mix_FreeMusic(m_background_music);
+		m_background_music = nullptr;
+	}
 
 	Mix_CloseAudio();
 }
@@ -261,19 +263,18 @@ void World::load_level(std::string level)
 void World::load()
 {
 	std::ifstream file(save_file);
-	if (file.good() && file.is_open())
-	{
-		json j = json::parse(file);
-		file.close();
-		m_unlocked.clear();
-		for (auto& i : j)
-		{
-			m_unlocked.push_back(i);
+	if (file.is_open()) {
+		if (file.good()) {
+			json j = json::parse(file);
+			m_unlocked.clear();
+			for (auto& i : j)
+			{
+				m_unlocked.push_back(i);
+			}
+		} else {
+			m_unlocked = { "level_select", "level_1" };
 		}
-	}
-	else
-	{
-		m_unlocked = { "level_select", "level_1" };
+		file.close();
 	}
 }
 
