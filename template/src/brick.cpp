@@ -36,6 +36,9 @@ bool Brick::init(int id)
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;
 
+    s_render_components[id]->can_be_hidden = 1.f;
+    s_render_components[id]->colour = m_colour;
+
 	return true;
 }
 

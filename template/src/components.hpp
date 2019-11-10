@@ -24,10 +24,14 @@ struct RenderComponent
 	Effect effect;
 	Transform transform;
 	bool render = true;
+	float can_be_hidden = 0.f;
+	vec3 colour = {0.f, 0.f, 0.f};
 	float alpha;
 
 	bool init_sprite();
-	void draw_sprite_alpha(const mat3& projection, float alpha);
+	void draw_sprite_alpha(const mat3& projection, float alpha, vec3 headlight_channel);
+
+    void draw_ui_sprite_alpha(const mat3 &projection, float alpha);
 };
 extern std::map<int, RenderComponent*> s_render_components;
 extern std::map<int, RenderComponent*> s_ui_render_components;

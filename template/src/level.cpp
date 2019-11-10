@@ -29,7 +29,8 @@ void Level::destroy()
 }
 
 void Level::draw_entities(const mat3 &projection, const vec2 &camera_shift) {
-    m_rendering_system.render(projection, camera_shift);
+    vec3 headlight_channel = m_light.get_headlight_channel();
+    m_rendering_system.render(projection, camera_shift, headlight_channel);
 }
 
 void Level::draw_light(const mat3 &projection, const vec2 &camera_shift) {
