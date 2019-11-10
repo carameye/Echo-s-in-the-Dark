@@ -98,7 +98,7 @@ void Robot::update(float ms)
 	if (m_grounded) {
         m_available_flight_time = fmin(m_available_flight_time += (ms*2), MAX_FLIGHT_DURATION);
 	    if (std::abs(mc.velocity.x) > TOLERANCE) {
-            mc.radians += mc.velocity.x / 150;
+            mc.radians += mc.velocity.x / 250.f;
         }
     }
 
@@ -106,7 +106,6 @@ void Robot::update(float ms)
 	m_head.update(ms, add(mc.position, { 0.f, -48.f }));
     m_hat.update(ms, add(mc.position, { 0.f, -56.f }));
     m_shoulders.update(ms, add(mc.position, { 0.f, 0.f }));
-
 
     if (m_is_flying) {
         m_available_flight_time = fmax(m_available_flight_time -= ms, 0);
@@ -148,7 +147,7 @@ vec2 Robot::get_acceleration() const
 
 vec2 Robot::get_next_position(float elapsed_ms)
 {
-    float step = elapsed_ms/100;
+    float step = elapsed_ms / 100.f;
     return {mc.position.x + mc.velocity.x * step, mc.position.y + mc.velocity.y * step};
 }
 

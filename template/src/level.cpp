@@ -40,12 +40,12 @@ void Level::update(float elapsed_ms) {
     vec2 robot_pos = m_robot.get_position();
     vec2 robot_head_pos = m_robot.get_head_position();
 
-    vec2 new_robot_vel = m_robot.update_velocity(elapsed_ms);
+    m_robot.update_velocity(elapsed_ms);
 
     vec2 new_robot_pos = m_robot.get_next_position(elapsed_ms);
     vec2 new_robot_head_pos = m_robot.get_next_head_position(new_robot_pos);
 
-    float translation = new_robot_vel.x;
+    float translation = new_robot_pos.x - robot_pos.x;
 	float translation_head = new_robot_head_pos.x - robot_head_pos.x;
     for (auto &i_brick : m_bricks) {
 
@@ -87,7 +87,7 @@ void Level::update(float elapsed_ms) {
     m_robot.set_position({new_robot_pos.x, robot_pos.y});
     m_robot.set_head_position({new_robot_head_pos.x, robot_head_pos.y});
 
-    translation = new_robot_vel.y;
+    translation = new_robot_pos.y - robot_pos.y;
 	translation_head = new_robot_head_pos.y - robot_head_pos.y;
     for (auto &i_brick : m_bricks) {
         const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
