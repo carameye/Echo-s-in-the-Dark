@@ -25,7 +25,7 @@ public:
 	void update(float ms);
 
 	// Update robots velocity based on its current movement direction and it's acceleration
-	void update_velocity(float ms);
+	vec2 update_velocity(float ms);
 
 	// Returns the current robot position
 	vec2 get_position() const;
@@ -36,8 +36,8 @@ public:
 	// Returns the current robot acceleration
 	vec2 get_acceleration() const;
 
-	// Calculates and return next position with out updating robot
-	vec2 get_next_position();
+    // Calculates and return next position with out updating robot
+    vec2 get_next_position(float elapsed_ms);
 
 	// Sets the new robot position
 	void set_position(vec2 position);
