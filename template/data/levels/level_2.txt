@@ -4,7 +4,7 @@ enddoors
 watch out for ghosts!
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                                                       B
+B                                                    T  B
 B                                                    D  B
 B                                                       B
 B                                                  BBBBBB

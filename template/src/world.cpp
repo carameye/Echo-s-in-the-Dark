@@ -76,16 +76,19 @@ void World::update(float elapsed_ms)
 
 	//-------------------------------------------------------------------------
 	vec2 player_pos = m_level.get_player_position();
-	float follow_speed = 0.03f;
+	float follow_speed = 0.1f;
 	vec2 follow_point = player_pos;
 	// check whether still showing the player the path through the level
 	bool done_panning_x = within_range(camera_pos.x, player_pos.x - w, player_pos.x + w);
 	bool done_panning_y = within_range(camera_pos.y, player_pos.y - h, player_pos.y + h);
 	is_level_load_pan = is_level_load_pan && (!done_panning_x || !done_panning_y);
 	if (!is_level_load_pan) {
-		follow_speed = 0.1f;
 		follow_point = add(player_pos, { 0.f, camera_offset });
 		m_level.update(elapsed_ms);
+	} else {
+		float multiplier = sq_len(sub(player_pos, m_level.get_starting_camera_position()))/100000000000;
+		follow_speed_input++;
+		follow_speed = exp(follow_speed_input*multiplier) - 1;
 	}
 	camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
 }
