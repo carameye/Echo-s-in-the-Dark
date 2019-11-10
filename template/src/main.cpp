@@ -30,6 +30,8 @@ int main(int argc, char* argv[])
 
 	auto t = Clock::now();
 
+	float elapsed_sec = 0.f;
+
 	// variable timestep loop.. can be improved (:
 	while (!gm.game_over())
 	{
@@ -38,13 +40,13 @@ int main(int argc, char* argv[])
 
 		// Calculating elapsed times in milliseconds from the previous iteration
 		auto now = Clock::now();
-		float elapsed_sec = (float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
+		elapsed_sec += (float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
 		t = now;
 
-		for (float b = 100.f; elapsed_sec > b; elapsed_sec -= b)
+		for (float b = 17.f; elapsed_sec > b; elapsed_sec -= b)
+		{
 			gm.update(b);
-		if (elapsed_sec > 0)
-			gm.update(elapsed_sec);
+		}
 		gm.draw();
 	}
 
