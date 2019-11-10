@@ -180,8 +180,10 @@ void Menu::start_music()
 
 void Menu::stop_music()
 {
-	if (m_background_music != nullptr)
+	if (m_background_music != nullptr) {
 		Mix_FreeMusic(m_background_music);
+		m_background_music = nullptr;
+	}
 
 	Mix_CloseAudio();
 }
