@@ -174,12 +174,12 @@ void Level::update(float elapsed_ms) {
     }
 }
 
-vec2 Level::get_camera_position() {
-    return m_robot.get_position();
+vec2 Level::get_starting_camera_position() const {
+    return m_starting_camera_pos;
 }
 
-Robot *Level::get_player() {
-    return &m_robot;
+vec2 Level::get_player_position() const {
+	return m_robot.get_position();
 }
 
 std::string Level::interact()
@@ -226,6 +226,7 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     fprintf(stderr, "	getting doors\n");
     for (json door : j["doors"]) {
         vec2 pos = {door["pos"]["x"], door["pos"]["y"]};
+		m_starting_camera_pos = to_pixel_position(pos);
         spawn_door(to_pixel_position(pos), door["next_level"]);
     }
 
@@ -301,6 +302,9 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
     // Spawn the robot
     vec2 pos = {j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"]};
+	if (level == "level_select") {
+		m_starting_camera_pos = to_pixel_position(pos);
+	}
     spawn_robot(to_pixel_position(pos));
 
     save_level();

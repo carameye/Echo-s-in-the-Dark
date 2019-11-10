@@ -79,6 +79,7 @@ private:
 	// Camera position
 	vec2 camera_pos;
 	float camera_offset;
+	bool is_level_load_pan = false; // true while showing the path to the door on initial level load
 
 	Level m_level;
 

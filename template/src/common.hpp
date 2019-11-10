@@ -55,6 +55,7 @@ static const float brick_size = 64.f;
 static const float TOLERANCE = 0.005f;
 
 float get_closest_point(float last_pos, float tile_pos, float circle_width, float tile_width);
+bool within_range(float val, float low, float high);
 
 // OpenGL utilities
 // cleans error buffer
