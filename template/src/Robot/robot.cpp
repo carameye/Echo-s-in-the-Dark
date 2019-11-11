@@ -56,7 +56,12 @@ bool Robot::init(int id)
 	m_shoulders.set_scaling(mc.physics.scale);
     m_energy_bar.set_scaling(mc.physics.scale);
     m_hat.set_scaling(mc.physics.scale);
-    m_available_flight_time = MAX_FLIGHT_DURATION;
+    m_available_flight_time = 0;
+    m_grounded = false;
+	m_should_stop_smoke = true;
+	m_is_accelerating_right = false;
+	m_is_accelerating_left = false;
+	m_is_flying = false;
 
 	return valid;
 }
