@@ -58,8 +58,8 @@ bool Brick::init(int id, vec3 colour)
         grc.colour = m_colour;
         s_render_components[id] = &grc;
     } else if (colour.x == 0.f && colour.y == 0.f && colour.z == 1.f) {
-        rrc.can_be_hidden = 1;
-        rrc.colour = m_colour;
+        brc.can_be_hidden = 1;
+        brc.colour = m_colour;
         s_render_components[id] = &brc;
     } else {
         s_render_components[id] = &rc;
