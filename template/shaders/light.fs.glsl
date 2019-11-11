@@ -106,8 +106,8 @@ float find_light_space(vec2 p1, vec2 p2)
 
 float find_light_brick(vec2 p1, vec2 p2)
 {
-    vec2 p = vec2(p1.x, p1.y);
-    vec2 d = vec2(p2.x - p1.x, p2.y - p1.y);
+    vec2 p = p1;
+    vec2 d = p2 - p1;
 
     float diff_x = p.x - camera_pos.x + 32;
     diff_x = mod(diff_x, 64);
@@ -137,29 +137,26 @@ float find_light_brick(vec2 p1, vec2 p2)
     float c_x = 0;
     if (abs(diff_x) <= 32)
     {
-        c_x = illuminate_torches(vec2(p_x / screen_size.x, p.y / screen_size.y), p2);
-        c_x = c_x * find_light_space(vec2(p_x, p.y), p2) * get_light_at_pixel(vec2(p_x, p.y));
+        c_x = find_light_space(vec2(p_x, p.y), p2) * get_light_at_pixel(vec2(p_x, p.y));
         c_x = c_x * sqrt(1024 - pow(diff_x, 2)) / 32;
     }
 
     float c_y = 0;
     if (abs(diff_y) <= 32)
     {
-        c_y = illuminate_torches(vec2(p.x / screen_size.x, p_y / screen_size.y), p2);
-        c_y = c_y * find_light_space(vec2(p.x, p_y), p2) * get_light_at_pixel(vec2(p.x, p_y));
+        c_y = find_light_space(vec2(p.x, p_y), p2) * get_light_at_pixel(vec2(p.x, p_y));
         c_y = c_y * sqrt(1024 - pow(diff_y, 2)) / 32;
     }
 
-    float c = pow(c_x, 2) + pow(c_y, 2);
+    float c = max(c_x, c_y);
     if (abs(diff_x) <= 32 && abs(diff_y) <= 32 && c == 0)
     {
-        c = illuminate_torches(vec2(p_x / screen_size.x, p_y / screen_size.y), p2);
-        c = c * find_light_space(vec2(p_x, p_y), p2) * get_light_at_pixel(vec2(p_x, p_y));
+        c = find_light_space(vec2(p_x, p_y), p2) * get_light_at_pixel(vec2(p_x, p_y));
         c = c * sqrt(1024 - (pow(diff_x, 2) + pow(diff_y, 2)) / 2) / 32;
-        return pow(c, 2);
+        return pow(c, 4);
     }
 
-    return sqrt(c);
+    return c;
 }
 
 float find_light(vec2 p1, vec2 p2)
