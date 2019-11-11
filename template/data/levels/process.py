@@ -140,7 +140,8 @@ def convert(filepath):
             starty = 64 * b["pos"]["y"]
             for i in range(startx, startx + 64):
                 for j in range(starty, starty + 64):
-                    brickpixels[i, j] = (0, 0, 0)
+                    if b["colour"] == { "r": 1.0, "g": 1.0, "b": 1.0 }:
+                        brickpixels[i, j] = (0, 0, 0)
 
         brickimage.save(join(dirpath, "shadow", filename + "_brickmap.png"))
 
