@@ -66,8 +66,8 @@ float headlight(vec2 coord)
 
 float get_light_at_pixel(vec2 pixel)
 {
-	vec2 brick_coord = vec2(screen_size.x - pixel.x, screen_size.y - pixel.y) + camera_pos - screen_size - vec2(32, 32);
-	brick_coord = vec2(1 - brick_coord.x / shadow_size.x, 1 - brick_coord.y / shadow_size.y);
+	vec2 brick_coord = pixel - camera_pos + vec2(32, 32);
+	brick_coord = vec2(brick_coord.x / shadow_size.x, brick_coord.y / shadow_size.y);
 	return texture(brick_map, brick_coord).x;
 }
 
