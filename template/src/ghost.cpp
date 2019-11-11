@@ -5,7 +5,7 @@
 
 Texture Ghost::s_ghost_texture;
 
-bool Ghost::init(int id)
+bool Ghost::init(int id, vec3 colour)
 {
 	m_id = id;
 
@@ -28,8 +28,14 @@ bool Ghost::init(int id)
 	mc.acceleration = { 0.f , 0.f };
 	mc.radians = 0.f;
 
+    m_colour = colour;
+    m_is_visible = m_colour.x == 1.f && m_colour.y == 1.f && m_colour.z == 1.f;
+
 	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 	mc.physics.scale.x *= 47.f / 41.f;
+
+	rc.colour = m_colour;
+	rc.can_be_hidden = 1;
 
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;
@@ -39,6 +45,9 @@ bool Ghost::init(int id)
 
 void Ghost::update(float ms)
 {
+    if (m_is_visible) {
+        return;
+    }
 	if (len(sub(m_goal, mc.position)) < 800.f)
 	{
 		if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > TOLERANCE)
@@ -116,4 +125,8 @@ void Ghost::set_goal(vec2 position)
 void Ghost::set_level_graph(LevelGraph* graph)
 {
 	m_level_graph = graph;
+}
+
+void Ghost::update_visibility(vec3 headlight_color) {
+    m_is_visible = m_colour.x == headlight_color.x && m_colour.y == headlight_color.y && m_colour.z == headlight_color.z;
 }

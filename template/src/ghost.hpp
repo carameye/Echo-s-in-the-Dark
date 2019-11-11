@@ -17,7 +17,7 @@ class Ghost : public Entity
 
 public:
 	// Creates all the associated render resources and default transform
-	bool init(int id);
+	bool init(int id, vec3 colour);
 
 	// Updates the ghost
 	void update(float ms);
@@ -36,4 +36,11 @@ public:
 
 	// Tell the ghost how to navigate the map
 	void set_level_graph(LevelGraph* graph);
+
+	// Update whether ghost is currently visible
+	void update_visibility(vec3 headlight_color);
+
+private:
+    vec3 m_colour;
+    bool m_is_visible;
 };

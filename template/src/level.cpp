@@ -44,9 +44,13 @@ void Level::update(float elapsed_ms) {
     m_robot.update_velocity(elapsed_ms);
 
     if (m_has_colour_changed) {
+        vec3 headlight_channel = m_light.get_headlight_channel();
         for (auto &i_brick : m_bricks) {
-            vec3 headlight_channel = m_light.get_headlight_channel();
             i_brick->update(headlight_channel);
+        }
+
+        for (auto &i_ghost : m_ghosts) {
+            i_ghost->update_visibility(headlight_channel);
         }
         m_has_colour_changed = false;
     }
@@ -276,7 +280,8 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     fprintf(stderr, "	getting ghosts\n");
     for (json ghost : j["ghosts"]) {
         vec2 pos = {ghost["pos"]["x"], ghost["pos"]["y"]};
-        spawn_ghost(to_pixel_position(pos));
+        vec3 colour = {ghost["colour"]["r"], ghost["colour"]["g"], ghost["colour"]["b"]};
+        spawn_ghost(to_pixel_position(pos), colour);
     }
 
     // Get the bricks
@@ -399,10 +404,10 @@ bool Level::spawn_door(vec2 position, std::string next_level)
     return false;
 }
 
-bool Level::spawn_ghost(vec2 position)
+bool Level::spawn_ghost(vec2 position, vec3 colour)
 {
     Ghost *ghost = new Ghost();
-    if (ghost->init(next_id++))
+    if (ghost->init(next_id++, colour))
     {
         ghost->set_position(position);
         ghost->set_level_graph(&m_graph);

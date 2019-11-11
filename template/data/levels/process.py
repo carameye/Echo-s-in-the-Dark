@@ -71,6 +71,7 @@ def convert(filepath):
                     continue
                 if char is "G":
                     ghosts.append(obj)
+                    obj["colour"] = { "r": 1.0, "g": 1.0, "b": 1.0 }
                     continue
                 if char is "R":
                     j["spawn"] = obj
@@ -88,20 +89,16 @@ def convert(filepath):
                     bricks.append(obj)
                     continue
                 if char is "N":
-                    obj["colour"] = { "r": 0.0, "g": 0.0, "b": 1.0 }
-                    bricks.append(obj)
+                    obj["colour"] = { "r": 1.0, "g": 0.0, "b": 0.0 }
+                    ghosts.append(obj)
                     continue
                 if char is "Y":
-                    obj["colour"] = { "r": 1.0, "g": 1.0, "b": 0.0 }
-                    bricks.append(obj)
+                    obj["colour"] = { "r": 0.0, "g": 1.0, "b": 0.0 }
+                    ghosts.append(obj)
                     continue
                 if char is "Z":
-                    obj["colour"] = { "r": 1.0, "g": 0.0, "b": 1.0 }
-                    bricks.append(obj)
-                    continue
-                if char is "L":
-                    obj["colour"] = { "r": 0.0, "g": 1.0, "b": 1.0 }
-                    bricks.append(obj)
+                    obj["colour"] = { "r": 0.0, "g": 0.0, "b": 1.0 }
+                    ghosts.append(obj)
                     continue
                 if char is "T":
                     torches.append(obj)
