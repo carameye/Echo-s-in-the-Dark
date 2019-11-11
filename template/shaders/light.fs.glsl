@@ -220,7 +220,7 @@ void main()
 
 	float sum = clamp(hl + illum_torch_sum + illum_robot, 0, 0.9);
 
-	if (headlight_channels.x == 0 && headlight_channels.y == 0 && headlight_channels.z == 0) {
+	if (headlight_channels.x == 1 && headlight_channels.y == 1 && headlight_channels.z == 1) {
 		color = in_color * sum;
 	} else {
 		color = mix( in_color,headlight_channels, hl) * sum;

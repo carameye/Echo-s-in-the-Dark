@@ -1,28 +1,7 @@
 #include "systems.hpp"
 
-void RenderingSystem::render(const mat3& projection, const vec2& camera_shift)
+void RenderingSystem::render(const mat3& projection, const vec2& camera_shift, vec3 headlight_channel)
 {
-	for (auto& entity : menu_entities)
-	{
-		RenderComponent* rc = s_ui_render_components[entity];
-		MotionComponent* mc = s_ui_motion_components[entity];
-
-		if (!rc->render)
-		{
-			continue;
-		}
-
-		// Transformation code, see Rendering and Transformation in the template specification for more info
-		// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
-		rc->transform.begin();
-		rc->transform.translate(mc->position);
-		rc->transform.rotate(mc->radians);
-		rc->transform.scale(mc->physics.scale);
-		rc->transform.end();
-
-		rc->draw_sprite_alpha(projection, rc->alpha);
-	}
-
 	for (auto& entity : level_entities)
 	{
 		RenderComponent* rc = s_render_components[entity];
@@ -42,8 +21,32 @@ void RenderingSystem::render(const mat3& projection, const vec2& camera_shift)
 		rc->transform.scale(mc->physics.scale);
 		rc->transform.end();
 
-		rc->draw_sprite_alpha(projection, rc->alpha);
+		rc->draw_sprite_alpha(projection, rc->alpha, headlight_channel);
 	}
+}
+
+void RenderingSystem::render_ui(const mat3& projection, const vec2& camera_shift)
+{
+    for (auto& entity : menu_entities)
+    {
+        RenderComponent* rc = s_ui_render_components[entity];
+        MotionComponent* mc = s_ui_motion_components[entity];
+
+        if (!rc->render)
+        {
+            continue;
+        }
+
+        // Transformation code, see Rendering and Transformation in the template specification for more info
+        // Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
+        rc->transform.begin();
+        rc->transform.translate(mc->position);
+        rc->transform.rotate(mc->radians);
+        rc->transform.scale(mc->physics.scale);
+        rc->transform.end();
+
+        rc->draw_ui_sprite_alpha(projection, rc->alpha);
+    }
 }
 
 void RenderingSystem::process(int min, int max)

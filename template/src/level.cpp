@@ -29,7 +29,8 @@ void Level::destroy()
 }
 
 void Level::draw_entities(const mat3 &projection, const vec2 &camera_shift) {
-    m_rendering_system.render(projection, camera_shift);
+    vec3 headlight_channel = m_light.get_headlight_channel();
+    m_rendering_system.render(projection, camera_shift, headlight_channel);
 }
 
 void Level::draw_light(const mat3 &projection, const vec2 &camera_shift) {
@@ -42,45 +43,58 @@ void Level::update(float elapsed_ms) {
 
     m_robot.update_velocity(elapsed_ms);
 
+    if (m_has_colour_changed) {
+        for (auto &i_brick : m_bricks) {
+            vec3 headlight_channel = m_light.get_headlight_channel();
+            i_brick->update(headlight_channel);
+        }
+        m_has_colour_changed = false;
+    }
+
     vec2 new_robot_pos = m_robot.get_next_position(elapsed_ms);
     vec2 new_robot_head_pos = m_robot.get_next_head_position(new_robot_pos);
 
     float translation = new_robot_pos.x - robot_pos.x;
-	float translation_head = new_robot_head_pos.x - robot_head_pos.x;
+    float translation_head = new_robot_head_pos.x - robot_head_pos.x;
     for (auto &i_brick : m_bricks) {
 
         const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
         const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
         Brick brick = *i_brick;
-        if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
-            m_robot.set_velocity({0.f, m_robot.get_velocity().y});
+        bool should_check_collisions = brick.get_is_visible();
+        if (should_check_collisions) {
+            if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
+                m_robot.set_velocity({0.f, m_robot.get_velocity().y});
 
-            float circle_width = brick_size / 2.f;
-            if (abs(m_robot.get_position().y - brick.get_position().y) > brick_size / 2.f) {
-                float param = abs(m_robot.get_position().y - brick.get_position().y) - brick_size / 2.f;
-                float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
-                if (dist_no_sqrt >= 0.f)
-                    circle_width = sqrt(dist_no_sqrt);
+                float circle_width = brick_size / 2.f;
+                if (abs(m_robot.get_position().y - brick.get_position().y) > brick_size / 2.f) {
+                    float param = abs(m_robot.get_position().y - brick.get_position().y) - brick_size / 2.f;
+                    float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
+                    if (dist_no_sqrt >= 0.f)
+                        circle_width = sqrt(dist_no_sqrt);
+                }
+
+                new_robot_pos.x = get_closest_point(robot_pos.x, brick.get_position().x, circle_width,
+                                                    brick_size / 2.f);
+                translation = new_robot_pos.x - robot_pos.x;
             }
 
-            new_robot_pos.x = get_closest_point(robot_pos.x, brick.get_position().x, circle_width, brick_size / 2.f);
-            translation = new_robot_pos.x - robot_pos.x;
-        }
 
-        if (brick.get_hitbox().collides_with(robot_head_hitbox_x)) {
-            m_robot.set_head_velocity({0.f, m_robot.get_head_velocity().y});
+            if (brick.get_hitbox().collides_with(robot_head_hitbox_x)) {
+                m_robot.set_head_velocity({0.f, m_robot.get_head_velocity().y});
 
-            float circle_width = brick_size / 2.f;
-            if (abs(m_robot.get_head_position().y - brick.get_position().y) > brick_size / 2.f) {
-                float param = abs(m_robot.get_head_position().y - brick.get_position().y) - brick_size / 2.f;
-                float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
-                if (dist_no_sqrt >= 0.f)
-                    circle_width = sqrt(dist_no_sqrt);
+                float circle_width = brick_size / 2.f;
+                if (abs(m_robot.get_head_position().y - brick.get_position().y) > brick_size / 2.f) {
+                    float param = abs(m_robot.get_head_position().y - brick.get_position().y) - brick_size / 2.f;
+                    float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
+                    if (dist_no_sqrt >= 0.f)
+                        circle_width = sqrt(dist_no_sqrt);
+                }
+
+                new_robot_head_pos.x = get_closest_point(robot_head_pos.x, brick.get_position().x, circle_width,
+                                                         21);
+                translation_head = new_robot_head_pos.x - robot_head_pos.x;
             }
-
-            new_robot_head_pos.x = get_closest_point(robot_head_pos.x, brick.get_position().x, circle_width,
-                                                     21);
-			translation_head = new_robot_head_pos.x - robot_head_pos.x;
         }
     }
 
@@ -88,48 +102,52 @@ void Level::update(float elapsed_ms) {
     m_robot.set_head_position({new_robot_head_pos.x, robot_head_pos.y});
 
     translation = new_robot_pos.y - robot_pos.y;
-	translation_head = new_robot_head_pos.y - robot_head_pos.y;
+    translation_head = new_robot_head_pos.y - robot_head_pos.y;
+
     for (auto &i_brick : m_bricks) {
         const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
         const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
         Brick brick = *i_brick;
-        if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
-            m_robot.set_velocity({m_robot.get_velocity().x, 0.f});
+        bool should_check_collisions = brick.get_is_visible();
+        if (should_check_collisions) {
+            if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
+                m_robot.set_velocity({m_robot.get_velocity().x, 0.f});
 
-            float circle_width = brick_size / 2.f;
-            if (abs(m_robot.get_position().x - brick.get_position().x) > brick_size / 2.f) {
-                float param = abs(m_robot.get_position().x - brick.get_position().x) - brick_size / 2.f;
-                float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
-                if (dist_no_sqrt >= 0.f)
-                    circle_width = sqrt(dist_no_sqrt);
+                float circle_width = brick_size / 2.f;
+                if (abs(m_robot.get_position().x - brick.get_position().x) > brick_size / 2.f) {
+                    float param = abs(m_robot.get_position().x - brick.get_position().x) - brick_size / 2.f;
+                    float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
+                    if (dist_no_sqrt >= 0.f)
+                        circle_width = sqrt(dist_no_sqrt);
+                }
+
+                new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, circle_width,
+                                                    brick_size / 2.f);
+                translation = new_robot_pos.y - robot_pos.y;
+                if (brick.get_position().y > new_robot_pos.y)
+                    m_robot.set_grounded();
             }
 
-            new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, circle_width, brick_size / 2.f);
-            translation = new_robot_pos.y - robot_pos.y;
-            if (brick.get_position().y > new_robot_pos.y)
-                m_robot.set_grounded();
-        }
+            if (brick.get_hitbox().collides_with(robot_head_hitbox_y)) {
+                m_robot.set_head_velocity({m_robot.get_head_velocity().x, 0.f});
 
-        if (brick.get_hitbox().collides_with(robot_head_hitbox_y)) {
-            m_robot.set_head_velocity({m_robot.get_head_velocity().x, 0.f});
+                float circle_width = brick_size / 2.f;
+                if (abs(m_robot.get_head_position().x - brick.get_position().x) > brick_size / 2.f) {
+                    float param = abs(m_robot.get_head_position().x - brick.get_position().x) - brick_size / 2.f;
+                    float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
+                    if (dist_no_sqrt >= 0.f)
+                        circle_width = sqrt(dist_no_sqrt);
+                }
 
-            float circle_width = brick_size / 2.f;
-            if (abs(m_robot.get_head_position().x - brick.get_position().x) > brick_size / 2.f) {
-                float param = abs(m_robot.get_head_position().x - brick.get_position().x) - brick_size / 2.f;
-                float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
-                if (dist_no_sqrt >= 0.f)
-                    circle_width = sqrt(dist_no_sqrt);
+                new_robot_head_pos.y = get_closest_point(robot_head_pos.y, brick.get_position().y, circle_width,
+                                                         21);
+                translation_head = new_robot_head_pos.y - robot_head_pos.y;
             }
-
-            new_robot_head_pos.y = get_closest_point(robot_head_pos.y, brick.get_position().y, circle_width,
-                                                     21);
-			translation_head = new_robot_head_pos.y - robot_head_pos.y;
         }
-
     }
 
     m_robot.set_position(new_robot_pos);
-	m_robot.set_head_position(new_robot_head_pos);
+    m_robot.set_head_position(new_robot_head_pos);
     m_robot.update(elapsed_ms);
     m_light.set_position(new_robot_pos);
 
@@ -184,15 +202,15 @@ vec2 Level::get_player_position() const {
 std::string Level::interact()
 {
     if (m_interactable != NULL) {
-		return m_interactable->perform_action();
-	}
+        return m_interactable->perform_action();
+    }
 
-	return "";
+    return "";
 }
 
 bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 {
-	m_level = level;
+    m_level = level;
 
     // Construct file name with path
     std::string filename = level_path;
@@ -218,8 +236,8 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     // Get ambient light level
     m_light.set_ambient(j["ambient_light"]);
 
-	// Get first entity in this group
-	int min = next_id;
+    // Get first entity in this group
+    int min = next_id;
 
     // Get the doors
     fprintf(stderr, "	getting doors\n");
@@ -229,22 +247,22 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
         spawn_door(to_pixel_position(pos), door["next_level"]);
     }
 
-	if (m_level == "level_select")
-	{
-		for (auto& d : m_interactables)
-		{
-			if (find(unlocked.begin(), unlocked.end(), d->get_destination()) == unlocked.end())
-			{
-				d->lock();
-			}
-		}
-	}
-
-	fprintf(stderr, "   getting torches\n");
-	for (json torch : j["torches"])
+    if (m_level == "level_select")
     {
-	    vec2 pos = {torch["pos"]["x"], torch["pos"]["y"]};
-	    m_light.add_torch(to_pixel_position(pos));
+        for (auto& d : m_interactables)
+        {
+            if (find(unlocked.begin(), unlocked.end(), d->get_destination()) == unlocked.end())
+            {
+                d->lock();
+            }
+        }
+    }
+
+    fprintf(stderr, "   getting torches\n");
+    for (json torch : j["torches"])
+    {
+        vec2 pos = {torch["pos"]["x"], torch["pos"]["y"]};
+        m_light.add_torch(to_pixel_position(pos));
     }
 
     // Get the signs
@@ -293,11 +311,11 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     fprintf(stderr, "	built world with %ld doors, %ld ghosts, and %ld bricks\n",
             m_interactables.size(), m_ghosts.size(), m_bricks.size());
 
-	// Generate the graph
-	if (m_ghosts.size() > 0)
-	{
-		m_graph.generate(potential_cp, bricks, width, height);
-	}
+    // Generate the graph
+    if (m_ghosts.size() > 0)
+    {
+        m_graph.generate(potential_cp, bricks, width, height);
+    }
 
     // Spawn the robot
     vec2 pos = {j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"]};
@@ -308,96 +326,99 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
     save_level();
 
-	m_rendering_system.process(min, next_id);
+    m_rendering_system.process(min, next_id);
 
     return true;
 }
 
 std::string Level::handle_key_press(int key, int action)
 {
-	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-		m_robot.start_flying();
-	}
-	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-		m_robot.set_is_accelerating_left(true);
-	}
-	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-		m_robot.set_is_accelerating_right(true);
-	}
+    if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+        m_robot.start_flying();
+    }
+    if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+        m_robot.set_is_accelerating_left(true);
+    }
+    if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+        m_robot.set_is_accelerating_right(true);
+    }
 
-	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
-		m_robot.stop_flying();
-	}
-	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-		m_robot.set_is_accelerating_left(false);
-	}
-	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-		m_robot.set_is_accelerating_right(false);
-	}
+    if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
+        m_robot.stop_flying();
+    }
+    if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+        m_robot.set_is_accelerating_left(false);
+    }
+    if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+        m_robot.set_is_accelerating_right(false);
+    }
 
-	if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
-		return interact();
-	}
+    if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
+        return interact();
+    }
 
-	// headlight toggle
-	if (action == GLFW_PRESS && key == GLFW_KEY_1) {
-		m_light.set_red_channel();
-	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_2) {
-		m_light.set_green_channel();
-	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_3) {
-		m_light.set_blue_channel();
-	}
+    // headlight toggle
+    if (action == GLFW_PRESS && key == GLFW_KEY_1) {
+        m_light.set_red_channel();
+        m_has_colour_changed = true;
+    }
+    if (action == GLFW_PRESS && key == GLFW_KEY_2) {
+        m_light.set_green_channel();
+        m_has_colour_changed = true;
+    }
+    if (action == GLFW_PRESS && key == GLFW_KEY_3) {
+        m_light.set_blue_channel();
+        m_has_colour_changed = true;
+    }
 
-	return "";
+    return "";
 }
 
 void Level::handle_mouse_move(double xpos, double ypos)
 {
-	float radians = atan2(-ypos + 300, xpos - 600);
-	m_light.set_radians(radians);
+    float radians = atan2(-ypos + 300, xpos - 600);
+    m_light.set_radians(radians);
 }
 
 std::string Level::get_current_level()
 {
-	return m_level;
+    return m_level;
 }
 
 bool Level::spawn_door(vec2 position, std::string next_level)
 {
-	Door *door = new Door();
-	if (door->init(next_id++))
-	{
-		door->set_position(position);
-		door->set_destination(next_level);
-		m_interactables.push_back(door);
-		return true;
-	}
-	fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
-	return false;
+    Door *door = new Door();
+    if (door->init(next_id++))
+    {
+        door->set_position(position);
+        door->set_destination(next_level);
+        m_interactables.push_back(door);
+        return true;
+    }
+    fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
+    return false;
 }
 
 bool Level::spawn_ghost(vec2 position)
 {
-	Ghost *ghost = new Ghost();
-	if (ghost->init(next_id++))
-	{
-		ghost->set_position(position);
-		ghost->set_level_graph(&m_graph);
-		m_ghosts.push_back(ghost);
-		return true;
-	}
-	return false;
+    Ghost *ghost = new Ghost();
+    if (ghost->init(next_id++))
+    {
+        ghost->set_position(position);
+        ghost->set_level_graph(&m_graph);
+        m_ghosts.push_back(ghost);
+        return true;
+    }
+    return false;
 }
 
 bool Level::spawn_robot(vec2 position)
 {
-	if (m_robot.init(next_id))
-	{
-		next_id += 104;
-		m_robot.set_position(position);
-		m_robot.set_head_position(position);
+    if (m_robot.init(next_id))
+    {
+        next_id += 104;
+        m_robot.set_position(position);
+        m_robot.set_head_position(position);
         m_robot.set_shoulder_position(position);
         if (m_light.init(m_level)) {
             m_light.set_position(m_robot.get_position());
@@ -419,34 +440,33 @@ bool Level::spawn_robot(vec2 position)
 
 bool Level::spawn_sign(vec2 position, std::string text)
 {
-	Sign *sign = new Sign();
-	if (sign->init(next_id, text, position))
-	{
-		next_id += 2;
-		m_signs.push_back(sign);
-		return true;
-	}
-	fprintf(stderr, "	sign spawn failed\n");
-	return false;
+    Sign *sign = new Sign();
+    if (sign->init(next_id, text, position))
+    {
+        next_id += 2;
+        m_signs.push_back(sign);
+        return true;
+    }
+    fprintf(stderr, "	sign spawn failed\n");
+    return false;
 }
 
 bool Level::spawn_brick(vec2 position, vec3 colour) {
-    // TODO: make bricks respond to different colours
-    bool x = colour.x == 1.f;
-    bool y = colour.y == 1.f;
-    bool z = colour.z == 1.f;
-    if (!x || !y || !z)
+    bool r = colour.x == 1.f;
+    bool g = colour.y == 1.f;
+    bool b = colour.z == 1.f;
+    if (!r || !g || !b)
         fprintf(stderr, "	brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
 
-	Brick *brick = new Brick();
-	if (brick->init(next_id++))
-	{
-		brick->set_position(position);
-		m_bricks.push_back(brick);
-		return true;
-	}
-	fprintf(stderr, "	brick spawn failed\n");
-	return false;
+    Brick *brick = new Brick();
+    if (brick->init(next_id++, colour))
+    {
+        brick->set_position(position);
+        m_bricks.push_back(brick);
+        return true;
+    }
+    fprintf(stderr, "	brick spawn failed\n");
+    return false;
 }
 
 void Level::save_level() {

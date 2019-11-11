@@ -41,6 +41,6 @@ B                                                                            B
 B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B                          B
 B          R               B
-B          T        T      B
+B   C M N  T        T      B
 B          S        S      B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB

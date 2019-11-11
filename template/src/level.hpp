@@ -60,7 +60,6 @@ private:
 	// For resetting the level
 	void save_level();
 
-private:
 	std::string m_level;
 	float width, height;
 
@@ -81,6 +80,8 @@ private:
 
     LevelGraph m_graph;
     Door* m_interactable;
+
+    bool m_has_colour_changed = true;
 
     std::vector<vec2> reset_positions;
 };

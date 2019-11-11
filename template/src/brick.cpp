@@ -5,8 +5,11 @@
 
 Texture Brick::brick_texture;
 RenderComponent Brick::rc;
+RenderComponent Brick::rrc;
+RenderComponent Brick::grc;
+RenderComponent Brick::brc;
 
-bool Brick::init(int id)
+bool Brick::init(int id, vec3 colour)
 {
 	m_id = id;
 
@@ -19,9 +22,21 @@ bool Brick::init(int id)
 		}
 
 		rc.texture = &brick_texture;
+        rrc.texture = &brick_texture;
+        grc.texture = &brick_texture;
+        brc.texture = &brick_texture;
 
 		if (!rc.init_sprite())
 			return false;
+
+        if (!rrc.init_sprite())
+            return false;
+
+        if (!grc.init_sprite())
+            return false;
+
+        if (!brc.init_sprite())
+            return false;
 	}
 
 	mc.position = { 0.f, 0.f };
@@ -29,16 +44,39 @@ bool Brick::init(int id)
 	mc.acceleration = { 0.f , 0.f };
 	mc.radians = 0.f;
 	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
+	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 
-	s_render_components[id] = &rc;
+    m_colour = colour;
+    m_is_visible = m_colour.x == 1.f && m_colour.y == 1.f && m_colour.z == 1.f;
+
+    if (colour.x == 1.f && colour.y == 0.f && colour.z == 0.f) {
+        rrc.can_be_hidden = 1;
+        rrc.colour = m_colour;
+        s_render_components[id] = &rrc;
+    } else if (colour.x == 0.f && colour.y == 1.f && colour.z == 0.f) {
+        grc.can_be_hidden = 1;
+        grc.colour = m_colour;
+        s_render_components[id] = &grc;
+    } else if (colour.x == 0.f && colour.y == 0.f && colour.z == 1.f) {
+        brc.can_be_hidden = 1;
+        brc.colour = m_colour;
+        s_render_components[id] = &brc;
+    } else {
+        s_render_components[id] = &rc;
+    }
 	s_motion_components[id] = &mc;
 
 	return true;
 }
 
-void Brick::update(float ms)
+void Brick::update(vec3 hl_colour)
 {
-	// probably don't really need much here...
+    if (m_colour.x == 1.f && m_colour.y == 1.f && m_colour.z == 1.f) {
+        m_is_visible = true;
+        return;
+    }
+
+    m_is_visible = m_colour.x == hl_colour.x && m_colour.y == hl_colour.y && m_colour.z == hl_colour.z;
 }
 
 vec2 Brick::get_position()const
@@ -53,15 +91,17 @@ void Brick::set_position(vec2 position)
 
 Hitbox Brick::get_hitbox() const
 {
-	std::vector<Square> squares(1);
-	
-	float width = brick_size;
-	vec2 position = mc.position;
-	position.x -= width / 2;
-	position.y += width / 2;
-	Square square(position, width);
-	squares[0] = square;
+    std::vector<Square> squares(1);
+    float width = brick_size;
+    vec2 position = mc.position;
+    position.x -= width / 2;
+    position.y += width / 2;
+    Square square(position, width);
+    squares[0] = square;
+    Hitbox hitbox({}, squares);
+    return hitbox;
+}
 
-	Hitbox hitbox({}, squares);
-	return hitbox;
+bool Brick::get_is_visible() {
+    return m_is_visible;
 }
