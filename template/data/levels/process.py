@@ -121,7 +121,7 @@ def convert(filepath):
         filename = filepath.replace(dirpath, "")
         filename = filename.replace("\\", "")
         filename = filename.replace(".txt", "")
-        writepath = join(dirpath, "json", filename + ".json")
+        writepath = "".join([dirpath, "/json", filename, ".json"])
 
         file = open(writepath, "w+")
         file.write(json.dumps(j))
@@ -140,10 +140,11 @@ def convert(filepath):
             starty = 64 * b["pos"]["y"]
             for i in range(startx, startx + 64):
                 for j in range(starty, starty + 64):
-                    if b["colour"] == { "r": 1.0, "g": 1.0, "b": 1.0 }:
+                    b_colour = b["colour"]
+                    if b_colour["r"] == 1.0 and b_colour["g"] == 1.0 and b_colour["b"] == 1.0:
                         brickpixels[i, j] = (0, 0, 0)
 
-        brickimage.save(join(dirpath, "shadow", filename + "_brickmap.png"))
+        brickimage.save("".join([dirpath, "/shadow", filename + "_brickmap.png"]))
 
 def convertall():
     path = dirname(abspath(__file__))
