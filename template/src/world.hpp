@@ -80,7 +80,7 @@ private:
 	vec2 camera_pos;
 	float camera_offset;
 	bool is_level_load_pan = false; // true while showing the path to the door on initial level load
-	float follow_speed_input = 1.f; // the speed at which the camera follows the player
+	float on_load_delay = 0.f; // keeps the player looking at level goal for delay ms
 
 	Level m_level;
 
