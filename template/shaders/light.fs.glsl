@@ -15,7 +15,6 @@ layout(location = 0) out vec4 color;
 
 vec2 screen_size;
 vec2 shadow_size;
-vec2 light_pos_world;
 vec2 light_pos;
 vec4 in_color;
 
@@ -181,7 +180,6 @@ void main()
 	screen_size = textureSize(screen_texture, 0);
 	shadow_size = textureSize(brick_map, 0);
     light_pos = light_position;
-    light_pos_world = light_position - camera_pos;
 
 	vec2 coord = uv.xy;
 	in_color = texture(screen_texture, coord);
