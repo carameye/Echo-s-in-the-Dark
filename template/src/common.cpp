@@ -121,6 +121,11 @@ float get_closest_point(float last_pos, float tile_pos, float circle_width, floa
 		return ret;
 }
 
+bool within_range(float val, float low, float high)
+{
+	return (val - high)*(val - low) <= 0;
+}
+
 Texture::Texture() 
 {
 

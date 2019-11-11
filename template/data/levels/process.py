@@ -121,7 +121,8 @@ def convert(filepath):
         filename = filepath.replace(dirpath, "")
         filename = filename.replace("\\", "")
         filename = filename.replace(".txt", "")
-        writepath = join(dirpath, "json", filename + ".json")
+        writepath = "".join([dirpath, "/json", filename, ".json"])
+        print(writepath)
 
         file = open(writepath, "w+")
         file.write(json.dumps(j))
