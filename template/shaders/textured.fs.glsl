@@ -9,7 +9,7 @@ uniform vec4 fcolor;
 
 uniform vec3 headlight_channel;
 uniform vec3 component_colour;
-uniform float component_can_be_hidden;
+uniform int component_can_be_hidden;
 
 // Output color
 layout(location = 0) out  vec4 color;
@@ -20,5 +20,15 @@ bool colour_equals(vec3 col1, vec3 col2) {
 
 void main()
 {
-	color = fcolor * texture(sampler0, vec2(texcoord.x, texcoord.y));
+	if (component_can_be_hidden == 1) {
+		if (colour_equals(headlight_channel, component_colour)){
+			color = fcolor * texture(sampler0, vec2(texcoord.x, texcoord.y));
+		} else {
+			vec4 no_alpha = fcolor;
+			no_alpha.w = 0.f;
+			color = no_alpha * texture(sampler0, vec2(texcoord.x, texcoord.y));
+		}
+	} else {
+		color = fcolor * texture(sampler0, vec2(texcoord.x, texcoord.y));
+	}
 }

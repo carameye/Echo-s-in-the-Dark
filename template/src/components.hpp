@@ -24,7 +24,7 @@ struct RenderComponent
 	Effect effect;
 	Transform transform;
 	bool render = true;
-	float can_be_hidden = 0.f;
+	int can_be_hidden = 0;
 	vec3 colour = {0.f, 0.f, 0.f};
 	float alpha;
 

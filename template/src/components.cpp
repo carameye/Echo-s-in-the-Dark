@@ -146,8 +146,7 @@ void RenderComponent::draw_sprite_alpha(const mat3& projection, float alpha, vec
 
     // pass whether component can be hidden
     GLuint should_render_uloc = glGetUniformLocation(effect.program, "component_can_be_hidden");
-    float can_hide[] = {can_be_hidden};
-    glUniform3fv(should_render_uloc, 1, can_hide);
+    glUniform1i(should_render_uloc, can_be_hidden);
 
     // Enabling and binding texture to slot 0
     glActiveTexture(GL_TEXTURE0);
