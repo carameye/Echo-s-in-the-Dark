@@ -89,14 +89,18 @@ def convert(filepath):
                     bricks.append(obj)
                     continue
                 if char is "N":
-                    obj["colour"] = { "r": 1.0, "g": 0.0, "b": 0.0 }
+                    obj["colour"] = { "r": 0.0, "g": 0.0, "b": 1.0 }
                     ghosts.append(obj)
                     continue
                 if char is "Y":
-                    obj["colour"] = { "r": 0.0, "g": 1.0, "b": 0.0 }
+                    obj["colour"] = { "r": 1.0, "g": 0.0, "b": 0.0 }
                     ghosts.append(obj)
                     continue
                 if char is "Z":
+                    obj["colour"] = { "r": 0.0, "g": 1.0, "b": 0.0 }
+                    ghosts.append(obj)
+                    continue
+                if char is "L":
                     obj["colour"] = { "r": 0.0, "g": 0.0, "b": 1.0 }
                     ghosts.append(obj)
                     continue
