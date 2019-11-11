@@ -15,10 +15,8 @@ using json = nlohmann::json;
 // Same as static in c, local to compilation unit
 namespace
 {
-	const size_t MAX_TURTLES = 15;
-	const size_t MAX_FISH = 5;
-	const size_t TURTLE_DELAY_MS = 2000;
-	const size_t FISH_DELAY_MS = 5000;
+	const size_t CAMERA_PAN_OFFSET = 200;
+	const size_t UPDATE_FREEZE_DURATION = 2000;
 }
 
 World::World()
@@ -78,10 +76,21 @@ void World::update(float elapsed_ms)
 	vec2 screen = { (float)w / m_screen_scale, (float)h / m_screen_scale };
 
 	//-------------------------------------------------------------------------
-	m_level.update(elapsed_ms);
-
-	float follow_speed = 0.1f;
-	vec2 follow_point = add(m_level.get_camera_position(), { 0.f, camera_offset });
+	vec2 player_pos = m_level.get_player_position();
+	float follow_speed = 0.05f;
+	vec2 follow_point = player_pos;
+	// check whether still showing the player the path through the level
+	bool done_panning_x = within_range(camera_pos.x, player_pos.x - w, player_pos.x + w);
+	bool done_panning_y = within_range(camera_pos.y, player_pos.y - h, player_pos.y + h);
+	is_level_load_pan = is_level_load_pan && (!done_panning_x || !done_panning_y);
+	if (!is_level_load_pan) {
+		follow_speed = 0.1f;
+		follow_point = add(player_pos, { 0.f, camera_offset });
+		m_level.update(elapsed_ms);
+	} else if (on_load_delay > 0) {
+		follow_speed = 0.f;
+		on_load_delay -= elapsed_ms;
+	}
 	camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
 }
 
@@ -162,16 +171,16 @@ bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 	}
 
 	if (action == GLFW_PRESS && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
-		camera_offset -= 100;
+		camera_offset -= CAMERA_PAN_OFFSET;
 	}
 	if (action == GLFW_PRESS && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
-		camera_offset += 100;
+		camera_offset += CAMERA_PAN_OFFSET;
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_UP || key == GLFW_KEY_W)) {
-		camera_offset += 100;
+		camera_offset += CAMERA_PAN_OFFSET;
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
-		camera_offset -= 100;
+		camera_offset -= CAMERA_PAN_OFFSET;
 	}
 	std::string r = m_level.handle_key_press(key, action);
 	if (r.length() > 0) {
@@ -186,6 +195,9 @@ bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 
 void World::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
+	if (is_level_load_pan) {
+		return;
+	}
 	m_level.handle_mouse_move(xpos, ypos);
 }
 
@@ -250,13 +262,15 @@ void World::load_level(std::string level)
 
 	if (valid)
 	{
-		camera_pos = m_level.get_camera_position();
+		camera_pos = m_level.get_starting_camera_position();
+		on_load_delay = UPDATE_FREEZE_DURATION;
 	}
 	else
 	{
 		camera_pos = { 0.f, 0.f };
 	}
 
+	is_level_load_pan = valid;
 	camera_offset = 0.f;
 }
 

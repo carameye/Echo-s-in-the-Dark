@@ -5,7 +5,7 @@ Use space to fly
 You can only fly for a short time
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                                                                            B
+B                                                                         T  B
 B                                                                         D  B
 B                                                                            B
 B                                                                       BBBBBB

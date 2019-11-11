@@ -26,11 +26,11 @@ class Level
     // Update level entites
     void update(float elapsed_ms);
 
-    // Gets the camera position
-    vec2 get_camera_position();
+    // Gets the camera position when the level first starts
+    vec2 get_starting_camera_position() const;
 
-    // Returns the player character
-    Robot* get_player();
+	// Gets the position of the player
+	vec2 get_player_position() const;
 
     // Interact with the current level interactable
     std::string interact();
@@ -75,6 +75,8 @@ private:
 	std::vector<Ghost*> m_ghosts;
     std::vector<Door*> m_interactables;
 	std::vector<Sign*> m_signs;
+
+	vec2 m_starting_camera_pos;
 
     LevelGraph m_graph;
     Door* m_interactable;
