@@ -44,8 +44,17 @@ void Level::update(float elapsed_ms) {
     m_robot.update_velocity(elapsed_ms);
 
     if (m_has_colour_changed) {
+        vec3 headlight_channel = m_light.get_headlight_channel();
         for (auto &i_brick : m_bricks) {
-            vec3 headlight_channel = m_light.get_headlight_channel();
+            i_brick->update(headlight_channel);
+        }
+        for (auto &i_brick : m_red_bricks) {
+            i_brick->update(headlight_channel);
+        }
+        for (auto &i_brick : m_green_bricks) {
+            i_brick->update(headlight_channel);
+        }
+        for (auto &i_brick : m_blue_bricks) {
             i_brick->update(headlight_channel);
         }
         m_has_colour_changed = false;
@@ -57,99 +66,77 @@ void Level::update(float elapsed_ms) {
     float translation = new_robot_pos.x - robot_pos.x;
 	float translation_head = new_robot_head_pos.x - robot_head_pos.x;
     for (auto &i_brick : m_bricks) {
-
-        const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
-        const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
         Brick brick = *i_brick;
+        vec2 translations = check_x_collisions(translation, translation_head, brick.get_position(), brick.get_hitbox(), new_robot_pos, robot_pos, new_robot_head_pos, robot_head_pos);
+        translation = translations.x;
+        translation_head = translations.y;
+    }
+    for (auto &i_brick : m_red_bricks) {
+        RedBrick brick = *i_brick;
         bool should_check_collisions = brick.get_is_visible();
         if (should_check_collisions) {
-            if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
-                m_robot.set_velocity({0.f, m_robot.get_velocity().y});
-
-                float circle_width = brick_size / 2.f;
-                if (abs(m_robot.get_position().y - brick.get_position().y) > brick_size / 2.f) {
-                    float param = abs(m_robot.get_position().y - brick.get_position().y) - brick_size / 2.f;
-                    float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
-                    if (dist_no_sqrt >= 0.f)
-                        circle_width = sqrt(dist_no_sqrt);
-                }
-
-                new_robot_pos.x = get_closest_point(robot_pos.x, brick.get_position().x, circle_width,
-                                                    brick_size / 2.f);
-                translation = new_robot_pos.x - robot_pos.x;
-            }
-
-
-            if (brick.get_hitbox().collides_with(robot_head_hitbox_x)) {
-                m_robot.set_head_velocity({0.f, m_robot.get_head_velocity().y});
-
-                float circle_width = brick_size / 2.f;
-                if (abs(m_robot.get_head_position().y - brick.get_position().y) > brick_size / 2.f) {
-                    float param = abs(m_robot.get_head_position().y - brick.get_position().y) - brick_size / 2.f;
-                    float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
-                    if (dist_no_sqrt >= 0.f)
-                        circle_width = sqrt(dist_no_sqrt);
-                }
-
-                new_robot_head_pos.x = get_closest_point(robot_head_pos.x, brick.get_position().x, circle_width,
-                                                         21);
-                translation_head = new_robot_head_pos.x - robot_head_pos.x;
-            }
+            vec2 translations = check_x_collisions(translation, translation_head, brick.get_position(), brick.get_hitbox(), new_robot_pos, robot_pos, new_robot_head_pos, robot_head_pos);
+            translation = translations.x;
+            translation_head = translations.y;
         }
     }
-
-    m_robot.set_position({new_robot_pos.x, robot_pos.y});
-    m_robot.set_head_position({new_robot_head_pos.x, robot_head_pos.y});
+    for (auto &i_brick : m_green_bricks) {
+        GreenBrick brick = *i_brick;
+        bool should_check_collisions = brick.get_is_visible();
+        if (should_check_collisions) {
+            vec2 translations = check_x_collisions(translation, translation_head, brick.get_position(), brick.get_hitbox(), new_robot_pos, robot_pos, new_robot_head_pos, robot_head_pos);
+            translation = translations.x;
+            translation_head = translations.y;
+        }
+    }
+    for (auto &i_brick : m_blue_bricks) {
+        BlueBrick brick = *i_brick;
+        bool should_check_collisions = brick.get_is_visible();
+        if (should_check_collisions) {
+            vec2 translations = check_x_collisions(translation, translation_head, brick.get_position(), brick.get_hitbox(), new_robot_pos, robot_pos, new_robot_head_pos, robot_head_pos);
+            translation = translations.x;
+            translation_head = translations.y;
+        }
+    }
 
     translation = new_robot_pos.y - robot_pos.y;
 	translation_head = new_robot_head_pos.y - robot_head_pos.y;
 
     for (auto &i_brick : m_bricks) {
-        const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
-        const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
         Brick brick = *i_brick;
+        vec2 translations = check_y_collisions(translation, translation_head, brick.get_position(), brick.get_hitbox(), new_robot_pos, robot_pos, new_robot_head_pos, robot_head_pos);
+        translation = translations.x;
+        translation_head = translations.y;
+    }
+    for (auto &i_brick : m_red_bricks) {
+        RedBrick brick = *i_brick;
         bool should_check_collisions = brick.get_is_visible();
         if (should_check_collisions) {
-            if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
-                m_robot.set_velocity({m_robot.get_velocity().x, 0.f});
-
-                float circle_width = brick_size / 2.f;
-                if (abs(m_robot.get_position().x - brick.get_position().x) > brick_size / 2.f) {
-                    float param = abs(m_robot.get_position().x - brick.get_position().x) - brick_size / 2.f;
-                    float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
-                    if (dist_no_sqrt >= 0.f)
-                        circle_width = sqrt(dist_no_sqrt);
-                }
-
-                new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, circle_width,
-                                                    brick_size / 2.f);
-                translation = new_robot_pos.y - robot_pos.y;
-                if (brick.get_position().y > new_robot_pos.y)
-                    m_robot.set_grounded();
-            }
-
-            if (brick.get_hitbox().collides_with(robot_head_hitbox_y)) {
-                m_robot.set_head_velocity({m_robot.get_head_velocity().x, 0.f});
-
-                float circle_width = brick_size / 2.f;
-                if (abs(m_robot.get_head_position().x - brick.get_position().x) > brick_size / 2.f) {
-                    float param = abs(m_robot.get_head_position().x - brick.get_position().x) - brick_size / 2.f;
-                    float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
-                    if (dist_no_sqrt >= 0.f)
-                        circle_width = sqrt(dist_no_sqrt);
-                }
-
-                new_robot_head_pos.y = get_closest_point(robot_head_pos.y, brick.get_position().y, circle_width,
-                                                         21);
-                translation_head = new_robot_head_pos.y - robot_head_pos.y;
-            }
+            vec2 translations = check_y_collisions(translation, translation_head, brick.get_position(), brick.get_hitbox(), new_robot_pos, robot_pos, new_robot_head_pos, robot_head_pos);
+            translation = translations.x;
+            translation_head = translations.y;
+        }
+    }
+    for (auto &i_brick : m_green_bricks) {
+        GreenBrick brick = *i_brick;
+        bool should_check_collisions = brick.get_is_visible();
+        if (should_check_collisions) {
+            vec2 translations = check_y_collisions(translation, translation_head, brick.get_position(), brick.get_hitbox(), new_robot_pos, robot_pos, new_robot_head_pos, robot_head_pos);
+            translation = translations.x;
+            translation_head = translations.y;
+        }
+    }
+    for (auto &i_brick : m_blue_bricks) {
+        BlueBrick brick = *i_brick;
+        bool should_check_collisions = brick.get_is_visible();
+        if (should_check_collisions) {
+            vec2 translations = check_y_collisions(translation, translation_head, brick.get_position(), brick.get_hitbox(), new_robot_pos, robot_pos, new_robot_head_pos, robot_head_pos);
+            translation = translations.x;
+            translation_head = translations.y;
         }
     }
 
-    m_robot.set_position(new_robot_pos);
-	m_robot.set_head_position(new_robot_head_pos);
     m_robot.update(elapsed_ms);
-    m_light.set_position(new_robot_pos);
 
 
     // TODO: init light when robot is spawned
@@ -189,6 +176,91 @@ void Level::update(float elapsed_ms) {
             }
         }
     }
+}
+
+vec2 Level::check_y_collisions(float translation, float translation_head, vec2 brick_position, Hitbox brick_hitbox, vec2 new_robot_pos, vec2 robot_pos, vec2 new_robot_head_pos, vec2 robot_head_pos) {
+    const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
+    const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
+    if (brick_hitbox.collides_with(robot_hitbox_y)) {
+        m_robot.set_velocity({m_robot.get_velocity().x, 0.f});
+
+        float circle_width = brick_size / 2.f;
+        if (abs(m_robot.get_position().x - brick_position.x) > brick_size / 2.f) {
+            float param = abs(m_robot.get_position().x - brick_position.x) - brick_size / 2.f;
+            float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
+            if (dist_no_sqrt >= 0.f)
+                circle_width = sqrt(dist_no_sqrt);
+        }
+
+        new_robot_pos.y = get_closest_point(robot_pos.y, brick_position.y, circle_width,
+                                            brick_size / 2.f);
+        translation = new_robot_pos.y - robot_pos.y;
+        if (brick_position.y > new_robot_pos.y)
+            m_robot.set_grounded();
+    }
+
+    if (brick_hitbox.collides_with(robot_head_hitbox_y)) {
+        m_robot.set_head_velocity({m_robot.get_head_velocity().x, 0.f});
+
+        float circle_width = brick_size / 2.f;
+        if (abs(m_robot.get_head_position().x -brick_position.x) > brick_size / 2.f) {
+            float param = abs(m_robot.get_head_position().x - brick_position.x) - brick_size / 2.f;
+            float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
+            if (dist_no_sqrt >= 0.f)
+                circle_width = sqrt(dist_no_sqrt);
+        }
+
+        new_robot_head_pos.y = get_closest_point(robot_head_pos.y, brick_position.y, circle_width,
+                                                 21);
+        translation_head = new_robot_head_pos.y - robot_head_pos.y;
+    }
+
+    m_robot.set_position({m_robot.get_position().x, new_robot_pos.y});
+    m_robot.set_head_position({m_robot.get_head_position().x, new_robot_head_pos.y});
+    m_light.set_position({m_robot.get_position().x, new_robot_pos.y});
+
+    return {translation, translation_head};
+}
+
+
+vec2 Level::check_x_collisions(float translation, float translation_head, vec2 brick_position, Hitbox brick_hitbox, vec2 new_robot_pos, vec2 robot_pos, vec2 new_robot_head_pos, vec2 robot_head_pos) {
+    const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
+    const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
+    if (brick_hitbox.collides_with(robot_hitbox_x)) {
+        m_robot.set_velocity({0.f, m_robot.get_velocity().y});
+
+        float circle_width = brick_size / 2.f;
+        if (abs(m_robot.get_position().y - brick_position.y) > brick_size / 2.f) {
+            float param = abs(m_robot.get_position().y - brick_position.y) - brick_size / 2.f;
+            float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
+            if (dist_no_sqrt >= 0.f)
+                circle_width = sqrt(dist_no_sqrt);
+        }
+
+        new_robot_pos.x = get_closest_point(robot_pos.x, brick_position.x, circle_width, brick_size / 2.f);
+        translation = new_robot_pos.x - robot_pos.x;
+    }
+
+    if (brick_hitbox.collides_with(robot_head_hitbox_x)) {
+        m_robot.set_head_velocity({0.f, m_robot.get_head_velocity().y});
+
+        float circle_width = brick_size / 2.f;
+        if (abs(m_robot.get_head_position().y - brick_position.y) > brick_size / 2.f) {
+            float param = abs(m_robot.get_head_position().y - brick_position.y) - brick_size / 2.f;
+            float dist_no_sqrt = pow(brick_size / 2.f, 2.f) - pow(param, 2.f);
+            if (dist_no_sqrt >= 0.f)
+                circle_width = sqrt(dist_no_sqrt);
+        }
+
+        new_robot_head_pos.x = get_closest_point(robot_head_pos.x, brick_position.x, circle_width, 21);
+        translation_head = new_robot_head_pos.x - robot_head_pos.x;
+    }
+
+    m_robot.set_position({new_robot_pos.x, robot_pos.y});
+    m_robot.set_head_position({new_robot_head_pos.x, robot_head_pos.y});
+    m_light.set_position({new_robot_pos.x, robot_pos.y});
+
+    return {translation, translation_head};
 }
 
 vec2 Level::get_camera_position() {
@@ -451,19 +523,50 @@ bool Level::spawn_brick(vec2 position, vec3 colour) {
     bool r = colour.x == 1.f;
     bool g = colour.y == 1.f;
     bool b = colour.z == 1.f;
-    if (!r || !g || !b)
-        fprintf(stderr, "	brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
+    if (!r || !g || !b) {
+        fprintf(stderr, "	brick at (%f, %f)is coloured\n", position.x, position.y);
+    }
 
-	Brick *brick = new Brick();
-	if (brick->init(next_id++))
-	{
-		brick->set_position(position);
-		brick->set_colour(colour);
-		m_bricks.push_back(brick);
-		return true;
-	}
-	fprintf(stderr, "	brick spawn failed\n");
-	return false;
+    if (r == 1.f && g == 0.f && b == 0.f) {
+        RedBrick *brick = new RedBrick();
+        if (brick->init(next_id++, colour))
+        {
+            brick->set_position(position);
+            m_red_bricks.push_back(brick);
+            return true;
+        }
+        fprintf(stderr, "	brick spawn failed\n");
+        return false;
+    }else if (r == 0.f && g == 1.f && b == 0.f) {
+        GreenBrick *brick = new GreenBrick();
+        if (brick->init(next_id++, colour))
+        {
+            brick->set_position(position);
+            m_green_bricks.push_back(brick);
+            return true;
+        }
+        fprintf(stderr, "	brick spawn failed\n");
+        return false;
+    }else if (r == 0.f && g == 0.f && b == 1.f) {
+        BlueBrick *brick = new BlueBrick();
+        if (brick->init(next_id++, colour))
+        {
+            brick->set_position(position);
+            m_blue_bricks.push_back(brick);
+            return true;
+        }
+        fprintf(stderr, "	brick spawn failed\n");
+        return false;
+    } else {
+        Brick *brick = new Brick();
+        if (brick->init(next_id++, colour)) {
+            brick->set_position(position);
+            m_bricks.push_back(brick);
+            return true;
+        }
+        fprintf(stderr, "	brick spawn failed\n");
+        return false;
+    }
 }
 
 void Level::save_level() {

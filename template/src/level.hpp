@@ -72,6 +72,9 @@ private:
     // Level entities
     Robot m_robot;
     std::vector<Brick*> m_bricks;
+    std::vector<BlueBrick*> m_blue_bricks;
+    std::vector<RedBrick*> m_red_bricks;
+    std::vector<GreenBrick*> m_green_bricks;
 	std::vector<Ghost*> m_ghosts;
     std::vector<Door*> m_interactables;
 	std::vector<Sign*> m_signs;
@@ -82,4 +85,10 @@ private:
     bool m_has_colour_changed = true;
 
     std::vector<vec2> reset_positions;
+
+    vec2 check_x_collisions(float translation, float translation_head, vec2 brick_position, Hitbox brick_hitbox,
+                            vec2 new_robot_pos, vec2 robot_pos, vec2 new_robot_head_pos, vec2 robot_head_pos);
+
+    vec2 check_y_collisions(float translation, float translation_head, vec2 brick_position, Hitbox brick_hitbox,
+                            vec2 new_robot_pos, vec2 robot_pos, vec2 new_robot_head_pos, vec2 robot_head_pos);
 };

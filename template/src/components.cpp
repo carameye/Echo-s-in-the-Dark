@@ -157,9 +157,10 @@ void RenderComponent::draw_sprite_alpha(const mat3& projection, float alpha, vec
     float color[] = { 1.f, 1.f, 1.f, alpha };
     glUniform4fv(color_uloc, 1, color);
     glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)&projection);
-
+    
     // Drawing!
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+
 
     if (gl_has_errors())
     {
