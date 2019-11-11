@@ -201,6 +201,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		case Status::new_game:
 			m_menu->stop_music();
 			m_in_menu = false;
+			m_world.destroy();
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load);
 			m_world.start_music();
@@ -209,6 +210,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		case Status::load_game:
 			m_menu->stop_music();
 			m_in_menu = false;
+			m_world.destroy();
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load);
 			m_world.start_level(false);

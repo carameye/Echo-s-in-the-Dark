@@ -26,6 +26,7 @@ void Level::destroy()
     m_interactables.clear();
     m_signs.clear();
     m_light.clear_torches();
+    m_rendering_system.destroy();
 }
 
 void Level::draw_entities(const mat3 &projection, const vec2 &camera_shift) {
