@@ -16,7 +16,7 @@ using json = nlohmann::json;
 namespace
 {
 	const size_t CAMERA_PAN_OFFSET = 200;
-	const size_t UPDATE_FREEZE_DURATION = 950;
+	const size_t UPDATE_FREEZE_DURATION = 2000;
 }
 
 World::World()
