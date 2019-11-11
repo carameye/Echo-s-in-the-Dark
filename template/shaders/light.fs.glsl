@@ -34,16 +34,14 @@ float dist(vec2 a, vec2 b)
 float illuminate_robot(vec2 coord)
 {
 	float dist = dist(light_pos, vec2(coord.x * screen_size.x, coord.y * screen_size.y));
-	float darkness = 1.5;
-	return sqrt(max(1 - darkness * dist / 300, 0)) / 1.2;
+	return sqrt(max(1 - dist / 300, 0)) / 1.2;
 }
 
 float illuminate_torches(vec2 coord, vec2 pos)
 {
 	coord.y = 1 - coord.y;
 	float dist = dist(pos, vec2(coord.x * screen_size.x, coord.y * screen_size.y));
-	float darkness = 1.5;
-	return sqrt(max(1 - darkness * dist / 384, 0));
+	return sqrt(max(1 - dist / 384, 0));
 }
 
 float headlight(vec2 coord) 
@@ -61,7 +59,9 @@ float headlight(vec2 coord)
         return 0;
     }
 
-    return sqrt(1 - angle_diff / max_diff);
+    float dist = dist(light_pos, vec2(coord.x * screen_size.x, coord.y * screen_size.y));
+
+    return sqrt(1 - angle_diff / max_diff) * sqrt(1 - dist / 800);
 }
 
 float get_light_at_pixel(vec2 pixel)
@@ -77,7 +77,7 @@ float find_light_space(vec2 p1, vec2 p2)
     vec2 d = vec2(p2.x - p1.x, p2.y - p1.y);
 
     float hit_count = 0;
-    float max_hits = 20;
+    float max_hits = 16;
     float step_size = 4;
 
     d = normalize(d);
@@ -180,7 +180,7 @@ void main()
 	screen_size = textureSize(screen_texture, 0);
 	shadow_size = textureSize(brick_map, 0);
     light_pos = light_position;
-    light_pos.y = 800 - light_pos.y;
+    light_pos.y = screen_size.y - light_pos.y;
 
 	vec2 coord = uv.xy;
 	in_color = texture(screen_texture, coord);
@@ -206,11 +206,17 @@ void main()
 		illum_torch_sum = max(illum_torch_sum, illum_torch);
 	}
 
-    vec2 temp_l = vec2(light_pos.x, screen_size.y - light_pos.y);
-    float hl_light = find_light(pos, temp_l);
+    float hl_light = 0;
+    float illum_robot = 0;
+    float hl = 0;
+    vec2 temp_l = light_pos;
 
-	float illum_robot = clamp(illuminate_robot(coord), 0, 1) * hl_light;
-	float hl = clamp(headlight(coord), 0, 0.8) * hl_light;
+    if (dist(pos, temp_l) < 800) {
+        hl_light = find_light(pos, temp_l);
+
+        illum_robot = clamp(illuminate_robot(coord), 0, 1) * hl_light;
+        hl = clamp(headlight(coord), 0, 0.8) * hl_light;
+    }
 
 	float sum = clamp(hl + illum_torch_sum + illum_robot, 0, 0.9);
 
