@@ -94,10 +94,10 @@ private:
 	SmokeSystem m_smoke_system;
 	FlightEnergyBar m_energy_bar;
     RobotHat m_hat;
-	bool m_grounded = false;
-	bool m_should_stop_smoke = false;
-	bool m_is_accelerating_right = false;
-	bool m_is_accelerating_left = false;
-	bool m_is_flying = false;
+	bool m_grounded;
+	bool m_should_stop_smoke;
+	bool m_is_accelerating_right;
+	bool m_is_accelerating_left;
+	bool m_is_flying;
 	float m_available_flight_time;
 };
