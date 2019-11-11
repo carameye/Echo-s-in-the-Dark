@@ -15,6 +15,7 @@ layout(location = 0) out vec4 color;
 
 vec2 screen_size;
 vec2 shadow_size;
+vec2 light_pos_world;
 vec2 light_pos;
 vec4 in_color;
 
@@ -33,6 +34,7 @@ float dist(vec2 a, vec2 b)
 
 float illuminate_robot(vec2 coord)
 {
+    coord.y = 1 - coord.y;
 	float dist = dist(light_pos, vec2(coord.x * screen_size.x, coord.y * screen_size.y));
 	return sqrt(max(1 - dist / 300, 0)) / 1.2;
 }
@@ -46,7 +48,9 @@ float illuminate_torches(vec2 coord, vec2 pos)
 
 float headlight(vec2 coord) 
 {
-	vec2 cone_dir = vec2(cos(light_angle), sin(light_angle));
+    coord.y = 1 - coord.y;
+
+	vec2 cone_dir = vec2(cos(light_angle), -sin(light_angle));
 	cone_dir = normalize(cone_dir);
 
 	vec2 coord_px = vec2(coord.x * screen_size.x, coord.y * screen_size.y);
@@ -180,7 +184,7 @@ void main()
 	screen_size = textureSize(screen_texture, 0);
 	shadow_size = textureSize(brick_map, 0);
     light_pos = light_position;
-    light_pos.y = screen_size.y - light_pos.y;
+    light_pos_world = light_position - camera_pos;
 
 	vec2 coord = uv.xy;
 	in_color = texture(screen_texture, coord);
@@ -209,10 +213,9 @@ void main()
     float hl_light = 0;
     float illum_robot = 0;
     float hl = 0;
-    vec2 temp_l = light_pos;
 
-    if (dist(pos, temp_l) < 800) {
-        hl_light = find_light(pos, temp_l);
+    if (dist(pos, light_pos) < 800) {
+        hl_light = find_light(pos, light_pos);
 
         illum_robot = clamp(illuminate_robot(coord), 0, 1) * hl_light;
         hl = clamp(headlight(coord), 0, 0.8) * hl_light;
@@ -225,5 +228,4 @@ void main()
 	} else {
 		color = mix( in_color,headlight_channels, hl) * sum;
 	}
-
 }
