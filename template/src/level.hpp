@@ -78,7 +78,7 @@ private:
 
 	vec2 m_starting_camera_pos;
 
-    LevelGraph m_graph;
+    LevelGraph* m_graph;
     LevelGraph m_white_graph;
     LevelGraph m_red_graph;
     LevelGraph m_green_graph;
