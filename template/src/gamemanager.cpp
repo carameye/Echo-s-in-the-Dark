@@ -155,14 +155,14 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			m_menu->stop_music();
 			m_in_menu = false;
-			m_world.start_music();
+			m_world.start_sounds();
 		}
 	}
 	else
 	{
 		if (!m_world.handle_key_press(window, key, scancode, action, mod))
 		{
-			m_world.stop_music();
+			m_world.stop_sounds();
 			m_in_menu = true;
 			m_menu = &m_pause_menu;
 			m_menu->start_music();
@@ -196,7 +196,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		case Status::resume:
 			m_menu->stop_music();
 			m_in_menu = false;
-			m_world.start_music();
+			m_world.start_sounds();
 			break;
 		case Status::new_game:
 			m_menu->stop_music();
@@ -204,7 +204,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load);
-			m_world.start_music();
+			m_world.start_sounds();
 			m_world.start_level(true);
 			break;
 		case Status::load_game:
@@ -214,7 +214,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load);
 			m_world.start_level(false);
-			m_world.start_music();
+			m_world.start_sounds();
 			break;
 		case Status::main_menu:
 			m_menu = &m_main_menu;
@@ -226,7 +226,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_menu->stop_music();
 			m_in_menu = false;
 			m_world.reset();
-			m_world.start_music();
+			m_world.start_sounds();
 			break;
 		case Status::exit:
 			m_is_over = true;

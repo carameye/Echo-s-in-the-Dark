@@ -2,7 +2,7 @@
 
 Texture Door::s_door_texture;
 
-bool Door::init(int id)
+bool Door::init(int id, vec2 position)
 {
     if (!s_door_texture.is_valid())
 	{
@@ -18,7 +18,7 @@ bool Door::init(int id)
     if (!rc.init_sprite())
         return false;
 
-    if (!Interactable::init(id))
+    if (!Interactable::init(id, position))
         return false;
 
 	mc.physics.scale = { 1.5f, 1.5f };
@@ -61,7 +61,10 @@ std::string Door::perform_action()
         // go to destination
         return action;
     }
-    // otherwise, door is locked or no destination specified
+    if (m_locked) {
+        return "door locked";
+    }
+    // otherwise, no destination specified
     // so, stay at current location
     return "";
 }

@@ -38,7 +38,8 @@ void Level::draw_light(const mat3 &projection, const vec2 &camera_shift) {
     m_light.draw(projection, camera_shift, {width, height});
 }
 
-void Level::update(float elapsed_ms) {
+std::string Level::update(float elapsed_ms) {
+	std::string sound_effect = "";
     vec2 robot_pos = m_robot.get_position();
     vec2 robot_head_pos = m_robot.get_head_position();
 
@@ -85,6 +86,7 @@ void Level::update(float elapsed_ms) {
         bool should_check_collisions = brick.get_is_visible();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
+                sound_effect = "collision";
                 m_robot.set_velocity({0.f, m_robot.get_velocity().y});
 
                 float circle_width = brick_size / 2.f;
@@ -102,6 +104,7 @@ void Level::update(float elapsed_ms) {
 
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_x)) {
+                sound_effect = "collision";
                 m_robot.set_head_velocity({0.f, m_robot.get_head_velocity().y});
 
                 float circle_width = brick_size / 2.f;
@@ -132,6 +135,7 @@ void Level::update(float elapsed_ms) {
         bool should_check_collisions = brick.get_is_visible();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
+                // sound_effect = "collision";
                 m_robot.set_velocity({m_robot.get_velocity().x, 0.f});
 
                 float circle_width = brick_size / 2.f;
@@ -150,6 +154,7 @@ void Level::update(float elapsed_ms) {
             }
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_y)) {
+                sound_effect = "collision";
                 m_robot.set_head_velocity({m_robot.get_head_velocity().x, 0.f});
 
                 float circle_width = brick_size / 2.f;
@@ -187,6 +192,7 @@ void Level::update(float elapsed_ms) {
         ghost->set_goal(m_robot.get_position());
         ghost->update(elapsed_ms);
         if (ghost->get_hitbox().collides_with(new_robot_hitbox)) {
+			sound_effect = "samlon_dead.wav";
             reset_level();
         }
     }
@@ -210,6 +216,7 @@ void Level::update(float elapsed_ms) {
             }
         }
     }
+	return sound_effect;
 }
 
 vec2 Level::get_starting_camera_position() const {
@@ -378,25 +385,27 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
 std::string Level::handle_key_press(int key, int action)
 {
-    if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-        m_robot.start_flying();
-    }
-    if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-        m_robot.set_is_accelerating_left(true);
-    }
-    if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-        m_robot.set_is_accelerating_right(true);
-    }
+	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+		m_robot.start_flying();
+        return "flying";
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+		m_robot.set_is_accelerating_left(true);
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+		m_robot.set_is_accelerating_right(true);
+	}
 
-    if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
-        m_robot.stop_flying();
-    }
-    if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-        m_robot.set_is_accelerating_left(false);
-    }
-    if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-        m_robot.set_is_accelerating_right(false);
-    }
+	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
+		m_robot.stop_flying();
+        return "falling";
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+		m_robot.set_is_accelerating_left(false);
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+		m_robot.set_is_accelerating_right(false);
+	}
 
     if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
         return interact();
@@ -432,16 +441,15 @@ std::string Level::get_current_level()
 
 bool Level::spawn_door(vec2 position, std::string next_level)
 {
-    Door *door = new Door();
-    if (door->init(next_id++))
-    {
-        door->set_position(position);
-        door->set_destination(next_level);
-        m_interactables.push_back(door);
-        return true;
-    }
-    fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
-    return false;
+	Door *door = new Door();
+	if (door->init(next_id++, position))
+	{
+		door->set_destination(next_level);
+		m_interactables.push_back(door);
+		return true;
+	}
+	fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
+	return false;
 }
 
 bool Level::spawn_ghost(vec2 position, vec3 colour)
