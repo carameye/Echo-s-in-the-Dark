@@ -47,11 +47,24 @@ std::string Level::update(float elapsed_ms) {
 
     if (m_has_colour_changed) {
         vec3 headlight_channel = m_light.get_headlight_channel();
+        if (headlight_channel.x == 1.f && headlight_channel.y == 1.f && headlight_channel.z == 1.f) {
+            m_graph = &m_white_graph;
+        }
+        if (headlight_channel.x == 1.f && headlight_channel.y == 0.f && headlight_channel.z == 0.f) {
+            m_graph = &m_red_graph;
+        }
+        if (headlight_channel.x == 0.f && headlight_channel.y == 1.f && headlight_channel.z == 0.f) {
+            m_graph = &m_green_graph;
+        }
+        if (headlight_channel.x == 0.f && headlight_channel.y == 0.f && headlight_channel.z == 1.f) {
+            m_graph = &m_blue_graph;
+        }
         for (auto &i_brick : m_bricks) {
             i_brick->update(headlight_channel);
         }
 
         for (auto &i_ghost : m_ghosts) {
+            i_ghost->set_level_graph(m_graph);
             i_ghost->update_is_chasing(headlight_channel);
         }
         m_has_colour_changed = false;
@@ -311,6 +324,10 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
     std::vector<bool> empty(width, false);
     std::vector<std::vector<bool>> bricks(height, empty);
+    std::vector<std::vector<bool>> white_bricks(height, empty);
+    std::vector<std::vector<bool>> red_bricks(height, empty);
+    std::vector<std::vector<bool>> green_bricks(height, empty);
+    std::vector<std::vector<bool>> blue_bricks(height, empty);
 
     for (json brick : j["bricks"]) {
         vec2 pos = {brick["pos"]["x"], brick["pos"]["y"]};
@@ -318,6 +335,19 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
         // Set brick here
         bricks[pos.y][pos.x] = true;
+
+        if (colour.x == 1.f && colour.y == 1.f && colour.z == 1.f) {
+            white_bricks[pos.y][pos.x] = true;
+            red_bricks[pos.y][pos.x] = true;
+            green_bricks[pos.y][pos.x] = true;
+            blue_bricks[pos.y][pos.x] = true;
+        } else if (colour.x == 1.f && colour.y == 0.f && colour.z == 0.f) {
+            red_bricks[pos.y][pos.x] = true;
+        } else if (colour.x == 0.f && colour.y == 1.f && colour.z == 0.f) {
+            green_bricks[pos.y][pos.x] = true;
+        } else if (colour.x == 0.f && colour.y == 0.f && colour.z == 1.f) {
+            blue_bricks[pos.y][pos.x] = true;
+        }
 
         // Add brick to critical points if not already cancelled
         for (vec2 diff : diffs) {
@@ -336,8 +366,14 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     // Generate the graph
     if (m_ghosts.size() > 0)
     {
-        m_graph.generate(potential_cp, bricks, width, height);
+        m_white_graph.generate(potential_cp, white_bricks, width, height);
+        m_red_graph.generate(potential_cp, red_bricks, width, height);
+        m_green_graph.generate(potential_cp, green_bricks, width, height);
+        m_blue_graph.generate(potential_cp, blue_bricks, width, height);
     }
+
+    // Level graph initially set to be the default white
+    m_graph = &m_white_graph;
 
     // Spawn the robot
     vec2 robot_pos = {j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"]};
@@ -433,7 +469,7 @@ bool Level::spawn_ghost(vec2 position, vec3 colour)
     if (ghost->init(next_id++, colour))
     {
         ghost->set_position(position);
-        ghost->set_level_graph(&m_graph);
+        ghost->set_level_graph(m_graph);
         m_ghosts.push_back(ghost);
         return true;
     }
