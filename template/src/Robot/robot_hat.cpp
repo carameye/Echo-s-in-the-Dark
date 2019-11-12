@@ -71,3 +71,7 @@ bool RobotHat::get_direction()
 {
     return m_face_right;
 }
+
+void RobotHat::set_velocity(vec2 velocity) {
+    mc.velocity = velocity;
+}

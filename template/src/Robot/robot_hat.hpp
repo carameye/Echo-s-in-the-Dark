@@ -31,4 +31,6 @@ public:
     void set_direction(bool right);
 
     bool get_direction();
+
+    void set_velocity(vec2 vec2);
 };
