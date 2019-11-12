@@ -11,6 +11,7 @@
 #include "json.hpp"
 #include <vector>
 #include "systems.hpp"
+#include "background.hpp"
 
 class Level
 {
@@ -56,6 +57,7 @@ private:
 	bool spawn_door(vec2 position, std::string next_level);
 	bool spawn_ghost(vec2 position, vec3 colour);
 	bool spawn_sign(vec2 position, std::string text);
+	bool spawn_background();
 
 	// For resetting the level
 	void save_level();
@@ -75,6 +77,8 @@ private:
 	std::vector<Ghost*> m_ghosts;
     std::vector<Door*> m_interactables;
 	std::vector<Sign*> m_signs;
+	std::vector<Background*> m_backgrounds;
+
 
 	vec2 m_starting_camera_pos;
 
