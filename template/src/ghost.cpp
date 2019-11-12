@@ -4,6 +4,9 @@
 #include <cmath>
 
 Texture Ghost::s_ghost_texture;
+Texture Ghost::s_red_ghost_texture;
+Texture Ghost::s_green_ghost_texture;
+Texture Ghost::s_blue_ghost_texture;
 
 bool Ghost::init(int id, vec3 colour)
 {
@@ -16,9 +19,36 @@ bool Ghost::init(int id, vec3 colour)
 			fprintf(stderr, "Failed to load ghost texture!");
 			return false;
 		}
+        if (!s_blue_ghost_texture.load_from_file(textures_path("ghost_blue.png")))
+        {
+            fprintf(stderr, "Failed to load blue ghost texture!");
+            return false;
+        }
+        if (!s_green_ghost_texture.load_from_file(textures_path("ghost_green.png")))
+        {
+            fprintf(stderr, "Failed to load green ghost texture!");
+            return false;
+        }
+        if (!s_red_ghost_texture.load_from_file(textures_path("ghost_red.png")))
+        {
+            fprintf(stderr, "Failed to load red ghost texture!");
+            return false;
+        }
 	}
 
-	rc.texture = &s_ghost_texture;
+    if (colour.x == 1.f && colour.y == 0.f && colour.z == 0.f) {
+        rc.can_be_hidden = 1;
+        rc.texture = &s_red_ghost_texture;
+    } else if (colour.x == 0.f && colour.y == 1.f && colour.z == 0.f) {
+        rc.can_be_hidden = 1;
+        rc.texture = &s_green_ghost_texture;
+    } else if (colour.x == 0.f && colour.y == 0.f && colour.z == 1.f) {
+        rc.can_be_hidden = 1;
+        rc.texture = &s_blue_ghost_texture;
+    } else {
+        rc.can_be_hidden = 0;
+        rc.texture = &s_ghost_texture;
+    }
 
 	if (!rc.init_sprite())
 		return false;
@@ -35,7 +65,6 @@ bool Ghost::init(int id, vec3 colour)
 	mc.physics.scale.x *= 47.f / 41.f;
 
 	rc.colour = m_colour;
-	rc.can_be_hidden = 1;
 
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;

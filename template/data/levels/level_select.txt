@@ -8,15 +8,15 @@ Use F to interact with objects
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B                                                                         B
+B                                                Y                        B
 B                                                                         B
 B                                                                         B
 B                                                                         B
 B                                                                         B
 B                                                                         B
+B                                                          Z              B
 B                                                                         B
-B  Y Z L                                                                  B
-B                                                                         B
-B                                                                         B
+B                          L                                              B
 B                                                                         B
 B  C M N   R                                                              B
 B          T        T       T  D                    D                     B
