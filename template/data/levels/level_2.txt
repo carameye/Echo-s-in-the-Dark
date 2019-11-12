@@ -5,12 +5,12 @@ watch out for ghosts!
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B                                                    T  B
-B                                                    D  B
+B     Y                                              D  B
 B                                                       B
 B                                                  BBBBBB
 B                                                       B
 B             BBBBB               BBBBB                 B
-B                                                       B
+B                          L                            B
 B                                                       B
 B                       BBBBB                           B
 B                                                       B
@@ -24,7 +24,7 @@ B                                                       B
 BBBBBB        BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B                 B                  B                  B
 B                 B                  B                  B
-B                 B                  B                  B
+B    Z            B                  B                  B
 B                 B                  B                  B
 B                 B                  B                  B
 BBBBBB            B      BBBBBB      B      BBBBBB      B
