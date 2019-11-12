@@ -41,9 +41,9 @@ public:
 	void set_level_graph(LevelGraph* graph);
 
 	// Update whether ghost is currently visible
-	void update_visibility(vec3 headlight_color);
+	void update_is_chasing(vec3 headlight_color);
 
 private:
     vec3 m_colour;
-    bool m_is_visible;
+    bool m_is_chasing;
 };

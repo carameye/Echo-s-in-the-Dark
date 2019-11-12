@@ -9,7 +9,7 @@ endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B                                                                         B
 B                                                Y                        B
-B                                                                         B
+B                         G                                               B
 B                                                                         B
 B                                                                         B
 B                                                                         B

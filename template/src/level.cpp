@@ -51,7 +51,7 @@ void Level::update(float elapsed_ms) {
         }
 
         for (auto &i_ghost : m_ghosts) {
-            i_ghost->update_visibility(headlight_channel);
+            i_ghost->update_is_chasing(headlight_channel);
         }
         m_has_colour_changed = false;
     }

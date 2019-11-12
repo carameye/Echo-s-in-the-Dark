@@ -59,7 +59,7 @@ bool Ghost::init(int id, vec3 colour)
 	mc.radians = 0.f;
 
     m_colour = colour;
-    m_is_visible = m_colour.x == 1.f && m_colour.y == 1.f && m_colour.z == 1.f;
+    m_is_chasing = m_colour.x == 1.f && m_colour.y == 1.f && m_colour.z == 1.f;
 
 	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 	mc.physics.scale.x *= 47.f / 41.f;
@@ -74,7 +74,7 @@ bool Ghost::init(int id, vec3 colour)
 
 void Ghost::update(float ms)
 {
-    if (m_is_visible) {
+    if (!m_is_chasing) {
         return;
     }
 	if (len(sub(m_goal, mc.position)) < 800.f)
@@ -156,6 +156,10 @@ void Ghost::set_level_graph(LevelGraph* graph)
 	m_level_graph = graph;
 }
 
-void Ghost::update_visibility(vec3 headlight_color) {
-    m_is_visible = m_colour.x == headlight_color.x && m_colour.y == headlight_color.y && m_colour.z == headlight_color.z;
+void Ghost::update_is_chasing(vec3 headlight_color) {
+    if (m_colour.x == 1.f && m_colour.y == 1.f && m_colour.x == 1.f) {
+        m_is_chasing = true;
+        return;
+    }
+    m_is_chasing = !(m_colour.x == headlight_color.x && m_colour.y == headlight_color.y && m_colour.z == headlight_color.z);
 }
