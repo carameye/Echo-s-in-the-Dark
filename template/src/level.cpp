@@ -213,6 +213,12 @@ std::string Level::update(float elapsed_ms) {
             }
         }
     }
+
+	// Update background
+	for (auto& background : m_backgrounds) {
+		background->update(elapsed_ms, m_robot.get_velocity());
+	}
+	
 	return sound_effect;
 }
 
@@ -267,6 +273,9 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
     // Get first entity in this group
     int min = next_id;
+
+	// Spawn background
+	spawn_background();
 
     // Get the doors
     fprintf(stderr, "	getting doors\n");
@@ -371,15 +380,20 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     m_graph = &m_white_graph;
 
     // Spawn the robot
-    vec2 pos = {j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"]};
+    vec2 robot_pos = {j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"]};
 	if (level == "level_select") {
-		m_starting_camera_pos = to_pixel_position(pos);
+		m_starting_camera_pos = to_pixel_position(robot_pos);
 	}
-    spawn_robot(to_pixel_position(pos));
+    spawn_robot(to_pixel_position(robot_pos));
+
+	for (auto& background : m_backgrounds) {
+		background->set_position(to_pixel_position(robot_pos));
+	}
 
     save_level();
 
     m_rendering_system.process(min, next_id);
+
 
     return true;
 }
@@ -491,6 +505,23 @@ bool Level::spawn_robot(vec2 position)
     }
     fprintf(stderr, "	robot spawn failed\n");
     return false;
+}
+
+bool Level::spawn_background()
+{
+	for (int i = 0; i < 4; i++) {
+		float scale = 0.25f * i + 0.25f;
+		fprintf(stderr, "scale: %f\n", scale);
+		Background* background = new Background();
+		if (!background->init(next_id++, scale, scale))
+		{
+			return false;
+		}
+		// background uses total of 3 components
+		m_backgrounds.push_back(background);
+		next_id += 2;
+	}
+	return true;
 }
 
 bool Level::spawn_sign(vec2 position, std::string text)

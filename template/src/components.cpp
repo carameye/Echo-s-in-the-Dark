@@ -154,7 +154,7 @@ void RenderComponent::draw_sprite_alpha(const mat3& projection, float alpha, vec
 
     // Setting uniform values to the currently bound program
     glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform.out);
-    float color[] = { 1.f, 1.f, 1.f, alpha };
+    float color[] = { colour.x, colour.y, colour.z, alpha };
     glUniform4fv(color_uloc, 1, color);
     glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)&projection);
     
