@@ -511,7 +511,6 @@ bool Level::spawn_background()
 {
 	for (int i = 0; i < 4; i++) {
 		float scale = 0.25f * i + 0.25f;
-		fprintf(stderr, "scale: %f\n", scale);
 		Background* background = new Background();
 		if (!background->init(next_id++, scale, scale))
 		{
