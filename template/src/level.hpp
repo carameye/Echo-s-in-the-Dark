@@ -23,8 +23,8 @@ class Level
     // Releases all level-associated resources
 	void destroy();
 
-    // Update level entites
-    void update(float elapsed_ms);
+    // Update level entites, returns name of audio file to be played if something happens on update
+    std::string update(float elapsed_ms);
 
     // Gets the camera position when the level first starts
     vec2 get_starting_camera_position() const;

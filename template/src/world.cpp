@@ -63,7 +63,8 @@ void World::destroy()
 {
 	glDeleteFramebuffers(1, &m_frame_buffer);
 
-	stop_music();
+	// free all sound resources
+	stop_sounds();
 
 	m_level.destroy();
 }
@@ -86,7 +87,14 @@ void World::update(float elapsed_ms)
 	if (!is_level_load_pan) {
 		follow_speed = 0.1f;
 		follow_point = add(player_pos, { 0.f, camera_offset });
-		m_level.update(elapsed_ms);
+		std::string sound_effect = m_level.update(elapsed_ms);
+		if (sound_effect.length() > 0) {
+			if (sound_effect == "collision") {
+				Mix_PlayChannel(-1, m_collision_effect, 0);
+			} else {
+				Mix_PlayChannel(-1, m_robot_hurt_effect, 0);
+			}
+		}
 	} else if (on_load_delay > 0) {
 		follow_speed = 0.f;
 		on_load_delay -= elapsed_ms;
@@ -184,11 +192,21 @@ bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 	}
 	std::string r = m_level.handle_key_press(key, action);
 	if (r.length() > 0) {
-		if (find(m_unlocked.begin(), m_unlocked.end(), r) == m_unlocked.end())
-		{
-			m_unlocked.push_back(r);
+		if (r == "flying") {
+			int channel = Mix_PlayChannel(-1, m_rocket_effect, -1);
+			Mix_GroupChannel(channel, 1);
+		} else if (r == "falling") {
+			int channel = Mix_FadeOutGroup(1, 1050);
+		} else if (r == "door locked") {
+			int channel = Mix_PlayChannel(-1, m_locked_door_effect, 0);
+		} else {
+			if (find(m_unlocked.begin(), m_unlocked.end(), r) == m_unlocked.end())
+			{
+				m_unlocked.push_back(r);
+			}
+			Mix_PlayChannel(-1, m_open_door_effect, 0);
+			load_level(r);
 		}
-		load_level(r);
 	}
 	return true;
 }
@@ -201,7 +219,7 @@ void World::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	m_level.handle_mouse_move(xpos, ypos);
 }
 
-void World::start_music()
+void World::start_sounds()
 {
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
 	{
@@ -210,18 +228,56 @@ void World::start_music()
 	}
 
 	m_background_music = Mix_LoadMUS(audio_path("goldleaf.wav"));
+	m_robot_hurt_effect = Mix_LoadWAV(audio_path("salmon_dead.wav"));
+	m_open_door_effect = Mix_LoadWAV(audio_path("open_door.wav"));
+	m_locked_door_effect = Mix_LoadWAV(audio_path("locked.wav"));
+	m_rocket_effect = Mix_LoadWAV(audio_path("rocket.wav"));
+	m_collision_effect = Mix_LoadWAV(audio_path("collision.wav"));
 
-	if (m_background_music == nullptr)
+	// set the volume for the music and sound effects
+	Mix_VolumeMusic(MIX_MAX_VOLUME/2.5);
+	Mix_VolumeChunk(m_robot_hurt_effect, MIX_MAX_VOLUME/2);
+	Mix_VolumeChunk(m_open_door_effect, MIX_MAX_VOLUME/4);
+	Mix_VolumeChunk(m_locked_door_effect, MIX_MAX_VOLUME); // locked door effect kind of quiet, so make it louder
+	Mix_VolumeChunk(m_rocket_effect, MIX_MAX_VOLUME/3);
+	Mix_VolumeChunk(m_collision_effect, MIX_MAX_VOLUME/9);
+
+	if (
+		m_background_music == nullptr || m_open_door_effect == nullptr || m_robot_hurt_effect == nullptr ||
+		m_locked_door_effect == nullptr || m_rocket_effect == nullptr
+	)
 	{
-		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
+		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n %s\n %s\n %s\n make sure the data directory is present",
 			audio_path("goldleaf.wav"),
 			audio_path("salmon_dead.wav"),
-			audio_path("salmon_eat.wav"));
+			audio_path("open_door.wav"),
+			audio_path("locked.wav"),
+			audio_path("rocket.wav"),
+			audio_path("collision.wav"));
 		return;
 	}
 
 	// Playing background music indefinitely
-	Mix_PlayMusic(m_background_music, -1);
+	Mix_FadeInMusic(m_background_music, -1, 1500);
+}
+
+void World::stop_sounds()
+{
+	// free sound effects
+	if (m_robot_hurt_effect != nullptr) {
+		Mix_FreeChunk(m_robot_hurt_effect);
+		m_robot_hurt_effect = nullptr;
+	}
+	if (m_open_door_effect != nullptr) {
+		Mix_FreeChunk(m_open_door_effect);
+		m_open_door_effect = nullptr;
+	}
+	if (m_locked_door_effect != nullptr) {
+		Mix_FreeChunk(m_locked_door_effect);
+		m_locked_door_effect = nullptr;
+	}
+	// free background music
+	stop_music();
 }
 
 void World::stop_music()
@@ -258,7 +314,7 @@ void World::load_level(std::string level)
 	stop_music();
 	m_load();
 	bool valid = m_level.parse_level(level, m_unlocked);
-	start_music();
+	start_sounds();
 
 	if (valid)
 	{

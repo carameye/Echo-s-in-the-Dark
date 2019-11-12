@@ -42,8 +42,9 @@ public:
 	bool handle_key_press(GLFWwindow*, int key, int, int action, int mod);
 	void handle_mouse_move(GLFWwindow* window, double xpos, double ypos);
 
-	// Manage music
-	void start_music();
+	// Manage sounds and background music
+	void start_sounds();
+	void stop_sounds();
 	void stop_music();
 
 	// Begin level
@@ -84,7 +85,13 @@ private:
 
 	Level m_level;
 
+	// game sounds
 	Mix_Music* m_background_music;
+	Mix_Chunk* m_robot_hurt_effect;
+	Mix_Chunk* m_open_door_effect;
+	Mix_Chunk* m_locked_door_effect;
+	Mix_Chunk* m_rocket_effect;
+	Mix_Chunk* m_collision_effect;
 
 	// C++ rng
 	std::default_random_engine m_rng;
