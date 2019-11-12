@@ -33,6 +33,8 @@ public:
 
     bool get_is_visible();
 
+    vec3 get_colour();
+
 private:
     vec3 m_colour;
     bool m_is_visible;
