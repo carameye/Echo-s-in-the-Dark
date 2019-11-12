@@ -32,6 +32,9 @@ class Level
 	// Gets the position of the player
 	vec2 get_player_position() const;
 
+	// Returns the number of ghosts in the level
+	int get_num_ghosts() const;
+
     // Interact with the current level interactable
     std::string interact();
 

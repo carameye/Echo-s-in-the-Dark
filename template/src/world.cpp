@@ -227,7 +227,9 @@ void World::start_sounds()
 		return;
 	}
 
-	m_background_music = Mix_LoadMUS(audio_path("goldleaf.wav"));
+	const int numGhosts = m_level.get_num_ghosts();
+
+	m_background_music =  Mix_LoadMUS(numGhosts > 0 ? audio_path("ghosts.wav") : audio_path("background.wav"));
 	m_robot_hurt_effect = Mix_LoadWAV(audio_path("salmon_dead.wav"));
 	m_open_door_effect = Mix_LoadWAV(audio_path("open_door.wav"));
 	m_locked_door_effect = Mix_LoadWAV(audio_path("locked.wav"));
@@ -248,7 +250,7 @@ void World::start_sounds()
 	)
 	{
 		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n %s\n %s\n %s\n make sure the data directory is present",
-			audio_path("goldleaf.wav"),
+			audio_path("background.wav"),
 			audio_path("salmon_dead.wav"),
 			audio_path("open_door.wav"),
 			audio_path("locked.wav"),
