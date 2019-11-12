@@ -174,15 +174,7 @@ std::string Level::update(float elapsed_ms) {
     m_robot.update(elapsed_ms);
     m_light.set_position(new_robot_pos);
 
-
-    // TODO: init light when robot is spawned
-//    bool isHeadFacingRight = m_robot.get_head_direction();
-//    bool isLightFacingRight = m_light.get_direction();
-//    // if head and light are facing different directions
-//    if (isHeadFacingRight != isLightFacingRight) {
-        m_robot.set_head_direction(m_light.get_direction());
-        //m_light.set_direction();
-//    }
+    m_robot.set_head_direction(m_light.get_direction());
 
     Hitbox new_robot_hitbox = m_robot.get_hitbox({0.f, 0.f});
 

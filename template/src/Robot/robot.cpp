@@ -121,8 +121,6 @@ void Robot::update(float ms)
     m_energy_bar.update(ms, add(mc.position, { 0.f, -90.f }), (m_available_flight_time/MAX_FLIGHT_DURATION));
 
 	if (mc.velocity.x != 0.f) {
-//        m_head.set_direction(mc.velocity.x > 0.f);
-//        m_hat.set_direction(mc.velocity.x > 0);
         m_shoulders.set_direction(mc.velocity.x > 0.f);
     }
 
