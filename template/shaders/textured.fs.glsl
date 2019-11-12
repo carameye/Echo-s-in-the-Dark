@@ -24,8 +24,11 @@ void main()
 		if (colour_equals(headlight_channel, component_colour)){
 			color = fcolor * texture(sampler0, vec2(texcoord.x, texcoord.y));
 		} else {
-			vec4 no_alpha = fcolor;
-			no_alpha.w = 0.f;
+			vec4 no_alpha;
+			no_alpha.x = component_colour.x;
+			no_alpha.y = component_colour.y;
+			no_alpha.z =  component_colour.z;
+			no_alpha.w = 0.01;
 			color = no_alpha * texture(sampler0, vec2(texcoord.x, texcoord.y));
 		}
 	} else {

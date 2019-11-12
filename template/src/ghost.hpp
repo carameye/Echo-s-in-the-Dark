@@ -8,6 +8,9 @@
 class Ghost : public Entity
 {
 	static Texture s_ghost_texture;
+    static Texture s_red_ghost_texture;
+    static Texture s_green_ghost_texture;
+    static Texture s_blue_ghost_texture;
 	vec2 m_goal;
 	std::vector<vec2> m_path;
 	LevelGraph* m_level_graph;
@@ -17,7 +20,7 @@ class Ghost : public Entity
 
 public:
 	// Creates all the associated render resources and default transform
-	bool init(int id);
+	bool init(int id, vec3 colour);
 
 	// Updates the ghost
 	void update(float ms);
@@ -36,4 +39,11 @@ public:
 
 	// Tell the ghost how to navigate the map
 	void set_level_graph(LevelGraph* graph);
+
+	// Update whether ghost is currently visible
+	void update_is_chasing(vec3 headlight_color);
+
+private:
+    vec3 m_colour;
+    bool m_is_chasing;
 };

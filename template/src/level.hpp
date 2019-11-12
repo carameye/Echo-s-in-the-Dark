@@ -54,7 +54,7 @@ private:
 	bool spawn_robot(vec2 position);
 	bool spawn_brick(vec2 position, vec3 colour);
 	bool spawn_door(vec2 position, std::string next_level);
-	bool spawn_ghost(vec2 position);
+	bool spawn_ghost(vec2 position, vec3 colour);
 	bool spawn_sign(vec2 position, std::string text);
 
 	// For resetting the level

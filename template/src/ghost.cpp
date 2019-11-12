@@ -4,8 +4,11 @@
 #include <cmath>
 
 Texture Ghost::s_ghost_texture;
+Texture Ghost::s_red_ghost_texture;
+Texture Ghost::s_green_ghost_texture;
+Texture Ghost::s_blue_ghost_texture;
 
-bool Ghost::init(int id)
+bool Ghost::init(int id, vec3 colour)
 {
 	m_id = id;
 
@@ -16,9 +19,36 @@ bool Ghost::init(int id)
 			fprintf(stderr, "Failed to load ghost texture!");
 			return false;
 		}
+        if (!s_blue_ghost_texture.load_from_file(textures_path("ghost_blue.png")))
+        {
+            fprintf(stderr, "Failed to load blue ghost texture!");
+            return false;
+        }
+        if (!s_green_ghost_texture.load_from_file(textures_path("ghost_green.png")))
+        {
+            fprintf(stderr, "Failed to load green ghost texture!");
+            return false;
+        }
+        if (!s_red_ghost_texture.load_from_file(textures_path("ghost_red.png")))
+        {
+            fprintf(stderr, "Failed to load red ghost texture!");
+            return false;
+        }
 	}
 
-	rc.texture = &s_ghost_texture;
+    if (colour.x == 1.f && colour.y == 0.f && colour.z == 0.f) {
+        rc.can_be_hidden = 0;
+        rc.texture = &s_red_ghost_texture;
+    } else if (colour.x == 0.f && colour.y == 1.f && colour.z == 0.f) {
+        rc.can_be_hidden = 0;
+        rc.texture = &s_green_ghost_texture;
+    } else if (colour.x == 0.f && colour.y == 0.f && colour.z == 1.f) {
+        rc.can_be_hidden = 0;
+        rc.texture = &s_blue_ghost_texture;
+    } else {
+        rc.can_be_hidden = 0;
+        rc.texture = &s_ghost_texture;
+    }
 
 	if (!rc.init_sprite())
 		return false;
@@ -28,8 +58,13 @@ bool Ghost::init(int id)
 	mc.acceleration = { 0.f , 0.f };
 	mc.radians = 0.f;
 
+    m_colour = colour;
+    m_is_chasing = m_colour.x == 1.f && m_colour.y == 1.f && m_colour.z == 1.f;
+
 	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 	mc.physics.scale.x *= 47.f / 41.f;
+
+	rc.colour = m_colour;
 
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;
@@ -39,6 +74,9 @@ bool Ghost::init(int id)
 
 void Ghost::update(float ms)
 {
+    if (!m_is_chasing) {
+        return;
+    }
 	if (len(sub(m_goal, mc.position)) < 800.f)
 	{
 		if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > TOLERANCE)
@@ -116,4 +154,12 @@ void Ghost::set_goal(vec2 position)
 void Ghost::set_level_graph(LevelGraph* graph)
 {
 	m_level_graph = graph;
+}
+
+void Ghost::update_is_chasing(vec3 headlight_color) {
+    if (m_colour.x == 1.f && m_colour.y == 1.f && m_colour.x == 1.f) {
+        m_is_chasing = true;
+        return;
+    }
+    m_is_chasing = !(m_colour.x == headlight_color.x && m_colour.y == headlight_color.y && m_colour.z == headlight_color.z);
 }
