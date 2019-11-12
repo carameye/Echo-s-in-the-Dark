@@ -37,13 +37,13 @@ bool Ghost::init(int id, vec3 colour)
 	}
 
     if (colour.x == 1.f && colour.y == 0.f && colour.z == 0.f) {
-        rc.can_be_hidden = 1;
+        rc.can_be_hidden = 0;
         rc.texture = &s_red_ghost_texture;
     } else if (colour.x == 0.f && colour.y == 1.f && colour.z == 0.f) {
-        rc.can_be_hidden = 1;
+        rc.can_be_hidden = 0;
         rc.texture = &s_green_ghost_texture;
     } else if (colour.x == 0.f && colour.y == 0.f && colour.z == 1.f) {
-        rc.can_be_hidden = 1;
+        rc.can_be_hidden = 0;
         rc.texture = &s_blue_ghost_texture;
     } else {
         rc.can_be_hidden = 0;
