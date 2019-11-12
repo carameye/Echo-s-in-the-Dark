@@ -109,7 +109,7 @@ void Robot::update(float ms)
 
 	m_grounded = false;
 	m_head.update(ms, add(mc.position, { 0.f, -48.f }));
-    m_hat.update(ms, add(mc.position, { 0.f, -56.f }));
+    m_hat.update(ms, add(m_head.get_position(), { 0.f, -8.f }));
     m_shoulders.update(ms, add(mc.position, { 0.f, 0.f }));
 
     if (m_is_flying) {
@@ -179,6 +179,7 @@ void Robot::set_grounded()
 void Robot::set_head_position(vec2 position)
 {
 	m_head.set_position(position);
+	m_hat.set_position(position);
 }
 
 bool Robot::get_head_direction()
@@ -278,6 +279,7 @@ vec2 Robot::get_head_velocity() {
 
 void Robot::set_head_velocity(vec2 velocity) {
     m_head.set_velocity(velocity);
+    m_hat.set_velocity(velocity);
 }
 
 
