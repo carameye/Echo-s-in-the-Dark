@@ -366,6 +366,33 @@ src/UI/menuentity.cpp.s:
 	$(MAKE) -f CMakeFiles/EITD.dir/build.make CMakeFiles/EITD.dir/src/UI/menuentity.cpp.s
 .PHONY : src/UI/menuentity.cpp.s
 
+src/background.o: src/background.cpp.o
+
+.PHONY : src/background.o
+
+# target to build an object file
+src/background.cpp.o:
+	$(MAKE) -f CMakeFiles/EITD.dir/build.make CMakeFiles/EITD.dir/src/background.cpp.o
+.PHONY : src/background.cpp.o
+
+src/background.i: src/background.cpp.i
+
+.PHONY : src/background.i
+
+# target to preprocess a source file
+src/background.cpp.i:
+	$(MAKE) -f CMakeFiles/EITD.dir/build.make CMakeFiles/EITD.dir/src/background.cpp.i
+.PHONY : src/background.cpp.i
+
+src/background.s: src/background.cpp.s
+
+.PHONY : src/background.s
+
+# target to generate assembly for a file
+src/background.cpp.s:
+	$(MAKE) -f CMakeFiles/EITD.dir/build.make CMakeFiles/EITD.dir/src/background.cpp.s
+.PHONY : src/background.cpp.s
+
 src/brick.o: src/brick.cpp.o
 
 .PHONY : src/brick.o
@@ -834,6 +861,9 @@ help:
 	@echo "... src/UI/menuentity.o"
 	@echo "... src/UI/menuentity.i"
 	@echo "... src/UI/menuentity.s"
+	@echo "... src/background.o"
+	@echo "... src/background.i"
+	@echo "... src/background.s"
 	@echo "... src/brick.o"
 	@echo "... src/brick.i"
 	@echo "... src/brick.s"
