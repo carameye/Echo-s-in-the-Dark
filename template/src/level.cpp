@@ -51,15 +51,12 @@ std::string Level::update(float elapsed_ms) {
             m_graph = &m_white_graph;
         }
         if (headlight_channel.x == 1.f && headlight_channel.y == 0.f && headlight_channel.z == 0.f) {
-            fprintf(stderr, "	level graph changed to red\n");
             m_graph = &m_red_graph;
         }
         if (headlight_channel.x == 0.f && headlight_channel.y == 1.f && headlight_channel.z == 0.f) {
-            fprintf(stderr, "	level graph changed to green\n");
             m_graph = &m_green_graph;
         }
         if (headlight_channel.x == 0.f && headlight_channel.y == 0.f && headlight_channel.z == 1.f) {
-            fprintf(stderr, "	level graph changed to blue\n");
             m_graph = &m_blue_graph;
         }
         for (auto &i_brick : m_bricks) {
