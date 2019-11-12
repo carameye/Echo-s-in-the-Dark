@@ -224,6 +224,10 @@ vec2 Level::get_player_position() const {
 	return m_robot.get_position();
 }
 
+int Level::get_num_ghosts() const {
+    return m_ghosts.size();
+}
+
 std::string Level::interact()
 {
     if (m_interactable != NULL) {
@@ -452,7 +456,8 @@ bool Level::spawn_door(vec2 position, std::string next_level)
 bool Level::spawn_ghost(vec2 position, vec3 colour)
 {
     Ghost *ghost = new Ghost();
-    if (ghost->init(next_id++, colour))
+    vec3 headlight_channel = m_light.get_headlight_channel();
+    if (ghost->init(next_id++, colour, headlight_channel))
     {
         ghost->set_position(position);
         ghost->set_level_graph(m_graph);

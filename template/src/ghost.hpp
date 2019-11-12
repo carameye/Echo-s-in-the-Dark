@@ -20,7 +20,7 @@ class Ghost : public Entity
 
 public:
 	// Creates all the associated render resources and default transform
-	bool init(int id, vec3 colour);
+	bool init(int id, vec3 colour, vec3 headlight_colour);
 
 	// Updates the ghost
 	void update(float ms);
@@ -46,4 +46,6 @@ public:
 private:
     vec3 m_colour;
     bool m_is_chasing;
+
+	bool colour_is_white(vec3 colour);
 };
