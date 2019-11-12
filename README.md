@@ -24,14 +24,14 @@ When building levels:
  
  Bricks:
  
-  B = normal brick show up regardless of headlight color
-  C = Brick that shows up only in red light
-  M = Brick that shows up only in green light
-  N = Brick that shows up only in blue light
+  -B = normal brick show up regardless of headlight color
+  -C = Brick that shows up only in red light
+  -M = Brick that shows up only in green light
+  -N = Brick that shows up only in blue light
   
 Ghosts:
   
-  G = Normal ghost chases regardless of headlight color
-  Y = Ghost that chases in any light other than red
-  Z = Ghost that chases in any light other than green
-  L = Ghost that chases in any light other than blue
+  -G = Normal ghost chases regardless of headlight color
+  -Y = Ghost that chases in any light other than red
+  -Z = Ghost that chases in any light other than green
+  -L = Ghost that chases in any light other than blue
