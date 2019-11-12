@@ -11,6 +11,7 @@ For this milestone, we have completed the following parts of our plan:
 - Made the movement of the robot more consistent
 - Made the robot's head collide with the ceiling and walls
 - Added coloured bricks and ghosts that only show up when the correct colour light is shone on them
+- Made ghosts pathfind only around blocks that are currently visible
 - Added a screen effect that notifies the player that there is something invisible nearby
 - Made pushable blocks
 - Followed advice from crossplay and made the headlamp turn all the way around with the mouse
