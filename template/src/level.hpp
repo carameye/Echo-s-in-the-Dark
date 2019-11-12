@@ -79,6 +79,10 @@ private:
 	vec2 m_starting_camera_pos;
 
     LevelGraph m_graph;
+    LevelGraph m_white_graph;
+    LevelGraph m_red_graph;
+    LevelGraph m_green_graph;
+    LevelGraph m_blue_graph;
     Door* m_interactable;
 
     bool m_has_colour_changed = true;

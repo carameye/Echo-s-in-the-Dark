@@ -105,3 +105,7 @@ Hitbox Brick::get_hitbox() const
 bool Brick::get_is_visible() {
     return m_is_visible;
 }
+
+vec3 Brick::get_colour() {
+    return m_colour;
+}
