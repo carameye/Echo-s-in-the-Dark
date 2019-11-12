@@ -70,7 +70,6 @@ void Light::set_position(vec2 pos){
 }
 
 void Light::convert_mouse_pos_to_rad(vec2 coordinates, vec2 centre) {
-    // TODO: What are this 600 and 300 even doing... this needs to be cleaned up
     float x = coordinates.x - centre.x;
     float y = -coordinates.y + centre.y;
     float radians = atan2(y,x);
