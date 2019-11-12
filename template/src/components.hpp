@@ -25,7 +25,7 @@ struct RenderComponent
 	Transform transform;
 	bool render = true;
 	int can_be_hidden = 0;
-	vec3 colour = {0.f, 0.f, 0.f};
+	vec3 colour = {1.f, 1.f, 1.f};
 	float alpha;
 
 	bool init_sprite();
