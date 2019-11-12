@@ -91,18 +91,6 @@ def convert(filepath):
                     obj["colour"] = { "r": 0.0, "g": 0.0, "b": 1.0 }
                     bricks.append(obj)
                     continue
-                if char is "Y":
-                    obj["colour"] = { "r": 1.0, "g": 1.0, "b": 0.0 }
-                    bricks.append(obj)
-                    continue
-                if char is "Z":
-                    obj["colour"] = { "r": 1.0, "g": 0.0, "b": 1.0 }
-                    bricks.append(obj)
-                    continue
-                if char is "L":
-                    obj["colour"] = { "r": 0.0, "g": 1.0, "b": 1.0 }
-                    bricks.append(obj)
-                    continue
                 if char is "T":
                     torches.append(obj)
                     continue
@@ -121,7 +109,7 @@ def convert(filepath):
         filename = filepath.replace(dirpath, "")
         filename = filename.replace("\\", "")
         filename = filename.replace(".txt", "")
-        writepath = "".join([dirpath, "/json", filename, ".json"])
+        writepath = "".join([dirpath, "/json/", filename, ".json"])
         print(writepath)
 
         file = open(writepath, "w+")

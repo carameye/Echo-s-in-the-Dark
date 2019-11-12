@@ -1,9 +1,14 @@
 1.0
 level_1
 level_2
+level_3
+level_4
+level_5
+level_6
 enddoors
 Use A and D (or left and right) to roll
 Use W and S (or up and down) to pan the camera
+Move the mouse to move your flashlight
 Use F to interact with objects
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
@@ -19,6 +24,6 @@ B                                                                         B
 B                                                                         B
 B                                                                         B
 B          R                                                              B
-B  C M N   T        T       T  D                    D                     B
-B          S        S       S                                             B
+B              T       T          T  D     D  T  D     D  T  D     D  T   B
+B          S       S       S                                              B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB

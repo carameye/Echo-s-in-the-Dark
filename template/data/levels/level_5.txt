@@ -1,0 +1,46 @@
+0.2
+level_6
+enddoors
+Use space to fly
+You can only fly for a short time
+endsigns
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                                                                         T  B
+B                                                                         D  B
+B                                                                            B
+B                                                                       BBBBBB
+B                                                                            B
+B                                                                            B
+B                                                        BBBBB               B
+B                                                                            B
+B                                                                            B
+B                              BBBBBBBBBBBBBBBB                              B
+B                                                                            B
+B                                                                            B
+B               BBBBB                                                        B
+B                                                                            B
+B                                                                            B
+BBBBBB                                                                       B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+BBBBBB          BBBBB          BBBBBBBBBBBBBBBB          BBBBB          BBBBBB
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                       BBBBBB
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                          B
+B          R               B
+B          T        T      B
+B          S        S      B
+BBBBBBBBBBBBBBBBBBBBBBBBBBBB
