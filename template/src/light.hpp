@@ -22,7 +22,7 @@ public:
 
     void set_position(vec2 pos);
 
-    void convert_mouse_pos_to_rad(vec2 coordinates);
+    void convert_mouse_pos_to_rad(vec2 coordinates, vec2 centre);
 
     float get_radians();
 

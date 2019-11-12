@@ -444,11 +444,12 @@ std::string Level::handle_key_press(int key, int action)
     return "";
 }
 
-void Level::handle_mouse_move(double xpos, double ypos)
+void Level::handle_mouse_move(double xpos, double ypos, vec2 camera_pos)
 {
     float mouse_x = (float) xpos;
     float mouse_y = (float) ypos;
-    m_light.convert_mouse_pos_to_rad({mouse_x, mouse_y});
+	vec2 top_left = sub(camera_pos, { 600.f, 400.f });
+	m_light.convert_mouse_pos_to_rad({ mouse_x, mouse_y }, sub(m_robot.get_head_position(), top_left));
 }
 
 std::string Level::get_current_level()
