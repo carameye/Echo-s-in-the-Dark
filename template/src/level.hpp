@@ -11,6 +11,8 @@
 #include "json.hpp"
 #include <vector>
 #include "systems.hpp"
+#include "background.hpp"
+#include "torch.hpp"
 
 class Level
 {
@@ -23,14 +25,17 @@ class Level
     // Releases all level-associated resources
 	void destroy();
 
-    // Update level entites
-    void update(float elapsed_ms);
+    // Update level entites, returns name of audio file to be played if something happens on update
+    std::string update(float elapsed_ms);
 
     // Gets the camera position when the level first starts
     vec2 get_starting_camera_position() const;
 
 	// Gets the position of the player
 	vec2 get_player_position() const;
+
+	// Returns the number of ghosts in the level
+	int get_num_ghosts() const;
 
     // Interact with the current level interactable
     std::string interact();
@@ -43,19 +48,20 @@ class Level
 
 	// Handle input
 	std::string handle_key_press(int key, int action);
-	void handle_mouse_move(double xpos, double ypos);
+	void handle_mouse_move(double xpos, double ypos, vec2 camera);
 
 	// Get the name of the current level
 	std::string get_current_level();
 
 private:
-
     // Spawn entities
 	bool spawn_robot(vec2 position);
 	bool spawn_brick(vec2 position, vec3 colour);
 	bool spawn_door(vec2 position, std::string next_level);
 	bool spawn_ghost(vec2 position, vec3 colour);
 	bool spawn_sign(vec2 position, std::string text);
+	bool spawn_background();
+	bool spawn_torch(vec2 position);
 
 	// For resetting the level
 	void save_level();
@@ -75,10 +81,16 @@ private:
 	std::vector<Ghost*> m_ghosts;
     std::vector<Door*> m_interactables;
 	std::vector<Sign*> m_signs;
+	std::vector<Background*> m_backgrounds;
+	std::vector<Torch*> m_torches;
 
 	vec2 m_starting_camera_pos;
 
-    LevelGraph m_graph;
+    LevelGraph* m_graph;
+    LevelGraph m_white_graph;
+    LevelGraph m_red_graph;
+    LevelGraph m_green_graph;
+    LevelGraph m_blue_graph;
     Door* m_interactable;
 
     bool m_has_colour_changed = true;

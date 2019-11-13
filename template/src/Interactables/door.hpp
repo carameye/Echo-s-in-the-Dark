@@ -8,7 +8,7 @@ class Door: public Interactable
 
     public:
         // Creates all the associated render resources and default transform
-        bool init(int id);
+        bool init(int id, vec2 position);
 
         // set the destination to go to after using door
         void set_destination(std::string dest);

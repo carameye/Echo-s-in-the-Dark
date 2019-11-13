@@ -8,7 +8,7 @@ Texture Ghost::s_red_ghost_texture;
 Texture Ghost::s_green_ghost_texture;
 Texture Ghost::s_blue_ghost_texture;
 
-bool Ghost::init(int id, vec3 colour)
+bool Ghost::init(int id, vec3 colour, vec3 headlight_colour)
 {
 	m_id = id;
 
@@ -59,7 +59,7 @@ bool Ghost::init(int id, vec3 colour)
 	mc.radians = 0.f;
 
     m_colour = colour;
-    m_is_chasing = m_colour.x == 1.f && m_colour.y == 1.f && m_colour.z == 1.f;
+    m_is_chasing = colour_is_white(m_colour) || colour_is_white(headlight_colour);
 
 	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 	mc.physics.scale.x *= 47.f / 41.f;
@@ -157,9 +157,13 @@ void Ghost::set_level_graph(LevelGraph* graph)
 }
 
 void Ghost::update_is_chasing(vec3 headlight_color) {
-    if (m_colour.x == 1.f && m_colour.y == 1.f && m_colour.x == 1.f) {
+    if (colour_is_white(m_colour) || colour_is_white(headlight_color)) {
         m_is_chasing = true;
         return;
     }
     m_is_chasing = !(m_colour.x == headlight_color.x && m_colour.y == headlight_color.y && m_colour.z == headlight_color.z);
+}
+
+bool Ghost::colour_is_white(vec3 colour) {
+	return colour.x == 1.f && colour.y == 1.f && colour.z == 1.f;
 }

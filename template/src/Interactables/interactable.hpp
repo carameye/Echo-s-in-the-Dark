@@ -16,10 +16,7 @@ protected:
 	RenderComponent rc;
 	MotionComponent mc;
 public:
-    bool init(int id);
-
-    // Set the position of the interactable
-    void set_position(vec2 pos);
+    bool init(int id, vec2 position);
 
     virtual Hitbox get_hitbox() const = 0;
 

@@ -30,19 +30,18 @@ bool Menu::init(GLFWwindow* window, vec2 screen)
 		return false;
 	}
 
-	m_background_music = Mix_LoadMUS(audio_path("goldleaf.wav"));
+	m_background_music = Mix_LoadMUS(audio_path("menu.wav"));
+	int vol = Mix_VolumeMusic(MIX_MAX_VOLUME/3);
 
 	if (m_background_music == nullptr)
 	{
-		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
-			audio_path("goldleaf.wav"),
-			audio_path("salmon_dead.wav"),
-			audio_path("salmon_eat.wav"));
+		fprintf(stderr, "Failed to load sounds\n %s\n make sure the data directory is present",
+			audio_path("menu.wav"));
 		return false;
 	}
 
-	// Playing background music indefinitely
-	Mix_PlayMusic(m_background_music, -1);
+	// Fade background music in and then play it indefinitely
+	Mix_FadeInMusic(m_background_music, -1, 1000);
 
 	return true;
 }
@@ -163,14 +162,13 @@ void Menu::start_music()
 		return;
 	}
 
-	m_background_music = Mix_LoadMUS(audio_path("goldleaf.wav"));
+	m_background_music = Mix_LoadMUS(audio_path("menu.wav"));
+	Mix_VolumeMusic(MIX_MAX_VOLUME/3);
 
 	if (m_background_music == nullptr)
 	{
-		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
-			audio_path("goldleaf.wav"),
-			audio_path("salmon_dead.wav"),
-			audio_path("salmon_eat.wav"));
+		fprintf(stderr, "Failed to load sounds\n %s\n make sure the data directory is present",
+			audio_path("menu.wav"));
 		return;
 	}
 

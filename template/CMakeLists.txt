@@ -33,6 +33,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/project_path.hpp.in" "${CMAKE_CU
 set(SOURCE_FILES
 	src/main.cpp
 	src/common.cpp
+		src/background.cpp
         src/smoke.cpp
         src/smoke_system.cpp
         src/Robot/robot.cpp
@@ -60,6 +61,7 @@ set(SOURCE_FILES
         src/world.cpp
         src/project_path.hpp
 	    src/common.hpp
+		src/background.hpp
         src/smoke.hpp
         src/smoke_system.hpp
         src/Robot/flight_energy_bar.hpp
@@ -85,7 +87,7 @@ set(SOURCE_FILES
         src/systems.hpp
         src/level.hpp
         src/world.hpp
-        )
+        src/torch.cpp src/torch.hpp)
 
 if (IS_OS_MAC)
     include_directories(/usr/local/include)

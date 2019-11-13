@@ -1,5 +1,6 @@
 #include <iostream>
 #include "level.hpp"
+#include "torch.hpp"
 
 using json = nlohmann::json;
 
@@ -18,6 +19,10 @@ void Level::destroy()
 	for (auto& sign : m_signs) {
 		delete sign;
 	}
+    for (auto& torch : m_torches) {
+        delete torch;
+    }
+
 	clear_level_components();
 	m_rendering_system.clear();
 	m_interactable = NULL;
@@ -25,7 +30,7 @@ void Level::destroy()
     m_ghosts.clear();
     m_interactables.clear();
     m_signs.clear();
-    m_light.clear_torches();
+    m_torches.clear();
     m_rendering_system.destroy();
 }
 
@@ -35,10 +40,11 @@ void Level::draw_entities(const mat3 &projection, const vec2 &camera_shift) {
 }
 
 void Level::draw_light(const mat3 &projection, const vec2 &camera_shift) {
-    m_light.draw(projection, camera_shift, {width, height});
+    m_light.draw(projection, camera_shift, {width, height}, m_torches);
 }
 
-void Level::update(float elapsed_ms) {
+std::string Level::update(float elapsed_ms) {
+	std::string sound_effect = "";
     vec2 robot_pos = m_robot.get_position();
     vec2 robot_head_pos = m_robot.get_head_position();
 
@@ -46,11 +52,24 @@ void Level::update(float elapsed_ms) {
 
     if (m_has_colour_changed) {
         vec3 headlight_channel = m_light.get_headlight_channel();
+        if (headlight_channel.x == 1.f && headlight_channel.y == 1.f && headlight_channel.z == 1.f) {
+            m_graph = &m_white_graph;
+        }
+        if (headlight_channel.x == 1.f && headlight_channel.y == 0.f && headlight_channel.z == 0.f) {
+            m_graph = &m_red_graph;
+        }
+        if (headlight_channel.x == 0.f && headlight_channel.y == 1.f && headlight_channel.z == 0.f) {
+            m_graph = &m_green_graph;
+        }
+        if (headlight_channel.x == 0.f && headlight_channel.y == 0.f && headlight_channel.z == 1.f) {
+            m_graph = &m_blue_graph;
+        }
         for (auto &i_brick : m_bricks) {
             i_brick->update(headlight_channel);
         }
 
         for (auto &i_ghost : m_ghosts) {
+            i_ghost->set_level_graph(m_graph);
             i_ghost->update_is_chasing(headlight_channel);
         }
         m_has_colour_changed = false;
@@ -69,6 +88,7 @@ void Level::update(float elapsed_ms) {
         bool should_check_collisions = brick.get_is_visible();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
+                sound_effect = "collision";
                 m_robot.set_velocity({0.f, m_robot.get_velocity().y});
 
                 float circle_width = brick_size / 2.f;
@@ -86,6 +106,7 @@ void Level::update(float elapsed_ms) {
 
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_x)) {
+                sound_effect = "collision";
                 m_robot.set_head_velocity({0.f, m_robot.get_head_velocity().y});
 
                 float circle_width = brick_size / 2.f;
@@ -116,6 +137,7 @@ void Level::update(float elapsed_ms) {
         bool should_check_collisions = brick.get_is_visible();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
+                // sound_effect = "collision";
                 m_robot.set_velocity({m_robot.get_velocity().x, 0.f});
 
                 float circle_width = brick_size / 2.f;
@@ -134,6 +156,7 @@ void Level::update(float elapsed_ms) {
             }
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_y)) {
+                sound_effect = "collision";
                 m_robot.set_head_velocity({m_robot.get_head_velocity().x, 0.f});
 
                 float circle_width = brick_size / 2.f;
@@ -156,14 +179,7 @@ void Level::update(float elapsed_ms) {
     m_robot.update(elapsed_ms);
     m_light.set_position(new_robot_pos);
 
-
-    // TODO: init light when robot is spawned
-    bool isHeadFacingRight = m_robot.get_head_direction();
-    bool isLightFacingRight = m_light.get_direction();
-    // if head and light are facing different directions
-    if (isHeadFacingRight != isLightFacingRight) {
-        m_light.set_direction();
-    }
+    m_robot.set_head_direction(m_light.get_direction());
 
     Hitbox new_robot_hitbox = m_robot.get_hitbox({0.f, 0.f});
 
@@ -171,6 +187,7 @@ void Level::update(float elapsed_ms) {
         ghost->set_goal(m_robot.get_position());
         ghost->update(elapsed_ms);
         if (ghost->get_hitbox().collides_with(new_robot_hitbox)) {
+			sound_effect = "samlon_dead.wav";
             reset_level();
         }
     }
@@ -194,6 +211,13 @@ void Level::update(float elapsed_ms) {
             }
         }
     }
+
+	// Update background
+	for (auto& background : m_backgrounds) {
+		background->update(elapsed_ms, m_robot.get_velocity());
+	}
+
+	return sound_effect;
 }
 
 vec2 Level::get_starting_camera_position() const {
@@ -202,6 +226,10 @@ vec2 Level::get_starting_camera_position() const {
 
 vec2 Level::get_player_position() const {
 	return m_robot.get_position();
+}
+
+int Level::get_num_ghosts() const {
+    return m_ghosts.size();
 }
 
 std::string Level::interact()
@@ -244,6 +272,9 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     // Get first entity in this group
     int min = next_id;
 
+	// Spawn background
+	spawn_background();
+
     // Get the doors
     fprintf(stderr, "	getting doors\n");
     for (json door : j["doors"]) {
@@ -267,7 +298,7 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     for (json torch : j["torches"])
     {
         vec2 pos = {torch["pos"]["x"], torch["pos"]["y"]};
-        m_light.add_torch(to_pixel_position(pos));
+        spawn_torch(to_pixel_position(pos));
     }
 
     // Get the signs
@@ -295,6 +326,10 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
     std::vector<bool> empty(width, false);
     std::vector<std::vector<bool>> bricks(height, empty);
+    std::vector<std::vector<bool>> white_bricks(height, empty);
+    std::vector<std::vector<bool>> red_bricks(height, empty);
+    std::vector<std::vector<bool>> green_bricks(height, empty);
+    std::vector<std::vector<bool>> blue_bricks(height, empty);
 
     for (json brick : j["bricks"]) {
         vec2 pos = {brick["pos"]["x"], brick["pos"]["y"]};
@@ -302,6 +337,19 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
         // Set brick here
         bricks[pos.y][pos.x] = true;
+
+        if (colour.x == 1.f && colour.y == 1.f && colour.z == 1.f) {
+            white_bricks[pos.y][pos.x] = true;
+            red_bricks[pos.y][pos.x] = true;
+            green_bricks[pos.y][pos.x] = true;
+            blue_bricks[pos.y][pos.x] = true;
+        } else if (colour.x == 1.f && colour.y == 0.f && colour.z == 0.f) {
+            red_bricks[pos.y][pos.x] = true;
+        } else if (colour.x == 0.f && colour.y == 1.f && colour.z == 0.f) {
+            green_bricks[pos.y][pos.x] = true;
+        } else if (colour.x == 0.f && colour.y == 0.f && colour.z == 1.f) {
+            blue_bricks[pos.y][pos.x] = true;
+        }
 
         // Add brick to critical points if not already cancelled
         for (vec2 diff : diffs) {
@@ -320,44 +368,57 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     // Generate the graph
     if (m_ghosts.size() > 0)
     {
-        m_graph.generate(potential_cp, bricks, width, height);
+        m_white_graph.generate(potential_cp, white_bricks, width, height);
+        m_red_graph.generate(potential_cp, red_bricks, width, height);
+        m_green_graph.generate(potential_cp, green_bricks, width, height);
+        m_blue_graph.generate(potential_cp, blue_bricks, width, height);
     }
 
+    // Level graph initially set to be the default white
+    m_graph = &m_white_graph;
+
     // Spawn the robot
-    vec2 pos = {j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"]};
+    vec2 robot_pos = {j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"]};
 	if (level == "level_select") {
-		m_starting_camera_pos = to_pixel_position(pos);
+		m_starting_camera_pos = to_pixel_position(robot_pos);
 	}
-    spawn_robot(to_pixel_position(pos));
+    spawn_robot(to_pixel_position(robot_pos));
+
+	for (auto& background : m_backgrounds) {
+		background->set_position(to_pixel_position(robot_pos));
+	}
 
     save_level();
 
     m_rendering_system.process(min, next_id);
+
 
     return true;
 }
 
 std::string Level::handle_key_press(int key, int action)
 {
-    if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-        m_robot.start_flying();
-    }
-    if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-        m_robot.set_is_accelerating_left(true);
-    }
-    if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-        m_robot.set_is_accelerating_right(true);
-    }
+	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+		m_robot.start_flying();
+        return "flying";
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+		m_robot.set_is_accelerating_left(true);
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+		m_robot.set_is_accelerating_right(true);
+	}
 
-    if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
-        m_robot.stop_flying();
-    }
-    if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
-        m_robot.set_is_accelerating_left(false);
-    }
-    if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
-        m_robot.set_is_accelerating_right(false);
-    }
+	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
+		m_robot.stop_flying();
+        return "falling";
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+		m_robot.set_is_accelerating_left(false);
+	}
+	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+		m_robot.set_is_accelerating_right(false);
+	}
 
     if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
         return interact();
@@ -380,10 +441,12 @@ std::string Level::handle_key_press(int key, int action)
     return "";
 }
 
-void Level::handle_mouse_move(double xpos, double ypos)
+void Level::handle_mouse_move(double xpos, double ypos, vec2 camera_pos)
 {
-    float radians = atan2(-ypos + 300, xpos - 600);
-    m_light.set_radians(radians);
+    float mouse_x = (float) xpos;
+    float mouse_y = (float) ypos;
+	vec2 top_left = sub(camera_pos, { 600.f, 400.f });
+	m_light.convert_mouse_pos_to_rad({ mouse_x, mouse_y }, sub(m_robot.get_head_position(), top_left));
 }
 
 std::string Level::get_current_level()
@@ -393,25 +456,25 @@ std::string Level::get_current_level()
 
 bool Level::spawn_door(vec2 position, std::string next_level)
 {
-    Door *door = new Door();
-    if (door->init(next_id++))
-    {
-        door->set_position(position);
-        door->set_destination(next_level);
-        m_interactables.push_back(door);
-        return true;
-    }
-    fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
-    return false;
+	Door *door = new Door();
+	if (door->init(next_id++, position))
+	{
+		door->set_destination(next_level);
+		m_interactables.push_back(door);
+		return true;
+	}
+	fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
+	return false;
 }
 
 bool Level::spawn_ghost(vec2 position, vec3 colour)
 {
     Ghost *ghost = new Ghost();
-    if (ghost->init(next_id++, colour))
+    vec3 headlight_channel = m_light.get_headlight_channel();
+    if (ghost->init(next_id++, colour, headlight_channel))
     {
         ghost->set_position(position);
-        ghost->set_level_graph(&m_graph);
+        ghost->set_level_graph(m_graph);
         m_ghosts.push_back(ghost);
         return true;
     }
@@ -428,20 +491,39 @@ bool Level::spawn_robot(vec2 position)
         m_robot.set_shoulder_position(position);
         if (m_light.init(m_level)) {
             m_light.set_position(m_robot.get_position());
-
-//            // TODO: init light when robot is spawned
-//            bool isHeadFacingRight = m_robot.get_head_direction();
-//            bool isLightFacingRight = m_light.get_direction();
-//            // if head and light are facing different directions
-//            if (isHeadFacingRight != isLightFacingRight) {
-//                std::cout << 1 << std::endl;
-//                m_light.set_direction();
-//            }
         }
         return true;
     }
     fprintf(stderr, "	robot spawn failed\n");
     return false;
+}
+
+bool Level::spawn_torch(vec2 position) {
+    Torch *torch = new Torch();
+    if (torch->init(next_id++))
+    {
+        torch->set_position(position);
+        m_torches.push_back(torch);
+        return true;
+    }
+    fprintf(stderr, "	torch spawn failed\n");
+    return false;
+}
+
+bool Level::spawn_background()
+{
+	for (int i = 0; i < 4; i++) {
+		float scale = 0.25f * i + 0.25f;
+		Background* background = new Background();
+		if (!background->init(next_id++, scale, scale))
+		{
+			return false;
+		}
+		// background uses total of 3 components
+		m_backgrounds.push_back(background);
+		next_id += 2;
+	}
+	return true;
 }
 
 bool Level::spawn_sign(vec2 position, std::string text)

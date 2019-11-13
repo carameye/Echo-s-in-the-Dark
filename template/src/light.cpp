@@ -1,4 +1,5 @@
 #include "light.hpp"
+#include "torch.hpp"
 #include <math.h>
 #include <iostream>
 
@@ -69,8 +70,14 @@ void Light::set_position(vec2 pos){
     motion.position = add(pos, { 0.f, -48.f });
 }
 
-void Light::set_radians(float radians){
-    //  std::cout << motion.radians << std::endl;
+void Light::convert_mouse_pos_to_rad(vec2 coordinates, vec2 centre) {
+    float x = coordinates.x - centre.x;
+    float y = -coordinates.y + centre.y;
+    float radians = atan2(y,x);
+    set_rotation(radians);
+}
+
+void Light::set_rotation(float radians) {
     motion.radians = radians;
 }
 
@@ -92,16 +99,6 @@ bool Light::get_direction(){
 void Light::set_ambient(float ambient)
 {
     this->ambient = ambient;
-}
-
-void Light::clear_torches()
-{
-    torches.clear();
-}
-
-void Light::add_torch(vec2 torch)
-{
-    torches.push_back(torch);
 }
 
 vec3 Light::get_headlight_channel(){
@@ -130,7 +127,7 @@ void Light::set_blue_channel(){
     }
 }
 
-void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& size) {
+void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& size, std::vector<Torch*> torches){
     // Setting shaders
     glUseProgram(effect.program);
 
@@ -186,8 +183,8 @@ void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& s
 		float x = -10000.f, y = -10000.f;
 		if (i < len)
 		{
-			x = torches[i].x;
-			y = torches[i].y;
+			x = torches[i]->get_position().x;
+			y = torches[i]->get_position().y;
 		}
 		float torch[] = { x + camera_shift.x, y + camera_shift.y };
 		glUniform2fv(torches_position_uloc, 1, torch);
