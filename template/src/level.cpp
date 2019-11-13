@@ -31,7 +31,6 @@ void Level::destroy()
     m_interactables.clear();
     m_signs.clear();
     m_torches.clear();
-   // m_light.clear_torches();
     m_rendering_system.destroy();
 }
 
@@ -297,7 +296,6 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     for (json torch : j["torches"])
     {
         vec2 pos = {torch["pos"]["x"], torch["pos"]["y"]};
-        //m_light.add_torch(to_pixel_position(pos));
         spawn_torch(to_pixel_position(pos));
     }
 

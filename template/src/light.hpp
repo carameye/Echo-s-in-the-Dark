@@ -44,7 +44,6 @@ private:
     vec2 m_light_position;
     float ambient = 0.f;
     vec3 m_headlight_channel;
-    //std::vector<vec2> torches;
 
 	RenderComponent rc;
 
