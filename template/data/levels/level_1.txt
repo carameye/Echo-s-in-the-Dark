@@ -20,7 +20,6 @@ B                          B
 B          BBBBBB          B
 B                          B
 B                          B
-BBBBBB                     B
 B                          B
 B                          B
 B          BBBBBB          B
