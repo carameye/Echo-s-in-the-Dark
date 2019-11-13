@@ -23,5 +23,4 @@ public:
     // Sets the new torch position
     void set_position(vec2 position);
 
-    void draw(const mat3& projection, const vec2& camera_shift, const vec2& size);
 };
