@@ -216,7 +216,7 @@ void World::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	if (is_level_load_pan) {
 		return;
 	}
-	m_level.handle_mouse_move(xpos, ypos);
+	m_level.handle_mouse_move(xpos, ypos, camera_pos);
 }
 
 void World::start_sounds()

@@ -23,7 +23,7 @@ public:
 
     void set_position(vec2 pos);
 
-    void set_radians(float radians);
+    void convert_mouse_pos_to_rad(vec2 coordinates, vec2 centre);
 
     float get_radians();
 
@@ -50,4 +50,6 @@ private:
 	Mesh mesh;
 	Effect effect;
 	Motion motion;
+
+    void set_rotation(float radians);
 };

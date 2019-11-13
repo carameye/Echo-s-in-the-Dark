@@ -121,8 +121,6 @@ void Robot::update(float ms)
     m_energy_bar.update(ms, add(mc.position, { 0.f, -90.f }), (m_available_flight_time/MAX_FLIGHT_DURATION));
 
 	if (mc.velocity.x != 0.f) {
-        m_head.set_direction(mc.velocity.x > 0.f);
-        m_hat.set_direction(mc.velocity.x > 0);
         m_shoulders.set_direction(mc.velocity.x > 0.f);
     }
 
@@ -280,6 +278,11 @@ vec2 Robot::get_head_velocity() {
 void Robot::set_head_velocity(vec2 velocity) {
     m_head.set_velocity(velocity);
     m_hat.set_velocity(velocity);
+}
+
+void Robot::set_head_direction(bool b) {
+    m_head.set_direction(b);
+    m_hat.set_direction(b);
 }
 
 

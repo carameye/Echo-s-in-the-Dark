@@ -16,6 +16,8 @@ For this milestone, we have completed the following parts of our plan:
 - Made pushable blocks
 - Followed advice from crossplay and made the headlamp turn all the way around with the mouse
 - Added a bunch of sprites
+- Increased camera pan size and made camera pan from the level-goal to the player on level load
+- Added sound effects (e.g. rocket, locked doors, etc.) and better background music
 
 
 
