@@ -64,7 +64,7 @@ float headlight(vec2 coord)
 
     float dist = dist(light_pos, vec2(coord.x * screen_size.x, coord.y * screen_size.y));
 
-    return sqrt(1 - angle_diff / max_diff) * sqrt(1 - dist / 800);
+    return sqrt(1 - angle_diff / max_diff) * sqrt(1 - dist / 1000);
 }
 
 float get_light_at_pixel(vec2 pixel)
@@ -216,11 +216,12 @@ void main()
         hl = clamp(headlight(coord), 0, 0.8) * hl_light;
     }
 
-	float sum = clamp(hl + illum_torch_sum + illum_robot, 0, 0.9);
+    float robot_sum = log(exp(hl + illum_robot));
+    float sum = clamp(robot_sum + illum_torch_sum , 0, 0.9);
 
 	if (headlight_channels.x == 1 && headlight_channels.y == 1 && headlight_channels.z == 1) {
 		color = in_color * sum;
 	} else {
-		color = mix( in_color,headlight_channels, hl) * sum;
+        color = mix( in_color,headlight_channels, hl) * clamp(max(hl , illum_torch_sum) + illum_robot, 0, 0.9);
 	}
 }
