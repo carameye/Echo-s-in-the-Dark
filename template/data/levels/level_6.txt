@@ -1,0 +1,45 @@
+0.2
+level_select
+level_select
+enddoors
+endsigns
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                                                                         T  B
+B                                                                         D  B
+B                                                                            B
+B                                                                       BBBBBB
+B                                                                            B
+B                                                                            B
+B                                                        BBBBB               B
+B                                                                            B
+B                                                                            B
+B                              BBBBBBBBBBBBBBBB                              B
+B                                                                            B
+B                                                                            B
+B               BBBBB                                                        B
+B                                                                            B
+B                                                                            B
+BBBBBB                                                                       B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+BBBBBB          BBBBB          BBBBBBBBBBBBBBBB          BBBBB          BBBBBB
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                       BBBBBB
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                                                                            B
+B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                          B
+B          R               B
+B       D     T            B
+B                          B
+BBBBBBBBBBBBBBBBBBBBBBBBBBBB

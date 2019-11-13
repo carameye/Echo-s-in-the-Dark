@@ -1,47 +1,39 @@
 0.2
+level_3
 level_select
 enddoors
-watch out for ghosts!
+color
+colored_bricks
 endsigns
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                                                    T  B
-B     Y                                              D  B
-B                                                       B
-B                                                  BBBBBB
-B                                                       B
-B             BBBBB               BBBBB                 B
-B                          L                            B
-B                                                       B
-B                       BBBBB                           B
-B                                                       B
-B                                                       B
-B             BBBBB                                     B
-B                                                       B
-B                                                       B
-B                                                       B
-B                                                     G B
-B                                                       B
-BBBBBB        BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                 B                  B                  B
-B                 B                  B                  B
-B    Z            B                  B                  B
-B                 B                  B                  B
-B                 B                  B                  B
-BBBBBB            B      BBBBBB      B      BBBBBB      B
-B                 B                  B                  B
-B                 B                  B                  B
-B                 B                  B                  B
-B                 G                                     B
-B                                                       B
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB      BBBBBBB
-B                                                       B
-B                                                       B
-B                                                       B
-B                                                       B
-B                                                       B
-B                                          BBBBBBBBBBBBBB
-B                                      BBBBB
-B               R                  BBBBB
-B               T              BBBBB
-B               S          BBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                       T  B
+B                       D  B
+B                          B
+B                     BBBBBB
+B                          B
+B                          B
+B                          B
+B                          B
+B                     MMMMMB
+B                     M    B
+B                     M    B
+B                     M    B
+B                     M    B
+B                     MMMMMB
+B                          B
+B                          B
+BCCCCCCC   CCCCCC          B
+B                          B
+B                          B
+BMMMMM                     B
+B                          B
+B                          B
+B          NNNNNN          B
+B                          B
+B                          B
+B                     CCCCCB
+B                          B
+B          R               B
+B       D     T            B
+B          S     S         B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB

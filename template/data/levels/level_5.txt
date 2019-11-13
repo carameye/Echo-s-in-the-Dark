@@ -1,0 +1,40 @@
+0.2
+level_select
+level_select
+enddoors
+endsigns
+BBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                      T  B
+B                      D  B
+B                         B
+B                    BBBBBB
+B                         B
+B                         B
+BNNNNN                    B
+B                         B
+B                         B
+B          BBBBB          B
+B                         B
+B                         B
+B                    CCCCCB
+B                         B
+B                         B
+BMMMMM                    B
+B                         B
+B                         B
+B                    BBBBBB
+B                         B
+B                         B
+B          NNNNN          B
+B                         B
+B                         B
+B                    MMMMMB
+B                         B
+B                         B
+BCCCCC                    B
+B                         B
+B                         BBBBBBBB
+B          R                     B
+B       D     T            Y Z L B
+B                                B
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB

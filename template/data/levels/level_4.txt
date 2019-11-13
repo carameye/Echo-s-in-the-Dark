@@ -1,0 +1,38 @@
+0.2
+level_5
+level_select
+enddoors
+freeze_ghosts
+endsigns
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                                                    T  B
+B Z                                                  D  B
+B                                                       B
+B                                                  BBBBBB
+B                                                       B
+B             BBBBB               BBBBB                 B
+B                                                       B
+B                                                       B
+B                       BBBBB                           B
+B                                                       B
+B                                                       B
+B             BBBBB                                     B
+B                                                       B
+B                                                     L B
+B                                                       B
+BBBBBB        BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                 B                  B                  B
+B                 B                  B                  B
+B                 B                  B                  B
+BBBBBB            B      BBBBBB      B      BBBBBB      B
+B                 B                  B                  B
+B         Y                                             B
+B                                                       B
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB      BBBBBBB
+B                                                       B
+B                                                       B
+B                                                       B
+B         R                        BBBBBBBBBBBBBBBBBBBBBB
+B      D      T                BBBBB
+B               S          BBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBB
