@@ -28,7 +28,7 @@ void main()
 			no_alpha.x = component_colour.x;
 			no_alpha.y = component_colour.y;
 			no_alpha.z =  component_colour.z;
-			no_alpha.w = 0.01;
+			no_alpha.w = 0.1;
 			color = no_alpha * texture(sampler0, vec2(texcoord.x, texcoord.y));
 		}
 	} else {
