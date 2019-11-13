@@ -87,7 +87,7 @@ set(SOURCE_FILES
         src/systems.hpp
         src/level.hpp
         src/world.hpp
-        )
+        src/torch.cpp src/torch.hpp)
 
 if (IS_OS_MAC)
     include_directories(/usr/local/include)
