@@ -1,18 +1,19 @@
 0.2
 level_3
+level_select
 enddoors
-Use 1, 2 and 3 to change your light colour
-Some bricks you can only see under a certain light
+color
+colored_bricks
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B                       T  B
 B                       D  B
 B                          B
 B                     BBBBBB
-B                     M    B
-B                     M    B
-B                     M    B
-B                     M    B
+B                          B
+B                          B
+B                          B
+B                          B
 B                     MMMMMB
 B                     M    B
 B                     M    B
@@ -33,6 +34,6 @@ B                          B
 B                     CCCCCB
 B                          B
 B          R               B
-B             T            B
+B       D     T            B
 B          S     S         B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB

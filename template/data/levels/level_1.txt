@@ -1,8 +1,9 @@
 0.2
 level_2
+level_select
 enddoors
-Use space to fly
-You can only fly for a short time
+fly
+fly_duration
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B                       T  B
@@ -28,6 +29,6 @@ B                          B
 B                     BBBBBB
 B                          B
 B          R               B
-B             T            B
+B       D     T            B
 B          S     S         B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB

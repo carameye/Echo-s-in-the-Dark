@@ -1,46 +1,23 @@
 0.2
-level_5
+level_4
+level_select
 enddoors
-Use space to fly
-You can only fly for a short time
+ghosts
 endsigns
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                                                                         T  B
-B                                                                         D  B
-B                                                                            B
-B                                                                       BBBBBB
-B                                                                            B
-B                                                                            B
-B                                                        BBBBB               B
-B                                                                            B
-B                                                                            B
-B                              BBBBBBBBBBBBBBBB                              B
-B                                                                            B
-B                                                                            B
-B               BBBBB                                                        B
-B                                                                            B
-B                                                                            B
-BBBBBB                                                                       B
-B                                                                            B
-B                                                                            B
-B                                                                            B
-B                                                                            B
-B                                                                            B
-BBBBBB          BBBBB          BBBBBBBBBBBBBBBB          BBBBB          BBBBBB
-B                                                                            B
-B                                                                            B
-B                                                                            B
-B                                                                            B
-B                                                                            B
-B                                                                       BBBBBB
-B                                                                            B
-B                                                                            B
-B                                                                            B
-B                                                                            B
-B                                                                            B
-B                          BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                          B
-B          R               B
-B          T        T      B
-B          S        S      B
-BBBBBBBBBBBBBBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+B                                              T  B
+B                                              D  B
+B                                                 B
+B                            BBBBBBBBBBBBBBBBBBBBBB
+B                            B                    B
+B                            B G                  B
+B                            B                    B
+B     BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB     B
+B                                                 B
+B                                                 B
+B                                                 B
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB     B
+B                                                 B
+B G       D  RT                                   B
+B                S                                B
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
