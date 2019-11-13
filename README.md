@@ -7,6 +7,7 @@
 For this milestone, we:
 Fixed the following from ideas from crossplay/previous bugs:
 - Made the headlamp turn all the way around with the mouse
+- Added tutorials for how to use the mouse to shine the light
 - Fixed some graphical lag by making only a single mesh (and other render data) for each object of which there are many instances
 
 Have completed the following parts of our plan:
@@ -15,7 +16,6 @@ Have completed the following parts of our plan:
 - Most of the momentum/physics parts were completed in previous milestones
 - Made the robot's head collide with the ceiling and walls
 - Made ghosts pathfind only around blocks that are currently visible
-- Made pushable blocks
 - Added a bunch of sprites
 - Added sound effects (e.g. rocket, locked doors, etc.) and better background music
 - Extended our use of the JSON library to include save files (previously was just level data)
@@ -25,6 +25,10 @@ Have made changes that were not in the plan but were small extra features we tho
 - Made the movement of the robot more consistent
 - Added coloured bricks and ghosts that only show up when the correct colour light is shone on them
 - Increased camera pan size and made camera pan from the level-goal to the player on level load
+
+Began Implementation to be refined for the next milestone:
+- Made pushable blocks
+- Clues for player about where there are 'hidden' bricks
 
 
 
