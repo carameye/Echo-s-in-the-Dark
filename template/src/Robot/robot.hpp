@@ -88,6 +88,8 @@ public:
 
     void set_head_velocity(vec2 velocity);
 
+    void set_head_direction(bool b);
+
 private:
 	RobotHead m_head;
 	RobotShoulders m_shoulders;

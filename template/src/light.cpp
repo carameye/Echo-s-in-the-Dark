@@ -69,8 +69,14 @@ void Light::set_position(vec2 pos){
     motion.position = add(pos, { 0.f, -48.f });
 }
 
-void Light::set_radians(float radians){
-    //  std::cout << motion.radians << std::endl;
+void Light::convert_mouse_pos_to_rad(vec2 coordinates, vec2 centre) {
+    float x = coordinates.x - centre.x;
+    float y = -coordinates.y + centre.y;
+    float radians = atan2(y,x);
+    set_rotation(radians);
+}
+
+void Light::set_rotation(float radians) {
     motion.radians = radians;
 }
 

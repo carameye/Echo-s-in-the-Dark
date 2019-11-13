@@ -174,14 +174,7 @@ std::string Level::update(float elapsed_ms) {
     m_robot.update(elapsed_ms);
     m_light.set_position(new_robot_pos);
 
-
-    // TODO: init light when robot is spawned
-    bool isHeadFacingRight = m_robot.get_head_direction();
-    bool isLightFacingRight = m_light.get_direction();
-    // if head and light are facing different directions
-    if (isHeadFacingRight != isLightFacingRight) {
-        m_light.set_direction();
-    }
+    m_robot.set_head_direction(m_light.get_direction());
 
     Hitbox new_robot_hitbox = m_robot.get_hitbox({0.f, 0.f});
 
@@ -443,10 +436,12 @@ std::string Level::handle_key_press(int key, int action)
     return "";
 }
 
-void Level::handle_mouse_move(double xpos, double ypos)
+void Level::handle_mouse_move(double xpos, double ypos, vec2 camera_pos)
 {
-    float radians = atan2(-ypos + 300, xpos - 600);
-    m_light.set_radians(radians);
+    float mouse_x = (float) xpos;
+    float mouse_y = (float) ypos;
+	vec2 top_left = sub(camera_pos, { 600.f, 400.f });
+	m_light.convert_mouse_pos_to_rad({ mouse_x, mouse_y }, sub(m_robot.get_head_position(), top_left));
 }
 
 std::string Level::get_current_level()
