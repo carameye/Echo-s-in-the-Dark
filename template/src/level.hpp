@@ -12,6 +12,7 @@
 #include <vector>
 #include "systems.hpp"
 #include "background.hpp"
+#include "torch.hpp"
 
 class Level
 {
@@ -53,7 +54,6 @@ class Level
 	std::string get_current_level();
 
 private:
-
     // Spawn entities
 	bool spawn_robot(vec2 position);
 	bool spawn_brick(vec2 position, vec3 colour);
@@ -61,6 +61,7 @@ private:
 	bool spawn_ghost(vec2 position, vec3 colour);
 	bool spawn_sign(vec2 position, std::string text);
 	bool spawn_background();
+	bool spawn_torch(vec2 position);
 
 	// For resetting the level
 	void save_level();
@@ -81,7 +82,7 @@ private:
     std::vector<Door*> m_interactables;
 	std::vector<Sign*> m_signs;
 	std::vector<Background*> m_backgrounds;
-
+	std::vector<Torch*> m_torches;
 
 	vec2 m_starting_camera_pos;
 

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "level.hpp"
+#include "torch.hpp"
 
 using json = nlohmann::json;
 
@@ -18,6 +19,10 @@ void Level::destroy()
 	for (auto& sign : m_signs) {
 		delete sign;
 	}
+    for (auto& torch : m_torches) {
+        delete torch;
+    }
+
 	clear_level_components();
 	m_rendering_system.clear();
 	m_interactable = NULL;
@@ -25,7 +30,8 @@ void Level::destroy()
     m_ghosts.clear();
     m_interactables.clear();
     m_signs.clear();
-    m_light.clear_torches();
+    m_torches.clear();
+   // m_light.clear_torches();
     m_rendering_system.destroy();
 }
 
@@ -35,7 +41,7 @@ void Level::draw_entities(const mat3 &projection, const vec2 &camera_shift) {
 }
 
 void Level::draw_light(const mat3 &projection, const vec2 &camera_shift) {
-    m_light.draw(projection, camera_shift, {width, height});
+    m_light.draw(projection, camera_shift, {width, height}, m_torches);
 }
 
 std::string Level::update(float elapsed_ms) {
@@ -174,15 +180,6 @@ std::string Level::update(float elapsed_ms) {
     m_robot.update(elapsed_ms);
     m_light.set_position(new_robot_pos);
 
-
-    // TODO: init light when robot is spawned
-    bool isHeadFacingRight = m_robot.get_head_direction();
-    bool isLightFacingRight = m_light.get_direction();
-    // if head and light are facing different directions
-    if (isHeadFacingRight != isLightFacingRight) {
-        m_light.set_direction();
-    }
-
     Hitbox new_robot_hitbox = m_robot.get_hitbox({0.f, 0.f});
 
     for (auto &ghost : m_ghosts) {
@@ -300,7 +297,8 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
     for (json torch : j["torches"])
     {
         vec2 pos = {torch["pos"]["x"], torch["pos"]["y"]};
-        m_light.add_torch(to_pixel_position(pos));
+        //m_light.add_torch(to_pixel_position(pos));
+        spawn_torch(to_pixel_position(pos));
     }
 
     // Get the signs
@@ -491,19 +489,22 @@ bool Level::spawn_robot(vec2 position)
         m_robot.set_shoulder_position(position);
         if (m_light.init(m_level)) {
             m_light.set_position(m_robot.get_position());
-
-//            // TODO: init light when robot is spawned
-//            bool isHeadFacingRight = m_robot.get_head_direction();
-//            bool isLightFacingRight = m_light.get_direction();
-//            // if head and light are facing different directions
-//            if (isHeadFacingRight != isLightFacingRight) {
-//                std::cout << 1 << std::endl;
-//                m_light.set_direction();
-//            }
         }
         return true;
     }
     fprintf(stderr, "	robot spawn failed\n");
+    return false;
+}
+
+bool Level::spawn_torch(vec2 position) {
+    Torch *torch = new Torch();
+    if (torch->init(next_id++))
+    {
+        torch->set_position(position);
+        m_torches.push_back(torch);
+        return true;
+    }
+    fprintf(stderr, "	torch spawn failed\n");
     return false;
 }
 
