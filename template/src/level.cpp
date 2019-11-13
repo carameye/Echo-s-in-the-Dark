@@ -277,12 +277,14 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
     // Get the doors
     fprintf(stderr, "	getting doors\n");
-    for (json door : j["doors"]) {
+    for (int i = 0; i < j["doors"].size(); i++) {
+        json door = j["doors"][i];
         vec2 pos = {door["pos"]["x"], door["pos"]["y"]};
-		m_starting_camera_pos = to_pixel_position(pos);
+        if (i == 0) {
+            m_starting_camera_pos = to_pixel_position(pos);
+        }
         spawn_door(to_pixel_position(pos), door["next_level"]);
     }
-
     if (m_level == "level_select")
     {
         for (auto& d : m_interactables)
