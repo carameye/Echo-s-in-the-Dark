@@ -1,4 +1,5 @@
 #include "light.hpp"
+#include "torch.hpp"
 #include <math.h>
 #include <iostream>
 
@@ -100,16 +101,6 @@ void Light::set_ambient(float ambient)
     this->ambient = ambient;
 }
 
-void Light::clear_torches()
-{
-    torches.clear();
-}
-
-void Light::add_torch(vec2 torch)
-{
-    torches.push_back(torch);
-}
-
 vec3 Light::get_headlight_channel(){
     return m_headlight_channel;
 }
@@ -136,7 +127,7 @@ void Light::set_blue_channel(){
     }
 }
 
-void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& size) {
+void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& size, std::vector<Torch*> torches){
     // Setting shaders
     glUseProgram(effect.program);
 
@@ -192,8 +183,8 @@ void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& s
 		float x = -10000.f, y = -10000.f;
 		if (i < len)
 		{
-			x = torches[i].x;
-			y = torches[i].y;
+			x = torches[i]->get_position().x;
+			y = torches[i]->get_position().y;
 		}
 		float torch[] = { x + camera_shift.x, y + camera_shift.y };
 		glUniform2fv(torches_position_uloc, 1, torch);
