@@ -228,12 +228,6 @@ vec2 Level::get_player_position() const {
 	return m_robot.get_position();
 }
 
-void Level::set_player_position(vec2 pos)
-{
-	m_robot.set_position(pos);
-	m_robot.set_head_position(add(pos, { 0.f, -48.f }));
-}
-
 int Level::get_num_ghosts() const {
     return m_ghosts.size();
 }

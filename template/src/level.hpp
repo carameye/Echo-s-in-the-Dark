@@ -31,9 +31,8 @@ class Level
     // Gets the camera position when the level first starts
     vec2 get_starting_camera_position() const;
 
-	// Gets/sets the position of the player
+	// Gets the position of the player
 	vec2 get_player_position() const;
-	void set_player_position(vec2 pos);
 
 	// Returns the number of ghosts in the level
 	int get_num_ghosts() const;
