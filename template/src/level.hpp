@@ -31,8 +31,9 @@ class Level
     // Gets the camera position when the level first starts
     vec2 get_starting_camera_position() const;
 
-	// Gets the position of the player
+	// Gets/sets the position of the player
 	vec2 get_player_position() const;
+	void set_player_position(vec2 pos);
 
 	// Returns the number of ghosts in the level
 	int get_num_ghosts() const;
@@ -44,7 +45,7 @@ class Level
 	void reset_level();
 
 	// Generate a level from a text file
-	bool parse_level(std::string level, std::vector<std::string> unlocked);
+	bool parse_level(std::string level, std::vector<std::string> unlocked, vec2 start_pos);
 
 	// Handle input
 	std::string handle_key_press(int key, int action);
