@@ -47,6 +47,8 @@ bool World::init(GLFWwindow* window, vec2 screen)
 	glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
 	m_screen_scale = static_cast<float>(fb_width) / screen.x;
 
+	m_robot_ls_pos = { -1000.f, -1000.f };
+
 	// Initialize the screen texture
 	m_screen_tex.create_from_screen(m_window);
 
@@ -100,6 +102,11 @@ void World::update(float elapsed_ms)
 		on_load_delay -= elapsed_ms;
 	}
 	camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
+
+	if (m_level.get_current_level() == "level_select")
+	{
+		m_robot_ls_pos = m_level.get_player_position();
+	}
 }
 
 // Render our game world
@@ -315,7 +322,7 @@ void World::load_level(std::string level)
 {
 	stop_music();
 	m_load();
-	bool valid = m_level.parse_level(level, m_unlocked);
+	bool valid = m_level.parse_level(level, m_unlocked, m_robot_ls_pos);
 	start_sounds();
 
 	if (valid)

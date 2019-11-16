@@ -44,7 +44,7 @@ class Level
 	void reset_level();
 
 	// Generate a level from a text file
-	bool parse_level(std::string level, std::vector<std::string> unlocked);
+	bool parse_level(std::string level, std::vector<std::string> unlocked, vec2 start_pos);
 
 	// Handle input
 	std::string handle_key_press(int key, int action);

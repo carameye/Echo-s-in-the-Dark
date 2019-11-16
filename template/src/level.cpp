@@ -241,7 +241,7 @@ std::string Level::interact()
     return "";
 }
 
-bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
+bool Level::parse_level(std::string level, std::vector<std::string> unlocked, vec2 start_pos)
 {
     m_level = level;
 
@@ -381,6 +381,10 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked)
 
     // Spawn the robot
     vec2 robot_pos = {j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"]};
+	if (level == "level_select" && start_pos.x > -1.f && start_pos.y > -1.f) {
+		robot_pos = to_grid_position(start_pos);
+	}
+
 	if (level == "level_select") {
 		m_starting_camera_pos = to_pixel_position(robot_pos);
 	}

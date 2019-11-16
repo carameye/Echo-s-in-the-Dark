@@ -84,6 +84,7 @@ private:
 	float on_load_delay = 0.f; // keeps the player looking at level goal for delay ms
 
 	Level m_level;
+	vec2 m_robot_ls_pos;
 
 	// game sounds
 	Mix_Music* m_background_music;
