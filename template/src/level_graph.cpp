@@ -139,8 +139,6 @@ std::vector<vec2> LevelGraph::get_path(const vec2 start, const vec2 goal)
 		path.push_back(best_path[i]->get_position());
 	}
 
-	path.push_back(goal);
-
 	return path;
 }
 

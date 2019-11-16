@@ -70,6 +70,7 @@ std::string Level::update(float elapsed_ms) {
 
         for (auto &i_ghost : m_ghosts) {
             i_ghost->set_level_graph(m_graph);
+			i_ghost->set_path();
             i_ghost->update_is_chasing(headlight_channel);
         }
         m_has_colour_changed = false;

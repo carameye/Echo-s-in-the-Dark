@@ -43,6 +43,9 @@ public:
 	// Update whether ghost is currently visible
 	void update_is_chasing(vec3 headlight_color);
 
+	// Set path
+	void set_path();
+
 private:
     vec3 m_colour;
     bool m_is_chasing;
