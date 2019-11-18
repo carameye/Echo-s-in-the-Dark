@@ -25,7 +25,8 @@
 #define shadow_path data_path "/levels/shadow/"
 #define save_file data_path "/save/save_file.json"
 
-enum class Status { nothing, main_menu, new_game, load_game, resume, reset, save_game, exit };
+enum class Status { nothing, main_menu, new_game, load_game, resume, reset, save_game, exit,
+					story_mode, maker_mode, play_level, make_level};
 
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..

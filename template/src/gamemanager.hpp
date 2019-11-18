@@ -2,6 +2,7 @@
 
 #include "world.hpp"
 #include "UI/menu.hpp"
+#include "maker.hpp"
 
 #include <stack>
 
@@ -30,6 +31,8 @@ public:
 
 	// Load menus
 	void load_main_menu();
+	void load_story_menu();
+	void load_maker_menu();
 	void load_pause_menu();
 	void load_loading_menu();
 	void draw_loading_screen();
@@ -42,11 +45,15 @@ private:
 	// Information about the state
 	bool m_world_valid = true;
 	bool m_in_menu = false;
+	bool m_in_maker = false;
 
 	// Game states
 	World m_world;
+	Maker m_maker;
 	Menu* m_menu;
 	Menu m_main_menu;
+	Menu m_story_menu;
+	Menu m_maker_menu;
 	Menu m_pause_menu;
 	Menu m_load_menu;
 

@@ -67,6 +67,61 @@ void RenderingSystem::process(int min, int max)
 	}
 }
 
+void RenderingSystem::add(int id)
+{
+	if (s_render_components.find(id) != s_render_components.end() &&
+		s_motion_components.find(id) != s_motion_components.end())
+	{
+		level_entities.push_back(id);
+	}
+
+	if (s_ui_render_components.find(id) != s_ui_render_components.end() &&
+		s_ui_motion_components.find(id) != s_ui_motion_components.end())
+	{
+		menu_entities.push_back(id);
+	}
+}
+
+void RenderingSystem::remove(int id, bool clean)
+{
+	auto it = std::find(level_entities.begin(), level_entities.end(), id);
+	if (it != level_entities.end())
+	{
+		if (clean)
+		{
+			RenderComponent* rc = s_render_components[id];
+
+			glDeleteBuffers(1, &rc->mesh.vbo);
+			glDeleteBuffers(1, &rc->mesh.ibo);
+			glDeleteVertexArrays(1, &rc->mesh.vao);
+
+			glDeleteShader(rc->effect.vertex);
+			glDeleteShader(rc->effect.fragment);
+			glDeleteShader(rc->effect.program);
+		}
+
+		level_entities.erase(it);
+	}
+	it = std::find(menu_entities.begin(), menu_entities.end(), id);
+	if (it != menu_entities.end())
+	{
+		if (clean)
+		{
+			RenderComponent* rc = s_ui_render_components[id];
+
+			glDeleteBuffers(1, &rc->mesh.vbo);
+			glDeleteBuffers(1, &rc->mesh.ibo);
+			glDeleteVertexArrays(1, &rc->mesh.vao);
+
+			glDeleteShader(rc->effect.vertex);
+			glDeleteShader(rc->effect.fragment);
+			glDeleteShader(rc->effect.program);
+		}
+
+		menu_entities.erase(it);
+	}
+}
+
 void RenderingSystem::destroy()
 {
 	for (auto& entity : level_entities)
