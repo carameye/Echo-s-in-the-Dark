@@ -28,8 +28,11 @@ public:
 	// Returns the current brick position
 	vec2 get_position()const;
 
-	// Sets the new turtle position
+	// Sets the new ghost position
 	void set_position(vec2 position);
+
+	// Get the colour of the ghost
+	vec3 get_colour();
 
 	// Returns the bricks hitbox for collision detection
 	Hitbox get_hitbox() const;

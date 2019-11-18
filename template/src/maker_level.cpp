@@ -30,7 +30,6 @@ void MakerLevel::destroy()
 
 void MakerLevel::generate_starter()
 {
-	m_j = {};
 	for (int i = 0; i < 40; i++)
 	{
 		for (int j = 0; j < 40; j++)
@@ -148,6 +147,72 @@ void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera)
 	for (int i = start; i < next_id; i++)
 	{
 		m_rendering_system.add(i);
+	}
+}
+
+void MakerLevel::process()
+{
+	json j = {};
+	j["size"]["width"] = (int)(width / 64.f);
+	j["size"]["height"] = (int)(height / 64.f);
+	j["ambient_light"] = 0.0;
+	j["spawn"]["pos"]["x"] = (int)(m_robot.get_position().x / 64.f);
+	j["spawn"]["pos"]["y"] = (int)(m_robot.get_position().y / 64.f);
+	j["signs"] = json::array();
+	std::vector<json> doors;
+	std::vector<json> ghosts;
+	std::vector<json> bricks;
+	std::vector<json> torches;
+
+	for (auto i : m_interactables)
+	{
+		json door;
+		door["pos"]["x"] = (int)(i->get_position().x / 64.f);
+		door["pos"]["y"] = (int)(i->get_position().y / 64.f);
+		door["next_level"] = i->get_destination();
+		doors.push_back(door);
+	}
+
+	for (auto i : m_ghosts)
+	{
+		json ghost;
+		ghost["pos"]["x"] = (int)(i->get_position().x / 64.f);
+		ghost["pos"]["y"] = (int)(i->get_position().y / 64.f);
+		ghost["colour"]["r"] = i->get_colour().x;
+		ghost["colour"]["g"] = i->get_colour().y;
+		ghost["colour"]["b"] = i->get_colour().z;
+		ghosts.push_back(ghost);
+	}
+
+	for (auto i : m_bricks)
+	{
+		json brick;
+		brick["pos"]["x"] = (int)(i->get_position().x / 64.f);
+		brick["pos"]["y"] = (int)(i->get_position().y / 64.f);
+		brick["colour"]["r"] = i->get_colour().x;
+		brick["colour"]["g"] = i->get_colour().y;
+		brick["colour"]["b"] = i->get_colour().z;
+		bricks.push_back(brick);
+	}
+
+	for (auto i : m_torches)
+	{
+		json torch;
+		torch["pos"]["x"] = (int)(i->get_position().x / 64.f);
+		torch["pos"]["y"] = (int)(i->get_position().y / 64.f);
+		torches.push_back(torch);
+	}
+
+	j["doors"] = json(doors);
+	j["ghosts"] = json(ghosts);
+	j["bricks"] = json(bricks);
+	j["torches"] = json(torches);
+
+	std::ofstream o(maker_file);
+	if (o.is_open())
+	{
+		o << j.dump() << std::endl;
+		o.close();
 	}
 }
 

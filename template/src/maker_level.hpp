@@ -34,6 +34,9 @@ public:
 	std::string handle_key_press(int key, int action);
 	void handle_mouse_click(double xpos, double ypos, vec2 camera);
 
+	// Generate JSON and shadow image for current level
+	void process();
+
 private:
 	// Spawn entities
 	bool spawn_robot(vec2 position);
@@ -53,9 +56,6 @@ private:
 	// Systems
 	int min;
 	RenderingSystem m_rendering_system;
-
-	// Json object representing level
-	nlohmann::json m_j;
 
 	// Level entities
 	bool permanent[40][40];

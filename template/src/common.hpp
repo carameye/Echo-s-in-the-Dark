@@ -24,6 +24,7 @@
 #define level_path data_path "/levels/json/"
 #define shadow_path data_path "/levels/shadow/"
 #define save_file data_path "/save/save_file.json"
+#define maker_file level_path "maker_level.json"
 
 enum class Status { nothing, main_menu, new_game, load_game, resume, reset, save_game, exit,
 					story_mode, maker_mode, play_level, make_level};

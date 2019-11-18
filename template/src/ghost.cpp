@@ -128,6 +128,11 @@ void Ghost::set_position(vec2 position)
 	m_path.clear();
 }
 
+vec3 Ghost::get_colour()
+{
+	return m_colour;
+}
+
 Hitbox Ghost::get_hitbox() const
 {
 	std::vector<Square> squares(1);

@@ -38,6 +38,11 @@ std::string Door::get_destination()
     return action;
 }
 
+vec2 Door::get_position()
+{
+	return mc.position;
+}
+
 Hitbox Door::get_hitbox() const
 {
 	std::vector<Square> squares(2);
