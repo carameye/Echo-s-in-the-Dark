@@ -30,6 +30,9 @@ public:
 	// Generate a large basic level
 	void generate_starter();
 
+	// Load previously made level
+	void load_level();
+
 	// Handle input
 	std::string handle_key_press(int key, int action);
 	void handle_mouse_click(double xpos, double ypos, vec2 camera);

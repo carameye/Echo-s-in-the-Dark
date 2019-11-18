@@ -55,8 +55,14 @@ bool Maker::init(GLFWwindow* window, vec2 screen)
 	return true;
 }
 
+void Maker::set_load_trigger(void(*l)())
+{
+	m_load = l;
+}
+
 void Maker::generate_starter()
 {
+	m_load();
 	m_maker_level.generate_starter();
 }
 
@@ -201,10 +207,12 @@ void Maker::handle_mouse_click(GLFWwindow* window, int button, int action, int m
 
 void Maker::load()
 {
-	
+	m_load();
+	m_maker_level.load_level();
 }
 
 void Maker::save()
 {
+	m_load();
 	m_maker_level.process();
 }

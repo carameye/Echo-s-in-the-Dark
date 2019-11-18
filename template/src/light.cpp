@@ -37,7 +37,7 @@ bool Light::init(std::string level) {
 		|| !brickmap_textures[level].is_valid())
 	{
 		std::string path = shadow_path;
-		path = path.append(level).append("_brickmap.png");
+		path = path.append(level).append("_brickmap.bmp");
 		if (!brickmap_textures[level].load_from_file(path.c_str()))
 		{
 			fprintf(stderr, "Failed to load brickmap texture!");

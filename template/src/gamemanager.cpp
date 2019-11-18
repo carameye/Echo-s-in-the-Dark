@@ -24,6 +24,11 @@ static void load()
 	gm->draw_loading_screen();
 }
 
+static void exit()
+{
+	gm->back_to_maker_menu();
+}
+
 bool GameManager::init(vec2 screen)
 {
 	gm = this;
@@ -239,11 +244,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		case Status::resume:
 			m_menu->stop_music();
 			m_in_menu = false;
-			if (m_in_maker)
-			{
-				
-			}
-			else
+			if (!m_in_maker)
 			{
 				m_world.start_sounds();
 			}
@@ -254,7 +255,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_in_maker = false;
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
-			m_world.set_pl_functions(load);
+			m_world.set_pl_functions(load, exit);
 			m_world.start_sounds();
 			m_world.start_level(true);
 			break;
@@ -264,7 +265,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_in_maker = false;
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
-			m_world.set_pl_functions(load);
+			m_world.set_pl_functions(load, exit);
 			m_world.start_level(false);
 			m_world.start_sounds();
 			break;
@@ -288,6 +289,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			{
 				m_maker.destroy();
 				m_maker.init(m_window, m_screen);
+				m_maker.set_load_trigger(load);
 				m_maker.generate_starter();
 			}
 			else
@@ -311,6 +313,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_in_maker = true;
 			m_maker.destroy();
 			m_maker.init(m_window, m_screen);
+			m_maker.set_load_trigger(load);
 			m_maker.generate_starter();
 			break;
 		case Status::play_level:
@@ -319,9 +322,22 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_in_maker = false;
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
-			m_world.set_pl_functions(load);
-			//m_world.start_maker_level();
+			m_world.set_pl_functions(load, exit);
+			if (!m_world.start_maker_level()) {
+				m_world.destroy();
+				m_in_menu = true;
+				m_menu->start_music();
+			}
 			m_world.start_sounds();
+			break;
+		case Status::load_level:
+			m_menu->stop_music();
+			m_in_menu = false;
+			m_in_maker = true;
+			m_maker.destroy();
+			m_maker.init(m_window, m_screen);
+			m_maker.set_load_trigger(load);
+			m_maker.load();
 			break;
 		default:
 			break;
@@ -354,8 +370,9 @@ void GameManager::load_story_menu()
 void GameManager::load_maker_menu()
 {
 	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("make_level.png", Status::make_level));
 	buttons.push_back(std::make_pair("play_level.png", Status::play_level));
+	buttons.push_back(std::make_pair("make_level.png", Status::make_level));
+	buttons.push_back(std::make_pair("load_level.png", Status::load_level));
 	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
 	m_maker_menu.setup(buttons);
 }
@@ -380,4 +397,14 @@ void GameManager::load_loading_menu()
 void GameManager::draw_loading_screen()
 {
 	m_load_menu.draw();
+}
+
+void GameManager::back_to_maker_menu()
+{
+	m_world.stop_music();
+	m_world.destroy();
+	m_in_maker = false;
+	m_in_menu = true;
+	m_menu = &m_maker_menu;
+	m_menu->start_music();
 }

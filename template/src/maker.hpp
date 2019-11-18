@@ -23,6 +23,9 @@ public:
 	// Creates a window, sets up events and begins the game
 	bool init(GLFWwindow* window, vec2 screen);
 
+	// Set load trigger
+	void set_load_trigger(void (*l)());
+
 	// Generates a large basic world
 	void generate_starter();
 
@@ -43,14 +46,16 @@ public:
 	void handle_mouse_move(GLFWwindow* window, double xpos, double ypos);
 	void handle_mouse_click(GLFWwindow* window, int button, int action, int mods);
 
-	// Save the game to save file
+	// Save the level to save file
 	void save();
 
-private:
-	// Load state from save file
+	// Load level from save file
 	void load();
 
 private:
+	// Load screen event trigger
+	void (*m_load)();
+
 	// Window handle
 	GLFWwindow* m_window;
 	vec2 m_screen;

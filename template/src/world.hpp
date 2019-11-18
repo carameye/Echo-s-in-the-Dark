@@ -24,7 +24,7 @@ public:
 	bool init(GLFWwindow *window, vec2 screen);
 
 	// Set pause and load functions
-	void set_pl_functions(void (*l)());
+	void set_pl_functions(void (*l)(), void (*e)());
 
 	// Releases all associated resources
 	void destroy();
@@ -50,6 +50,9 @@ public:
 	// Begin level
 	void start_level(bool new_game);
 
+	// Begin level made in echo maker
+	bool start_maker_level();
+
 	// Reset the level
 	void reset();
 
@@ -66,6 +69,7 @@ private:
 private:
 	// Load menu access
 	void (*m_load)();
+	void (*m_exit)();
 
 	// Window handle
 	GLFWwindow* m_window;

@@ -55,9 +55,10 @@ bool World::init(GLFWwindow* window, vec2 screen)
 	return true;
 }
 
-void World::set_pl_functions(void (*l)())
+void World::set_pl_functions(void (*l)(), void (*e)())
 {
 	m_load = l;
+	m_exit = e;
 }
 
 // Releases all the associated resources
@@ -207,12 +208,20 @@ bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 		} else if (r == "door locked") {
 			int channel = Mix_PlayChannel(-1, m_locked_door_effect, 0);
 		} else {
-			if (find(m_unlocked.begin(), m_unlocked.end(), r) == m_unlocked.end())
+			if (r == "quit" || r == "complete")
 			{
-				m_unlocked.push_back(r);
+				m_exit();
+				return true;
 			}
-			Mix_PlayChannel(-1, m_open_door_effect, 0);
-			load_level(r);
+			else
+			{
+				if (find(m_unlocked.begin(), m_unlocked.end(), r) == m_unlocked.end())
+				{
+					m_unlocked.push_back(r);
+				}
+				Mix_PlayChannel(-1, m_open_door_effect, 0);
+				load_level(r);
+			}
 		}
 	}
 	return true;
@@ -311,6 +320,18 @@ void World::start_level(bool new_game)
 		load();
 		load_level("level_select");
 	}
+}
+
+bool World::start_maker_level()
+{
+	std::ifstream f(maker_file);
+	if (f.good())
+	{
+		load_level("maker_level");
+		return true;
+	}
+
+	return false;
 }
 
 void World::reset()

@@ -36,6 +36,7 @@ public:
 	void load_pause_menu();
 	void load_loading_menu();
 	void draw_loading_screen();
+	void back_to_maker_menu();
 
 private:
 	// Window information

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "maker_level.hpp"
+#include "bitmap_image.hpp"
 
 using json = nlohmann::json;
 
@@ -58,6 +59,135 @@ void MakerLevel::generate_starter()
 			}
 		}
 	}
+
+	m_rendering_system.process(min, next_id);
+}
+
+void MakerLevel::load_level()
+{
+	for (int i = 0; i < 40; i++)
+	{
+		for (int j = 0; j < 40; j++)
+		{
+			permanent[i][j] = false;
+			slots[i][j] = nullptr;
+		}
+	}
+
+	min = next_id;
+
+	permanent[4][37] = true;
+	permanent[4][38] = true;
+	permanent[6][36] = true;
+
+	for (float x = 0.f; x < width; x += 64.f)
+	{
+		for (float y = 0.f; y < height; y += 64.f)
+		{
+			if ((x == 0.f || x == width - 64.f) || (y == 0.f || y == height - 64.f))
+			{
+				permanent[(int)(x / 64.f)][(int)(y / 64.f)] = true;
+			}
+		}
+	}
+	std::ifstream file(maker_file);
+	if (!file.is_open()) {
+		destroy();
+		generate_starter();
+		return;
+	}
+	fprintf(stderr, "Opened level file\n");
+
+	// clear all level-dependent resources
+	destroy();
+
+	// Parse the json
+	json j = json::parse(file);
+
+	width = j["size"]["width"] * 64.f;
+	height = j["size"]["height"] * 64.f;
+
+	// Get first entity in this group
+	int min = next_id;
+
+	// Get the doors
+	fprintf(stderr, "	getting doors\n");
+	for (int i = 0; i < j["doors"].size(); i++) {
+		json door = j["doors"][i];
+		vec2 pos = { door["pos"]["x"], door["pos"]["y"] };
+		spawn_door(to_pixel_position(pos), door["next_level"]);
+	}
+
+	fprintf(stderr, "   getting torches\n");
+	for (json torch : j["torches"])
+	{
+		vec2 pos = { torch["pos"]["x"], torch["pos"]["y"] };
+		spawn_torch(to_pixel_position(pos));
+	}
+
+	// Get the ghosts
+	fprintf(stderr, "	getting ghosts\n");
+	for (json ghost : j["ghosts"]) {
+		vec2 pos = { ghost["pos"]["x"], ghost["pos"]["y"] };
+		vec3 colour = { ghost["colour"]["r"], ghost["colour"]["g"], ghost["colour"]["b"] };
+		spawn_ghost(to_pixel_position(pos), colour);
+	}
+
+	// Get the bricks
+	fprintf(stderr, "	getting bricks\n");
+	std::vector<vec2> potential_cp;
+	std::vector<vec2> diffs = { {-1.f, -1.f},
+							   {1.f,  -1.f},
+							   {-1.f, 1.f},
+							   {1.f,  1.f} };
+
+	std::vector<bool> empty(width, false);
+	std::vector<std::vector<bool>> bricks(height, empty);
+	std::vector<std::vector<bool>> white_bricks(height, empty);
+	std::vector<std::vector<bool>> red_bricks(height, empty);
+	std::vector<std::vector<bool>> green_bricks(height, empty);
+	std::vector<std::vector<bool>> blue_bricks(height, empty);
+
+	for (json brick : j["bricks"]) {
+		vec2 pos = { brick["pos"]["x"], brick["pos"]["y"] };
+		vec3 colour = { brick["colour"]["r"], brick["colour"]["g"], brick["colour"]["b"] };
+
+		// Set brick here
+		bricks[pos.y][pos.x] = true;
+
+		if (colour.x == 1.f && colour.y == 1.f && colour.z == 1.f) {
+			white_bricks[pos.y][pos.x] = true;
+			red_bricks[pos.y][pos.x] = true;
+			green_bricks[pos.y][pos.x] = true;
+			blue_bricks[pos.y][pos.x] = true;
+		}
+		else if (colour.x == 1.f && colour.y == 0.f && colour.z == 0.f) {
+			red_bricks[pos.y][pos.x] = true;
+		}
+		else if (colour.x == 0.f && colour.y == 1.f && colour.z == 0.f) {
+			green_bricks[pos.y][pos.x] = true;
+		}
+		else if (colour.x == 0.f && colour.y == 0.f && colour.z == 1.f) {
+			blue_bricks[pos.y][pos.x] = true;
+		}
+
+		// Add brick to critical points if not already cancelled
+		for (vec2 diff : diffs) {
+			vec2 pot = add(pos, diff);
+			if (pot.x >= 0.f && pot.x < width && pot.y >= 0.f && pot.y < height) {
+				potential_cp.push_back(pot);
+			}
+		}
+
+		spawn_brick(to_pixel_position(pos), colour);
+	}
+
+	fprintf(stderr, "	built world with %ld doors, %ld ghosts, and %ld bricks\n",
+		m_interactables.size(), m_ghosts.size(), m_bricks.size());
+
+	// Spawn the robot
+	vec2 robot_pos = { j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"] };
+	spawn_robot(to_pixel_position(robot_pos));
 
 	m_rendering_system.process(min, next_id);
 }
@@ -214,6 +344,25 @@ void MakerLevel::process()
 		o << j.dump() << std::endl;
 		o.close();
 	}
+
+	bitmap_image image(40 * 64, 40 * 64);
+	image.set_all_channels(255, 255, 255);
+	rgb_t black = make_colour(0, 0, 0);
+
+	for (auto b : m_bricks)
+	{
+		int startx = b->get_position().x;
+		int starty = b->get_position().y;
+		for (int i = 0; i < 64; i++)
+		{
+			for (int j = 0; j < 64; j++)
+			{
+				image.set_pixel(startx + i, starty + j, black);
+			}
+		}
+	}
+
+	image.save_image(maker_shadow);
 }
 
 bool MakerLevel::spawn_door(vec2 position, std::string next_level)

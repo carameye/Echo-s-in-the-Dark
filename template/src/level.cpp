@@ -399,7 +399,6 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
 
     m_rendering_system.process(min, next_id);
 
-
     return true;
 }
 
