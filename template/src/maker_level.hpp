@@ -28,10 +28,10 @@ public:
 	void destroy();
 
 	// Generate a large basic level
-	void generate_starter();
+	vec2 generate_starter();
 
 	// Load previously made level
-	void load_level();
+	vec2 load_level();
 
 	// Handle input
 	std::string handle_key_press(int key, int action);

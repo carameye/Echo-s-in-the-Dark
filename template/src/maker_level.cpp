@@ -29,7 +29,7 @@ void MakerLevel::destroy()
 	m_rendering_system.destroy();
 }
 
-void MakerLevel::generate_starter()
+vec2 MakerLevel::generate_starter()
 {
 	for (int i = 0; i < 40; i++)
 	{
@@ -61,9 +61,11 @@ void MakerLevel::generate_starter()
 	}
 
 	m_rendering_system.process(min, next_id);
+
+	return m_robot.get_position();
 }
 
-void MakerLevel::load_level()
+vec2 MakerLevel::load_level()
 {
 	for (int i = 0; i < 40; i++)
 	{
@@ -94,7 +96,7 @@ void MakerLevel::load_level()
 	if (!file.is_open()) {
 		destroy();
 		generate_starter();
-		return;
+		return { 0.f, 0.f };
 	}
 	fprintf(stderr, "Opened level file\n");
 
@@ -190,6 +192,8 @@ void MakerLevel::load_level()
 	spawn_robot(to_pixel_position(robot_pos));
 
 	m_rendering_system.process(min, next_id);
+
+	return m_robot.get_position();
 }
 
 void MakerLevel::draw_entities(const mat3& projection, const vec2& camera_shift) 
@@ -486,6 +490,7 @@ bool MakerLevel::delete_object(vec2 position)
 	auto it_t = std::find(m_torches.begin(), m_torches.end(), e);
 	if (it_t != m_torches.end())
 	{
+		clean = false;
 		m_torches.erase(it_t);
 	}
 

@@ -63,7 +63,7 @@ void Maker::set_load_trigger(void(*l)())
 void Maker::generate_starter()
 {
 	m_load();
-	m_maker_level.generate_starter();
+	camera_pos = m_maker_level.generate_starter();
 }
 
 // Releases all the associated resources
@@ -208,7 +208,7 @@ void Maker::handle_mouse_click(GLFWwindow* window, int button, int action, int m
 void Maker::load()
 {
 	m_load();
-	m_maker_level.load_level();
+	camera_pos = m_maker_level.load_level();
 }
 
 void Maker::save()
