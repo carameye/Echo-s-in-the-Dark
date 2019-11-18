@@ -77,12 +77,9 @@ void Ghost::update(float ms)
     if (!m_is_chasing) {
         return;
     }
-	if (len(sub(m_goal, mc.position)) < 800.f)
+	if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > TOLERANCE)
 	{
-		if (m_path.size() == 0 || len(sub(m_path.back(), m_goal)) > TOLERANCE)
-		{
-			m_path = m_level_graph->get_path(mc.position, m_goal);
-		}
+		set_path();
 	}
 
 	if (m_path.size() > 0)
@@ -162,6 +159,14 @@ void Ghost::update_is_chasing(vec3 headlight_color) {
         return;
     }
     m_is_chasing = !(m_colour.x == headlight_color.x && m_colour.y == headlight_color.y && m_colour.z == headlight_color.z);
+}
+
+void Ghost::set_path()
+{
+	if (len(sub(m_goal, mc.position)) < 800.f)
+	{
+		m_path = m_level_graph->get_path(mc.position, m_goal);
+	}
 }
 
 bool Ghost::colour_is_white(vec3 colour) {
