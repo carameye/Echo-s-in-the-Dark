@@ -83,6 +83,8 @@ bool GameManager::init(vec2 screen)
 	m_main_menu.init(m_window, screen);
 	load_main_menu();
 
+	m_main_menu.start_music();
+
 	m_story_menu.init(m_window, screen);
 	load_story_menu();
 

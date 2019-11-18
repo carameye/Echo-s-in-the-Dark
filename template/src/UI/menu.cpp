@@ -40,9 +40,6 @@ bool Menu::init(GLFWwindow* window, vec2 screen)
 		return false;
 	}
 
-	// Fade background music in and then play it indefinitely
-	Mix_FadeInMusic(m_background_music, -1, 1000);
-
 	return true;
 }
 
