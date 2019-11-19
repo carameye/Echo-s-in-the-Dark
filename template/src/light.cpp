@@ -55,7 +55,17 @@ bool Light::init(std::string level) {
 }
 
 // Releases all graphics resources
-void Light::destroy() {
+void Light::destroy() 
+{
+	for (const auto& it : brickmap_textures)
+	{
+		Texture t = it.second;
+		if (t.id != 0) glDeleteTextures(1, &t.id);
+		if (t.depth_render_buffer_id != 0) glDeleteRenderbuffers(1, &t.depth_render_buffer_id);	
+	}
+
+	brickmap_textures.clear();
+
     glDeleteBuffers(1, &mesh.vbo);
 
     glDeleteShader(effect.vertex);

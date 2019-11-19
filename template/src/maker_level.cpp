@@ -40,6 +40,9 @@ vec2 MakerLevel::generate_starter()
 		}
 	}
 
+	m_ot = ObjectType::del;
+	m_ot_selection = 0;
+
 	min = next_id;
 
 	spawn_door({ 4.f * 64.f, height - 3 * 64.f }, "quit");
@@ -75,6 +78,9 @@ vec2 MakerLevel::load_level()
 			slots[i][j] = nullptr;
 		}
 	}
+
+	m_ot = ObjectType::del;
+	m_ot_selection = 0;
 
 	min = next_id;
 
@@ -367,6 +373,7 @@ void MakerLevel::process()
 	}
 
 	image.save_image(maker_shadow);
+	image.clear();
 }
 
 bool MakerLevel::spawn_door(vec2 position, std::string next_level)

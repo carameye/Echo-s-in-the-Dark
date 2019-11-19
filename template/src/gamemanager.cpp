@@ -273,6 +273,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			break;
 		case Status::main_menu:
 			m_menu = &m_main_menu;
+			m_world.destroy();
 			break;
 		case Status::save_game:
 			if (m_in_maker)
