@@ -59,6 +59,9 @@ set(SOURCE_FILES
         src/systems.cpp
         src/level.cpp
         src/world.cpp
+        src/torch.cpp 
+        src/maker.cpp
+        src/maker_level.cpp
         src/project_path.hpp
 	    src/common.hpp
 		src/background.hpp
@@ -87,7 +90,9 @@ set(SOURCE_FILES
         src/systems.hpp
         src/level.hpp
         src/world.hpp
-        src/torch.cpp src/torch.hpp)
+        src/torch.hpp
+        src/maker.hpp
+        src/maker_level.hpp)
 
 if (IS_OS_MAC)
     include_directories(/usr/local/include)
@@ -106,6 +111,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS 0)
 target_include_directories(${PROJECT_NAME} PUBLIC ext/stb_image/)
 target_include_directories(${PROJECT_NAME} PUBLIC ext/gl3w)
 target_include_directories(${PROJECT_NAME} PUBLIC ext/json)
+target_include_directories(${PROJECT_NAME} PUBLIC ext/bitmap)
 
 # Find OpenGL
 find_package(OpenGL REQUIRED)
