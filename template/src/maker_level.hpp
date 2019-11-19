@@ -36,6 +36,10 @@ public:
 	// Handle input
 	std::string handle_key_press(int key, int action);
 	void handle_mouse_click(double xpos, double ypos, vec2 camera);
+	void handle_mouse_move(float xpos, float ypos, vec2 camera_pos);
+
+	// Refresh the object that is hovering under the mouse
+	void refresh_hover_object(float x, float y);
 
 	// Generate JSON and shadow image for current level
 	void process();
@@ -55,6 +59,8 @@ private:
 	ObjectType m_ot = ObjectType::del;
 	int m_ot_selection = 0;
 	vec3 m_color = { 1.f, 1.f, 1.f };
+	bool m_hover_object_is_spawned = false;
+	vec2 m_hover_object_position;
 
 	// Systems
 	int min;

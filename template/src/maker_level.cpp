@@ -259,6 +259,12 @@ void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera)
 
 	int start = next_id;
 
+	if (m_hover_object_is_spawned)
+	{
+		m_hover_object_is_spawned = false;
+		return;
+	}
+
 	switch (m_ot)
 	{
 	case ObjectType::del:
@@ -283,6 +289,53 @@ void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera)
 	for (int i = start; i < next_id; i++)
 	{
 		m_rendering_system.add(i);
+	}
+}
+
+void MakerLevel::handle_mouse_move(float xpos, float ypos, vec2 camera_pos)
+{
+	float x = xpos + camera_pos.x - 600.f + brick_size / 2.f;
+	float y = ypos + camera_pos.y - 400.f + brick_size / 2.f;
+	vec2 position = { x - fmod(x, 64.f) , y - fmod(y, 64.f) };
+	refresh_hover_object(position.x, position.y);
+}
+
+void MakerLevel::refresh_hover_object(float x, float y)
+{
+	vec2 position = { x, y };
+
+	if (m_hover_object_is_spawned)
+	{
+		delete_object(m_hover_object_position);
+	}
+
+	m_hover_object_position = position;
+
+
+	switch (m_ot)
+	{
+	case ObjectType::del:
+		m_hover_object_is_spawned = false;
+		break;
+	case ObjectType::brick:
+		m_hover_object_is_spawned = spawn_brick(position, m_color);
+		break;
+	case ObjectType::torch:
+		m_hover_object_is_spawned = spawn_torch(position);
+		break;
+	case ObjectType::door:
+		m_hover_object_is_spawned = spawn_door(position, "hover");
+		break;
+	case ObjectType::ghost:
+		m_hover_object_is_spawned = spawn_ghost(position, m_color);
+		break;
+	default:
+		break;
+	}
+
+	if (m_hover_object_is_spawned)
+	{
+		m_rendering_system.add(next_id - 1);
 	}
 }
 
