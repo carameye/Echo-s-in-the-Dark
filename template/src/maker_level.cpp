@@ -209,12 +209,8 @@ void MakerLevel::draw_entities(const mat3& projection, const vec2& camera_shift)
 
 std::string MakerLevel::handle_key_press(int key, int action)
 {
-	if (action == GLFW_PRESS && key == GLFW_KEY_E) {
+	if (action == GLFW_PRESS && key == GLFW_KEY_TAB) {
 		m_ot_selection = (m_ot_selection + 1) % 5;
-		m_ot = (ObjectType)m_ot_selection;
-	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_Q) {
-		m_ot_selection = (m_ot_selection - 1) % 5;
 		m_ot = (ObjectType)m_ot_selection;
 	}
 
