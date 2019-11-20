@@ -145,9 +145,7 @@ void Maker::update(float ms)
 		camera_pos.x += step_size * ms / 100.f;
 	}
 
-	if (movement[0] || movement[1] || movement[2] || movement[3]) {
-		m_maker_level.handle_mouse_move(mouse_pos.x, mouse_pos.y, camera_pos);
-	}
+	m_maker_level.handle_mouse_move(mouse_pos.x, mouse_pos.y, camera_pos);
 }
 
 // Should the game be over ?
@@ -202,7 +200,6 @@ bool Maker::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 void Maker::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
 	mouse_pos = { (float)xpos, (float)ypos };
-	m_maker_level.handle_mouse_move((float)xpos, (float)ypos, camera_pos);
 }
 
 void Maker::handle_mouse_click(GLFWwindow* window, int button, int action, int mods)

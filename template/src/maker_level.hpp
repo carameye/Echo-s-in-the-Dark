@@ -34,7 +34,7 @@ public:
 	vec2 load_level();
 
 	// Handle input
-	std::string handle_key_press(int key, int action);
+	void handle_key_press(int key, int action);
 	void handle_mouse_click(double xpos, double ypos, vec2 camera);
 	void handle_mouse_move(float xpos, float ypos, vec2 camera_pos);
 

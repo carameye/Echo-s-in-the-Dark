@@ -191,7 +191,7 @@ void MakerLevel::draw_entities(const mat3& projection, const vec2& camera_shift)
 	m_rendering_system.render(projection, camera_shift, { 1.f, 1.f, 1.f });
 }
 
-std::string MakerLevel::handle_key_press(int key, int action)
+void MakerLevel::handle_key_press(int key, int action)
 {
 	if (action == GLFW_PRESS && key == GLFW_KEY_TAB) {
 		m_ot_selection = (m_ot_selection + 1) % 6;
@@ -226,8 +226,6 @@ std::string MakerLevel::handle_key_press(int key, int action)
 			m_color = { 0.f, 0.f, 1.f };
 		}
 	}
-
-	return "";
 }
 
 void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera)
