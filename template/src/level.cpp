@@ -490,7 +490,7 @@ bool Level::spawn_ghost(vec2 position, vec3 colour)
 
 bool Level::spawn_robot(vec2 position)
 {
-    if (m_robot.init(next_id))
+    if (m_robot.init(next_id, true))
     {
         next_id += 104;
         m_robot.set_position(position);

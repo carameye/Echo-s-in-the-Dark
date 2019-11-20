@@ -15,7 +15,7 @@
 
 #include <vector>
 
-enum class ObjectType { del, brick, torch, door, ghost };
+enum class ObjectType { del, brick, torch, door, ghost, robot };
 
 class MakerLevel
 {
@@ -56,11 +56,13 @@ private:
 	std::string m_level;
 	float width = 64.f * 40.f, height = 64.f * 40.f;
 
+	ObjectType m_lot = ObjectType::del;
 	ObjectType m_ot = ObjectType::del;
 	int m_ot_selection = 0;
 	vec3 m_color = { 1.f, 1.f, 1.f };
 	bool m_hover_object_is_spawned = false;
 	vec2 m_hover_object_position;
+	vec2 m_robot_position;
 
 	// Systems
 	int min;
