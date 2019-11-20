@@ -112,8 +112,8 @@ vec2 MakerLevel::load_level()
 	// Parse the json
 	json j = json::parse(file);
 
-	width = j["size"]["width"] * 64.f;
-	height = j["size"]["height"] * 64.f;
+	width = (float) j["size"]["width"] * 64.f;
+	height = (float) j["size"]["height"] * 64.f;
 
 	// Get first entity in this group
 	int min = next_id;
