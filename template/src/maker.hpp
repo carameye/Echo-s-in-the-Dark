@@ -71,6 +71,7 @@ private:
 
 	// Mouse position
 	vec2 mouse_pos;
+	bool mouse_moved = false;
 
 	// Camera movement direction
 	bool movement[4] = { false, false, false, false };
