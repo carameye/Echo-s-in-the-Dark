@@ -119,7 +119,7 @@ void Robot::update(float ms)
     m_shoulders.update(ms, add(mc.position, { 0.f, 0.f }));
 
     if (m_is_flying) {
-        m_available_flight_time = fmax(m_available_flight_time -= ms, 0);
+        m_available_flight_time = (float)fmax(m_available_flight_time -= ms, 0);
         if (m_available_flight_time == 0) {
             stop_flying();
         }
@@ -210,7 +210,7 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 	position.x += translation.x;
 	position.y += translation.y;
 
-	int radius = brick_size / 2;
+	int radius = (int)brick_size / 2;
 	Circle circle(position, radius);
 	circles[0] = circle;
 

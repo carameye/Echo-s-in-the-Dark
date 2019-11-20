@@ -54,7 +54,7 @@ void SmokeSystem::update(float ms, vec2 robot_position, vec2 robot_velocity)
 			smoke_position.x += x_interval;
 		}
 	}
-	for (int i = m_active_smokes.size() - 1; i >= 0; i--) {
+	for (int i = (int)m_active_smokes.size() - 1; i >= 0; i--) {
 		if (m_active_smokes.at(i)->should_destroy()) {
 			m_inactive_smokes.push_back(m_active_smokes.at(i));
 			m_active_smokes.erase(m_active_smokes.begin() + i);

@@ -133,34 +133,34 @@ vec2 MakerLevel::load_level()
 							   {-1.f, 1.f},
 							   {1.f,  1.f} };
 
-	std::vector<bool> empty(width, false);
-	std::vector<std::vector<bool>> bricks(height, empty);
-	std::vector<std::vector<bool>> white_bricks(height, empty);
-	std::vector<std::vector<bool>> red_bricks(height, empty);
-	std::vector<std::vector<bool>> green_bricks(height, empty);
-	std::vector<std::vector<bool>> blue_bricks(height, empty);
+	std::vector<bool> empty((int)width, false);
+	std::vector<std::vector<bool>> bricks((int)height, empty);
+	std::vector<std::vector<bool>> white_bricks((int)height, empty);
+	std::vector<std::vector<bool>> red_bricks((int)height, empty);
+	std::vector<std::vector<bool>> green_bricks((int)height, empty);
+	std::vector<std::vector<bool>> blue_bricks((int)height, empty);
 
 	for (json brick : j["bricks"]) {
 		vec2 pos = { brick["pos"]["x"], brick["pos"]["y"] };
 		vec3 colour = { brick["colour"]["r"], brick["colour"]["g"], brick["colour"]["b"] };
 
 		// Set brick here
-		bricks[pos.y][pos.x] = true;
+		bricks[(int)pos.y][(int)pos.x] = true;
 
 		if (colour.x == 1.f && colour.y == 1.f && colour.z == 1.f) {
-			white_bricks[pos.y][pos.x] = true;
-			red_bricks[pos.y][pos.x] = true;
-			green_bricks[pos.y][pos.x] = true;
-			blue_bricks[pos.y][pos.x] = true;
+			white_bricks[(int)pos.y][(int)pos.x] = true;
+			red_bricks[(int)pos.y][(int)pos.x] = true;
+			green_bricks[(int)pos.y][(int)pos.x] = true;
+			blue_bricks[(int)pos.y][(int)pos.x] = true;
 		}
 		else if (colour.x == 1.f && colour.y == 0.f && colour.z == 0.f) {
-			red_bricks[pos.y][pos.x] = true;
+			red_bricks[(int)pos.y][(int)pos.x] = true;
 		}
 		else if (colour.x == 0.f && colour.y == 1.f && colour.z == 0.f) {
-			green_bricks[pos.y][pos.x] = true;
+			green_bricks[(int)pos.y][(int)pos.x] = true;
 		}
 		else if (colour.x == 0.f && colour.y == 0.f && colour.z == 1.f) {
-			blue_bricks[pos.y][pos.x] = true;
+			blue_bricks[(int)pos.y][(int)pos.x] = true;
 		}
 
 		// Add brick to critical points if not already cancelled
@@ -174,7 +174,7 @@ vec2 MakerLevel::load_level()
 		spawn_brick(to_pixel_position(pos), colour);
 	}
 
-	fprintf(stderr, "	built world with %ld doors, %ld ghosts, and %ld bricks\n",
+	fprintf(stderr, "	built world with %I64u doors, %I64u ghosts, and %I64u bricks\n",
 		m_interactables.size(), m_ghosts.size(), m_bricks.size());
 
 	// Spawn the robot
@@ -230,8 +230,8 @@ void MakerLevel::handle_key_press(int key, int action)
 
 void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera)
 {
-	float x = xpos + camera.x - 600.f + brick_size / 2.f;
-	float y = ypos + camera.y - 400.f + brick_size / 2.f;
+	float x = (float)xpos + camera.x - 600.f + brick_size / 2.f;
+	float y = (float)ypos + camera.y - 400.f + brick_size / 2.f;
 	vec2 position = { x - fmod(x, 64.f) , y - fmod(y, 64.f) };
 
 	if (position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
@@ -402,8 +402,8 @@ void MakerLevel::process()
 
 	for (auto b : m_bricks)
 	{
-		int startx = b->get_position().x;
-		int starty = b->get_position().y;
+		int startx = (int)b->get_position().x;
+		int starty = (int)b->get_position().y;
 		for (int i = 0; i < 64; i++)
 		{
 			for (int j = 0; j < 64; j++)

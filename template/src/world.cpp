@@ -253,7 +253,7 @@ void World::start_sounds()
 	m_collision_effect = Mix_LoadWAV(audio_path("collision.wav"));
 
 	// set the volume for the music and sound effects
-	Mix_VolumeMusic(MIX_MAX_VOLUME/2.5);
+	Mix_VolumeMusic((int)(MIX_MAX_VOLUME / 2.5));
 	Mix_VolumeChunk(m_robot_hurt_effect, MIX_MAX_VOLUME/2);
 	Mix_VolumeChunk(m_open_door_effect, MIX_MAX_VOLUME/4);
 	Mix_VolumeChunk(m_locked_door_effect, MIX_MAX_VOLUME); // locked door effect kind of quiet, so make it louder

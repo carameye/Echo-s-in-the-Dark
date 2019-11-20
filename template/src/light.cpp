@@ -2,6 +2,7 @@
 #include "torch.hpp"
 #include <math.h>
 #include <iostream>
+#include <string>
 
 std::map<std::string, Texture> Light::brickmap_textures;
 
@@ -181,15 +182,14 @@ void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& s
     glUniform3fv(headlight_channel_uloc, 1, channel);
 
 	// pass torches size
-	int len = torches.size();
+	int len = (int)torches.size();
 	GLuint torches_size_uloc = glGetUniformLocation(effect.program, "torches_size");
 	glUniform1i(torches_size_uloc, len);
 
 	// pass all torch positions
 	for (int i = 0; i < len && i < 256; i++) {
-		char s[50];
-		std::sprintf(s, "torches_position[%d]", i);
-		GLuint torches_position_uloc = glGetUniformLocation(effect.program, s);
+		std::string s = "torches_position[" + std::to_string(i) + "]";
+		GLuint torches_position_uloc = glGetUniformLocation(effect.program, s.c_str());
 		float x = -10000.f, y = -10000.f;
 		if (i < len)
 		{

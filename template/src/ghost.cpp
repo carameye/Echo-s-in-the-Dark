@@ -115,7 +115,7 @@ Hitbox Ghost::get_hitbox() const
 	vec2 position = mc.position;
 	position.x -= width / 2;
 	position.y += width / 2;
-	Square square(position, width);
+	Square square(position, (int)width);
 	squares[0] = square;
 
 	Hitbox hitbox({}, squares);
