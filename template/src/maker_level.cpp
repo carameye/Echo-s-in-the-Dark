@@ -422,7 +422,8 @@ void MakerLevel::process()
 bool MakerLevel::spawn_door(vec2 position, std::string next_level)
 {
 	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f) + 1] != nullptr)
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f) + 1] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
 	{
 		return false;
 	}
@@ -442,7 +443,8 @@ bool MakerLevel::spawn_door(vec2 position, std::string next_level)
 
 bool MakerLevel::spawn_ghost(vec2 position, vec3 colour)
 {
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr)
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
 	{
 		return false;
 	}
@@ -460,6 +462,12 @@ bool MakerLevel::spawn_ghost(vec2 position, vec3 colour)
 
 bool MakerLevel::spawn_robot(vec2 position)
 {
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
+	{
+		return false;
+	}
+
 	if (m_robot.init(next_id, false))
 	{
 		m_robot_position = position;
@@ -474,7 +482,8 @@ bool MakerLevel::spawn_robot(vec2 position)
 
 bool MakerLevel::spawn_torch(vec2 position) 
 {
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr)
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
 	{
 		return false;
 	}
@@ -516,46 +525,100 @@ bool MakerLevel::delete_object(vec2 position)
 	}
 
 	bool clean = true;
-
-	auto it_b = std::find(m_bricks.begin(), m_bricks.end(), e);
-	if (it_b != m_bricks.end())
-	{
-		clean = false;
-		m_bricks.erase(it_b);
-	}
-
-	auto it_g = std::find(m_ghosts.begin(), m_ghosts.end(), e);
-	if (it_g != m_ghosts.end())
-	{
-		m_ghosts.erase(it_g);
-	}
-
-	auto it_i = std::find(m_interactables.begin(), m_interactables.end(), e);
-	if (it_i != m_interactables.end())
-	{
-		m_interactables.erase(it_i);
-	}
-
-	auto it_t = std::find(m_torches.begin(), m_torches.end(), e);
-	if (it_t != m_torches.end())
-	{
-		clean = false;
-		m_torches.erase(it_t);
-	}
+	bool found = false;
 
 	if (e == &m_robot)
 	{
 		return true;
 	}
 
-	m_rendering_system.remove(id, clean);
+	if (!found && !m_ghosts.empty()) {
+		if (e == m_ghosts.back())
+		{
+			m_ghosts.pop_back();
+			found = true;
+		}
+		else
+		{
+			auto it_g = std::find(m_ghosts.begin(), m_ghosts.end(), e);
+			if (it_g != m_ghosts.end())
+			{
+				m_ghosts.erase(it_g);
+				found = true;
+			}
+		}
+	}
+
+	if (!found && !m_interactables.empty())
+	{
+		if (e == m_interactables.back())
+		{
+			m_interactables.pop_back();
+			found = true;
+		}
+		else
+		{
+			auto it_i = std::find(m_interactables.begin(), m_interactables.end(), e);
+			if (it_i != m_interactables.end())
+			{
+				m_interactables.erase(it_i);
+				found = true;
+			}
+		}
+	}
+
+	if (!found && !m_torches.empty())
+	{
+		if (e == m_torches.back())
+		{
+			clean = false;
+			m_torches.pop_back();
+			found = true;
+		}
+		else
+		{
+			auto it_t = std::find(m_torches.begin(), m_torches.end(), e);
+			if (it_t != m_torches.end())
+			{
+				clean = false;
+				m_torches.erase(it_t);
+				found = true;
+			}
+		}
+	}
+
+	if (!found && !m_bricks.empty())
+	{
+		if (e == m_bricks.back())
+		{
+			clean = false;
+			m_bricks.pop_back();
+			found = true;
+		}
+		else
+		{
+			auto it_b = std::find(m_bricks.begin(), m_bricks.end(), e);
+			if (it_b != m_bricks.end())
+			{
+				clean = false;
+				m_bricks.erase(it_b);
+				found = true;
+			}
+		}
+	}
+
+	if (found)
+	{
+		m_rendering_system.remove(id, clean);
+	}
 
 	return true;
 }
 
 bool MakerLevel::spawn_brick(vec2 position, vec3 colour) 
 {
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr)
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
 	{
 		return false;
 	}
