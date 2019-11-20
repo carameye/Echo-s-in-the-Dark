@@ -429,7 +429,6 @@ bool MakerLevel::spawn_door(vec2 position, std::string next_level)
 	Door* door = new Door();
 	if (door->init(next_id++, position))
 	{
-		fprintf(stderr, "spawn door at (%f, %f)\n", position.x, position.y);
 		door->set_destination(next_level);
 		m_interactables.push_back(door);
 		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = door;
@@ -554,7 +553,6 @@ bool MakerLevel::delete_object(vec2 position)
 		{
 			m_interactables.pop_back();
 			found = true;
-			fprintf(stderr, "delete door\n");
 		}
 		else
 		{
@@ -563,7 +561,6 @@ bool MakerLevel::delete_object(vec2 position)
 			{
 				m_interactables.erase(it_i);
 				found = true;
-				fprintf(stderr, "delete door\n");
 			}
 		}
 	}

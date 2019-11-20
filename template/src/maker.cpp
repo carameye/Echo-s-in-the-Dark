@@ -197,6 +197,7 @@ bool Maker::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 	}
 
 	m_maker_level.handle_key_press(key, action);
+	mouse_moved = true;
 
 	return true;
 }
