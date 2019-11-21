@@ -627,6 +627,7 @@ bool MakerLevel::spawn_brick(vec2 position, vec3 colour)
 		brick->set_position(position);
 		m_bricks.push_back(brick);
 		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = brick;
+		brick->update(colour);
 		return true;
 	}
 	fprintf(stderr, "	brick spawn failed\n");

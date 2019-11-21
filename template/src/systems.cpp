@@ -23,6 +23,11 @@ void RenderingSystem::render(const mat3& projection, const vec2& camera_shift, v
 
 		rc->draw_sprite_alpha(projection, rc->alpha, headlight_channel);
 	}
+
+	if (gl_has_errors())
+	{
+		gl_flush_errors();
+	}
 }
 
 void RenderingSystem::render_ui(const mat3& projection, const vec2& camera_shift)
