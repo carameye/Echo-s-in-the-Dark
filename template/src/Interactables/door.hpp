@@ -15,6 +15,8 @@ class Door: public Interactable
 
         std::string get_destination();
 
+		vec2 get_position();
+
         Hitbox get_hitbox() const;
 
         std::string perform_action();

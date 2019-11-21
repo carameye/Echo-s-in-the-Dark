@@ -102,6 +102,11 @@ void Ghost::set_position(vec2 position)
 	m_path.clear();
 }
 
+vec3 Ghost::get_colour()
+{
+	return m_colour;
+}
+
 Hitbox Ghost::get_hitbox() const
 {
 	std::vector<Square> squares(1);
@@ -110,7 +115,7 @@ Hitbox Ghost::get_hitbox() const
 	vec2 position = mc.position;
 	position.x -= width / 2;
 	position.y += width / 2;
-	Square square(position, width);
+	Square square(position, (int)width);
 	squares[0] = square;
 
 	Hitbox hitbox({}, squares);

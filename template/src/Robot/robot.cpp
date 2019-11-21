@@ -16,7 +16,7 @@ namespace {
 Texture Robot::robot_body_texture;
 Texture Robot::robot_body_flying_texture;
 
-bool Robot::init(int id)
+bool Robot::init(int id, bool use_parts)
 {
 	m_id = id;
 
@@ -51,6 +51,12 @@ bool Robot::init(int id)
 	s_motion_components[id] = &mc;
 
 	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
+
+	if (!use_parts)
+	{
+		return true;
+	}
+
 	bool valid = m_shoulders.init(id + 1) && m_head.init(id + 2) && m_energy_bar.init(id + 3) && m_smoke_system.init(id + 4) && m_hat.init(id + 5);
 	m_head.set_scaling(mc.physics.scale);
 	m_shoulders.set_scaling(mc.physics.scale);
@@ -113,7 +119,7 @@ void Robot::update(float ms)
     m_shoulders.update(ms, add(mc.position, { 0.f, 0.f }));
 
     if (m_is_flying) {
-        m_available_flight_time = fmax(m_available_flight_time -= ms, 0);
+        m_available_flight_time = (float)fmax(m_available_flight_time -= ms, 0);
         if (m_available_flight_time == 0) {
             stop_flying();
         }
@@ -204,7 +210,7 @@ Hitbox Robot::get_hitbox(vec2 translation) const
 	position.x += translation.x;
 	position.y += translation.y;
 
-	int radius = brick_size / 2;
+	int radius = (int)brick_size / 2;
 	Circle circle(position, radius);
 	circles[0] = circle;
 

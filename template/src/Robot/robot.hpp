@@ -18,7 +18,7 @@ class Robot : public Entity
 
 public:
 	// Creates all the associated render resources and default transform
-	bool init(int id);
+	bool init(int id, bool use_parts);
 	
 	// Update robot
 	// ms represents the number of milliseconds elapsed from the previous update() call

@@ -38,6 +38,11 @@ std::string Door::get_destination()
     return action;
 }
 
+vec2 Door::get_position()
+{
+	return mc.position;
+}
+
 Hitbox Door::get_hitbox() const
 {
 	std::vector<Square> squares(2);
@@ -46,8 +51,8 @@ Hitbox Door::get_hitbox() const
 	vec2 position = mc.position;
 	position.x -= width / 2;
 	position.y += width / 2;
-    Square top(position, width);
-	Square bot(add(position, {0.f, width}), width);
+    Square top(position, (int)width);
+	Square bot(add(position, {0.f, width}), (int)width);
 	squares[0] = top;
 	squares[1] = bot;
 

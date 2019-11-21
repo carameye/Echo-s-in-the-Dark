@@ -2,6 +2,7 @@
 #include "torch.hpp"
 #include <math.h>
 #include <iostream>
+#include <string>
 
 std::map<std::string, Texture> Light::brickmap_textures;
 
@@ -37,7 +38,7 @@ bool Light::init(std::string level) {
 		|| !brickmap_textures[level].is_valid())
 	{
 		std::string path = shadow_path;
-		path = path.append(level).append("_brickmap.png");
+		path = path.append(level).append("_brickmap.bmp");
 		if (!brickmap_textures[level].load_from_file(path.c_str()))
 		{
 			fprintf(stderr, "Failed to load brickmap texture!");
@@ -55,7 +56,17 @@ bool Light::init(std::string level) {
 }
 
 // Releases all graphics resources
-void Light::destroy() {
+void Light::destroy() 
+{
+	for (const auto& it : brickmap_textures)
+	{
+		Texture t = it.second;
+		if (t.id != 0) glDeleteTextures(1, &t.id);
+		if (t.depth_render_buffer_id != 0) glDeleteRenderbuffers(1, &t.depth_render_buffer_id);	
+	}
+
+	brickmap_textures.clear();
+
     glDeleteBuffers(1, &mesh.vbo);
 
     glDeleteShader(effect.vertex);
@@ -65,9 +76,16 @@ void Light::destroy() {
 
 // pos is the robot pos
 // todo: in the future, light will be slightly above robot,
-//  and there might be other lights that are not headlights
+// and there might be other lights that are not headlights
 void Light::set_position(vec2 pos){
-    motion.position = add(pos, { 0.f, -48.f });
+	if (get_direction())
+	{
+		motion.position = add(pos, { 14.f, -6.f });
+	}
+	else
+	{
+		motion.position = add(pos, { -14.f, -6.f });
+	}
 }
 
 void Light::convert_mouse_pos_to_rad(vec2 coordinates, vec2 centre) {
@@ -171,15 +189,14 @@ void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& s
     glUniform3fv(headlight_channel_uloc, 1, channel);
 
 	// pass torches size
-	int len = torches.size();
+	int len = (int)torches.size();
 	GLuint torches_size_uloc = glGetUniformLocation(effect.program, "torches_size");
 	glUniform1i(torches_size_uloc, len);
 
 	// pass all torch positions
 	for (int i = 0; i < len && i < 256; i++) {
-		char s[50];
-		std::sprintf(s, "torches_position[%d]", i);
-		GLuint torches_position_uloc = glGetUniformLocation(effect.program, s);
+		std::string s = "torches_position[" + std::to_string(i) + "]";
+		GLuint torches_position_uloc = glGetUniformLocation(effect.program, s.c_str());
 		float x = -10000.f, y = -10000.f;
 		if (i < len)
 		{

@@ -26,7 +26,7 @@ bool Button::init(int id, vec2 position)
 {
 	if (!button_texture.is_valid())
 	{
-		std::string path = textures_path();
+		std::string path = textures_path("");
 		path = path.append(m_texture_name);
 		if (!button_texture.load_from_file(path.c_str()))
 		{

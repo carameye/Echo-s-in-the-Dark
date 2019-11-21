@@ -146,7 +146,7 @@ def convert(filepath):
                     if colour["r"] == 1.0 and colour["g"] == 1.0 and colour["b"] == 1.0:
                         brickpixels[i, j] = (0, 0, 0)
 
-        brickimage.save(join(dirpath, "shadow", filename + "_brickmap.png"))
+        brickimage.save(join(dirpath, "shadow", filename + "_brickmap.bmp"))
 
 def convertall():
     path = dirname(abspath(__file__))

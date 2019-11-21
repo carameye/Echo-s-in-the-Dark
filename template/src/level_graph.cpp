@@ -161,7 +161,7 @@ bool LevelGraph::generate(std::vector<vec2> cps, std::vector<std::vector<bool>> 
 			vec2 pos = add(cp, diff);
 			if (pos.x >= 0.f && pos.x < width && pos.y >= 0.f && pos.y < height)
 			{
-				valid &= !data[pos.y][pos.x];
+				valid &= !data[(int)pos.y][(int)pos.x];
 			}
 		}
 		
@@ -213,10 +213,10 @@ bool LevelGraph::can_travel_between(CriticalPoint a, CriticalPoint b)
 			float yfirst = add(start, mul(disp, xfirst / max)).y;
 			float ylast = add(start, mul(disp, xlast / max)).y;
 
-			if (m_data[floor(yfirst + 1.f - TOLERANCE)][floor(start.x + sign * xfirst)] ||
-				m_data[floor(yfirst       + TOLERANCE)][floor(start.x + sign * xfirst)] ||
-				m_data[floor(ylast  + 1.f - TOLERANCE)][floor(start.x + sign * xlast)] ||
-				m_data[floor(ylast        + TOLERANCE)][floor(start.x + sign * xlast)])
+			if (m_data[(int)floor(yfirst + 1.f - TOLERANCE)][(int)floor(start.x + sign * xfirst)] ||
+				m_data[(int)floor(yfirst       + TOLERANCE)][(int)floor(start.x + sign * xfirst)] ||
+				m_data[(int)floor(ylast  + 1.f - TOLERANCE)][(int)floor(start.x + sign * xlast)] ||
+				m_data[(int)floor(ylast        + TOLERANCE)][(int)floor(start.x + sign * xlast)])
 			{
 				return false;
 			}
@@ -244,10 +244,10 @@ bool LevelGraph::can_travel_between(CriticalPoint a, CriticalPoint b)
 			float xfirst = add(start, mul(disp, yfirst / max)).x;
 			float xlast = add(start, mul(disp, ylast / max)).x;
 
-			if (m_data[floor(start.y + sign * yfirst)][floor(xfirst + 1.f - TOLERANCE)] ||
-				m_data[floor(start.y + sign * yfirst)][floor(xfirst       + TOLERANCE)] ||
-				m_data[floor(start.y + sign * ylast)] [floor(xlast  + 1.f - TOLERANCE)] ||
-				m_data[floor(start.y + sign * ylast)] [floor(xlast        + TOLERANCE)])
+			if (m_data[(int)floor(start.y + sign * yfirst)][(int)floor(xfirst + 1.f - TOLERANCE)] ||
+				m_data[(int)floor(start.y + sign * yfirst)][(int)floor(xfirst       + TOLERANCE)] ||
+				m_data[(int)floor(start.y + sign * ylast)] [(int)floor(xlast  + 1.f - TOLERANCE)] ||
+				m_data[(int)floor(start.y + sign * ylast)] [(int)floor(xlast        + TOLERANCE)])
 			{
 				return false;
 			}

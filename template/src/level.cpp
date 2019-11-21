@@ -22,6 +22,9 @@ void Level::destroy()
     for (auto& torch : m_torches) {
         delete torch;
     }
+	for (auto& bg : m_backgrounds) {
+		delete bg;
+	}
 
 	clear_level_components();
 	m_rendering_system.clear();
@@ -31,7 +34,9 @@ void Level::destroy()
     m_interactables.clear();
     m_signs.clear();
     m_torches.clear();
+	m_backgrounds.clear();
     m_rendering_system.destroy();
+	m_light.destroy();
 }
 
 void Level::draw_entities(const mat3 &projection, const vec2 &camera_shift) {
@@ -178,7 +183,7 @@ std::string Level::update(float elapsed_ms) {
     m_robot.set_position(new_robot_pos);
     m_robot.set_head_position(new_robot_head_pos);
     m_robot.update(elapsed_ms);
-    m_light.set_position(new_robot_pos);
+    m_light.set_position(new_robot_head_pos);
 
     m_robot.set_head_direction(m_light.get_direction());
 
@@ -230,7 +235,7 @@ vec2 Level::get_player_position() const {
 }
 
 int Level::get_num_ghosts() const {
-    return m_ghosts.size();
+    return (int)m_ghosts.size();
 }
 
 std::string Level::interact()
@@ -327,31 +332,31 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
                                {-1.f, 1.f},
                                {1.f,  1.f}};
 
-    std::vector<bool> empty(width, false);
-    std::vector<std::vector<bool>> bricks(height, empty);
-    std::vector<std::vector<bool>> white_bricks(height, empty);
-    std::vector<std::vector<bool>> red_bricks(height, empty);
-    std::vector<std::vector<bool>> green_bricks(height, empty);
-    std::vector<std::vector<bool>> blue_bricks(height, empty);
+    std::vector<bool> empty((int)width, false);
+    std::vector<std::vector<bool>> bricks((int)height, empty);
+    std::vector<std::vector<bool>> white_bricks((int)height, empty);
+    std::vector<std::vector<bool>> red_bricks((int)height, empty);
+    std::vector<std::vector<bool>> green_bricks((int)height, empty);
+    std::vector<std::vector<bool>> blue_bricks((int)height, empty);
 
     for (json brick : j["bricks"]) {
         vec2 pos = {brick["pos"]["x"], brick["pos"]["y"]};
         vec3 colour = {brick["colour"]["r"], brick["colour"]["g"], brick["colour"]["b"]};
 
         // Set brick here
-        bricks[pos.y][pos.x] = true;
+        bricks[(int)pos.y][(int)pos.x] = true;
 
         if (colour.x == 1.f && colour.y == 1.f && colour.z == 1.f) {
-            white_bricks[pos.y][pos.x] = true;
-            red_bricks[pos.y][pos.x] = true;
-            green_bricks[pos.y][pos.x] = true;
-            blue_bricks[pos.y][pos.x] = true;
+            white_bricks[(int)pos.y][(int)pos.x] = true;
+            red_bricks[(int)pos.y][(int)pos.x] = true;
+            green_bricks[(int)pos.y][(int)pos.x] = true;
+            blue_bricks[(int)pos.y][(int)pos.x] = true;
         } else if (colour.x == 1.f && colour.y == 0.f && colour.z == 0.f) {
-            red_bricks[pos.y][pos.x] = true;
+            red_bricks[(int)pos.y][(int)pos.x] = true;
         } else if (colour.x == 0.f && colour.y == 1.f && colour.z == 0.f) {
-            green_bricks[pos.y][pos.x] = true;
+            green_bricks[(int)pos.y][(int)pos.x] = true;
         } else if (colour.x == 0.f && colour.y == 0.f && colour.z == 1.f) {
-            blue_bricks[pos.y][pos.x] = true;
+            blue_bricks[(int)pos.y][(int)pos.x] = true;
         }
 
         // Add brick to critical points if not already cancelled
@@ -365,16 +370,16 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
         spawn_brick(to_pixel_position(pos), colour);
     }
 
-    fprintf(stderr, "	built world with %ld doors, %ld ghosts, and %ld bricks\n",
+    fprintf(stderr, "	built world with %lu doors, %lu ghosts, and %lu bricks\n",
             m_interactables.size(), m_ghosts.size(), m_bricks.size());
 
     // Generate the graph
     if (m_ghosts.size() > 0)
     {
-        m_white_graph.generate(potential_cp, white_bricks, width, height);
-        m_red_graph.generate(potential_cp, red_bricks, width, height);
-        m_green_graph.generate(potential_cp, green_bricks, width, height);
-        m_blue_graph.generate(potential_cp, blue_bricks, width, height);
+        m_white_graph.generate(potential_cp, white_bricks, (int)width, (int)height);
+        m_red_graph.generate(potential_cp, red_bricks, (int)width, (int)height);
+        m_green_graph.generate(potential_cp, green_bricks, (int)width, (int)height);
+        m_blue_graph.generate(potential_cp, blue_bricks, (int)width, (int)height);
     }
 
     // Level graph initially set to be the default white
@@ -398,7 +403,6 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
     save_level();
 
     m_rendering_system.process(min, next_id);
-
 
     return true;
 }
@@ -490,14 +494,14 @@ bool Level::spawn_ghost(vec2 position, vec3 colour)
 
 bool Level::spawn_robot(vec2 position)
 {
-    if (m_robot.init(next_id))
+    if (m_robot.init(next_id, true))
     {
         next_id += 104;
         m_robot.set_position(position);
         m_robot.set_head_position(position);
         m_robot.set_shoulder_position(position);
         if (m_light.init(m_level)) {
-            m_light.set_position(m_robot.get_position());
+            m_light.set_position(m_robot.get_head_position());
         }
         return true;
     }

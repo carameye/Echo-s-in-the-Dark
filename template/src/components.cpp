@@ -48,8 +48,6 @@ bool RenderComponent::init_sprite()
 	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
 
-
-
 	alpha = 1.f;
 
 	return true;
@@ -97,11 +95,6 @@ void RenderComponent::draw_ui_sprite_alpha(const mat3& projection, float alpha)
 
 	// Drawing!
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-
-	if (gl_has_errors())
-	{
-		gl_flush_errors();
-	}
 }
 
 // Draw sprite with or without transparency
