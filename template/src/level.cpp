@@ -183,7 +183,7 @@ std::string Level::update(float elapsed_ms) {
     m_robot.set_position(new_robot_pos);
     m_robot.set_head_position(new_robot_head_pos);
     m_robot.update(elapsed_ms);
-    m_light.set_position(new_robot_pos);
+    m_light.set_position(new_robot_head_pos);
 
     m_robot.set_head_direction(m_light.get_direction());
 
@@ -501,7 +501,7 @@ bool Level::spawn_robot(vec2 position)
         m_robot.set_head_position(position);
         m_robot.set_shoulder_position(position);
         if (m_light.init(m_level)) {
-            m_light.set_position(m_robot.get_position());
+            m_light.set_position(m_robot.get_head_position());
         }
         return true;
     }

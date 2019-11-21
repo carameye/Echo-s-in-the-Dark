@@ -76,9 +76,16 @@ void Light::destroy()
 
 // pos is the robot pos
 // todo: in the future, light will be slightly above robot,
-//  and there might be other lights that are not headlights
+// and there might be other lights that are not headlights
 void Light::set_position(vec2 pos){
-    motion.position = add(pos, { 0.f, -48.f });
+	if (get_direction())
+	{
+		motion.position = add(pos, { 14.f, -6.f });
+	}
+	else
+	{
+		motion.position = add(pos, { -14.f, -6.f });
+	}
 }
 
 void Light::convert_mouse_pos_to_rad(vec2 coordinates, vec2 centre) {
