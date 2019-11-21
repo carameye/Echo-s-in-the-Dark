@@ -156,7 +156,6 @@ std::string Level::update(float elapsed_ms) {
         bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
-                // sound_effect = "collision";
                 m_robot.set_velocity({m_robot.get_velocity().x, 0.f});
 
                 float circle_width = brick_size / 2.f;
@@ -170,8 +169,12 @@ std::string Level::update(float elapsed_ms) {
                 new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, circle_width,
                                                     brick_size / 2.f);
                 translation = new_robot_pos.y - robot_pos.y;
-                if (brick.get_position().y > new_robot_pos.y)
+                if (brick.get_position().y > new_robot_pos.y) {
+                    if (!m_robot.is_grounded()) {
+                        sound_effect = "landing";
+                    }
                     m_robot.set_grounded();
+                }
             }
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_y)) {

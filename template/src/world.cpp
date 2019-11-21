@@ -96,6 +96,8 @@ void World::update(float elapsed_ms)
 		if (sound_effect.length() > 0) {
 			if (sound_effect == "collision") {
 				Mix_PlayChannel(-1, m_collision_effect, 0);
+			} else if ("landing") {
+				Mix_FadeInChannel(-1, m_landing_effect, 0, 5);
 			} else {
 				Mix_PlayChannel(-1, m_robot_hurt_effect, 0);
 			}
@@ -280,6 +282,7 @@ void World::start_sounds()
 	m_locked_door_effect = Mix_LoadWAV(audio_path("locked.wav"));
 	m_rocket_effect = Mix_LoadWAV(audio_path("rocket.wav"));
 	m_collision_effect = Mix_LoadWAV(audio_path("collision.wav"));
+	m_landing_effect = Mix_LoadWAV(audio_path("impactMining_000.ogg"));
 
 	// set the volume for the music and sound effects
 	Mix_VolumeMusic((int)(MIX_MAX_VOLUME / 2.5));
@@ -294,12 +297,13 @@ void World::start_sounds()
 		m_locked_door_effect == nullptr || m_rocket_effect == nullptr
 	)
 	{
-		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n %s\n %s\n %s\n make sure the data directory is present",
+		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n make sure the data directory is present",
 			audio_path("background.wav"),
 			audio_path("salmon_dead.wav"),
 			audio_path("open_door.wav"),
 			audio_path("locked.wav"),
 			audio_path("rocket.wav"),
+			audio_path("impactMining_000.ogg"),
 			audio_path("collision.wav"));
 		return;
 	}

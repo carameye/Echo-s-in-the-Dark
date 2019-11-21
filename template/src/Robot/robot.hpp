@@ -39,6 +39,8 @@ public:
     // Calculates and return next position with out updating robot
     vec2 get_next_position(float elapsed_ms);
 
+	bool is_grounded() const;
+
 	// Sets the new robot position
 	void set_position(vec2 position);
 

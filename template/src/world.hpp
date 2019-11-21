@@ -105,6 +105,7 @@ private:
 	Mix_Chunk* m_locked_door_effect;
 	Mix_Chunk* m_rocket_effect;
 	Mix_Chunk* m_collision_effect;
+	Mix_Chunk* m_landing_effect;
 
 	// C++ rng
 	std::default_random_engine m_rng;

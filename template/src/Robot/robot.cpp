@@ -113,13 +113,13 @@ void Robot::update(float ms)
         }
     }
 
-	m_grounded = false;
 	m_head.update(ms, add(mc.position, { 0.f, -48.f }));
     m_hat.update(ms, add(m_head.get_position(), { 0.f, -8.f }));
     m_shoulders.update(ms, add(mc.position, { 0.f, 0.f }));
 
     if (m_is_flying) {
-        m_available_flight_time = (float)fmax(m_available_flight_time -= ms, 0);
+        m_grounded = false;
+        m_available_flight_time = fmax(m_available_flight_time -= ms, 0);
         if (m_available_flight_time == 0) {
             stop_flying();
         }
@@ -158,6 +158,11 @@ vec2 Robot::get_next_position(float elapsed_ms)
 {
     float step = elapsed_ms / 100.f;
     return {mc.position.x + mc.velocity.x * step, mc.position.y + mc.velocity.y * step};
+}
+
+bool Robot::is_grounded() const
+{
+    return m_grounded;
 }
 
 void Robot::set_position(vec2 position)
