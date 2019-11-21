@@ -174,7 +174,7 @@ vec2 MakerLevel::load_level()
 		spawn_brick(to_pixel_position(pos), colour);
 	}
 
-	fprintf(stderr, "	built world with %I64u doors, %I64u ghosts, and %I64u bricks\n",
+	fprintf(stderr, "	built world with %lu doors, %lu ghosts, and %lu bricks\n",
 		m_interactables.size(), m_ghosts.size(), m_bricks.size());
 
 	// Spawn the robot
