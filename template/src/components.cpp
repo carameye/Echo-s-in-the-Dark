@@ -141,6 +141,10 @@ void RenderComponent::draw_sprite_alpha(const mat3& projection, float alpha, vec
     GLuint should_render_uloc = glGetUniformLocation(effect.program, "component_can_be_hidden");
     glUniform1i(should_render_uloc, can_be_hidden);
 
+    // pass whether component is invisible
+    GLuint is_invisible_uloc = glGetUniformLocation(effect.program, "component_is_invisible");
+    glUniform1i(is_invisible_uloc, is_invisible);
+
     // Enabling and binding texture to slot 0
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->id);

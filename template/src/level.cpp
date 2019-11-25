@@ -91,7 +91,7 @@ std::string Level::update(float elapsed_ms) {
         const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
         const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
         Brick brick = *i_brick;
-        bool should_check_collisions = brick.get_is_visible();
+        bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
                 sound_effect = "collision";
@@ -140,7 +140,7 @@ std::string Level::update(float elapsed_ms) {
         const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
         const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
         Brick brick = *i_brick;
-        bool should_check_collisions = brick.get_is_visible();
+        bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
                 // sound_effect = "collision";
