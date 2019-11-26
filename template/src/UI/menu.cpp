@@ -30,13 +30,12 @@ bool Menu::init(GLFWwindow* window, vec2 screen)
 		return false;
 	}
 
-	m_background_music = Mix_LoadMUS(audio_path("menu.wav"));
-	int vol = Mix_VolumeMusic(MIX_MAX_VOLUME/3);
+	m_background_music = Mix_LoadMUS(audio_path("dreams.wav"));
+	int vol = Mix_VolumeMusic(MIX_MAX_VOLUME/2.5);
 
 	if (m_background_music == nullptr)
 	{
-		fprintf(stderr, "Failed to load sounds\n %s\n make sure the data directory is present",
-			audio_path("menu.wav"));
+		fprintf(stderr, "Failed to load menu music\n %s\n", Mix_GetError());
 		return false;
 	}
 
@@ -172,13 +171,12 @@ void Menu::start_music()
 		return;
 	}
 
-	m_background_music = Mix_LoadMUS(audio_path("menu.wav"));
+	m_background_music = Mix_LoadMUS(audio_path("dreams.wav"));
 	Mix_VolumeMusic(MIX_MAX_VOLUME/3);
 
 	if (m_background_music == nullptr)
 	{
-		fprintf(stderr, "Failed to load sounds\n %s\n make sure the data directory is present",
-			audio_path("menu.wav"));
+		fprintf(stderr, "Failed to load menu music\n %s\n", Mix_GetError());
 		return;
 	}
 
