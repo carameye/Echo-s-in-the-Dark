@@ -48,8 +48,8 @@ void Level::draw_light(const mat3 &projection, const vec2 &camera_shift) {
     m_light.draw(projection, camera_shift, {width, height}, m_torches);
 }
 
-std::string Level::update(float elapsed_ms) {
-	std::string sound_effect = "";
+Sound_Effects Level::update(float elapsed_ms) {
+	Sound_Effects sound_effect = Sound_Effects::silence;
     vec2 robot_pos = m_robot.get_position();
     vec2 robot_head_pos = m_robot.get_head_position();
 
@@ -101,7 +101,7 @@ std::string Level::update(float elapsed_ms) {
         bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
-                sound_effect = "collision";
+                sound_effect = Sound_Effects::collision;
                 m_robot.set_velocity({0.f, m_robot.get_velocity().y});
 
                 float circle_width = brick_size / 2.f;
@@ -119,7 +119,7 @@ std::string Level::update(float elapsed_ms) {
 
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_x)) {
-                sound_effect = "collision";
+                sound_effect = Sound_Effects::collision;
                 m_robot.set_head_velocity({0.f, m_robot.get_head_velocity().y});
 
                 float circle_width = brick_size / 2.f;
@@ -171,14 +171,14 @@ std::string Level::update(float elapsed_ms) {
                 translation = new_robot_pos.y - robot_pos.y;
                 if (brick.get_position().y > new_robot_pos.y) {
                     if (!m_robot.is_grounded()) {
-                        sound_effect = "landing";
+                        sound_effect = Sound_Effects::landing;
                     }
                     m_robot.set_grounded();
                 }
             }
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_y)) {
-                sound_effect = "collision";
+                sound_effect = Sound_Effects::landing;
                 m_robot.set_head_velocity({m_robot.get_head_velocity().x, 0.f});
 
                 float circle_width = brick_size / 2.f;
@@ -209,7 +209,7 @@ std::string Level::update(float elapsed_ms) {
         ghost->set_goal(m_robot.get_position());
         ghost->update(elapsed_ms);
         if (ghost->get_hitbox().collides_with(new_robot_hitbox)) {
-			sound_effect = "samlon_dead.wav";
+			sound_effect = Sound_Effects::robot_hurt;
             reset_level();
         }
     }
@@ -446,12 +446,14 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
     return true;
 }
 
-std::string Level::handle_key_press(int key, int action, std::unordered_map<int, int> &input_states)
+std::pair<std::string, Sound_Effects> Level::handle_key_press(int key, int action, std::unordered_map<int, int> &input_states)
 {
-	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+	std::pair<std::string, Sound_Effects> key_press_result("", Sound_Effects::silence);
+    if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
         input_states[key] = action;
 		m_robot.start_flying();
-        return "flying";
+        key_press_result.second = Sound_Effects::rocket;
+        return key_press_result;
 	}
 	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
         input_states[key] = action;
@@ -465,7 +467,6 @@ std::string Level::handle_key_press(int key, int action, std::unordered_map<int,
 	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
         input_states[key] = action;
 		m_robot.stop_flying();
-        return "falling";
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
         input_states[key] = action;
@@ -477,7 +478,14 @@ std::string Level::handle_key_press(int key, int action, std::unordered_map<int,
 	}
 
     if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
-        return interact();
+        std::string destination = interact();
+        if (destination == "door locked") {
+            key_press_result.second = Sound_Effects::door_locked;
+            return key_press_result;
+        } else {
+            key_press_result.first = destination;
+            return key_press_result;
+        }
     }
 
     // headlight toggle
@@ -494,7 +502,7 @@ std::string Level::handle_key_press(int key, int action, std::unordered_map<int,
         m_has_colour_changed = true;
     }
 
-    return "";
+    return key_press_result;
 }
 
 void Level::handle_mouse_move(double xpos, double ypos, vec2 camera_pos)

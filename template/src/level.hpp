@@ -27,7 +27,7 @@ class Level
 	void destroy();
 
     // Update level entites, returns name of audio file to be played if something happens on update
-    std::string update(float elapsed_ms);
+    Sound_Effects update(float elapsed_ms);
 
     // Gets the camera position when the level first starts
     vec2 get_starting_camera_position() const;
@@ -48,7 +48,7 @@ class Level
 	bool parse_level(std::string level, std::vector<std::string> unlocked, vec2 start_pos);
 
 	// Handle input
-	std::string handle_key_press(int key, int action, std::unordered_map<int, int> &input_states);
+	std::pair<std::string, Sound_Effects> handle_key_press(int key, int action, std::unordered_map<int, int> &input_states);
 	void handle_mouse_move(double xpos, double ypos, vec2 camera);
 	void handle_mouse_click(int button, int action);
 

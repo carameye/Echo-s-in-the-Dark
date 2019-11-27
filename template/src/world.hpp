@@ -100,12 +100,7 @@ private:
 
 	// game sounds
 	Mix_Music* m_background_music;
-	Mix_Chunk* m_robot_hurt_effect;
-	Mix_Chunk* m_open_door_effect;
-	Mix_Chunk* m_locked_door_effect;
-	Mix_Chunk* m_rocket_effect;
-	Mix_Chunk* m_collision_effect;
-	Mix_Chunk* m_landing_effect;
+	std::map<Sound_Effects, Mix_Chunk*> m_sound_effects;
 
 	// C++ rng
 	std::default_random_engine m_rng;

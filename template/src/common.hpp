@@ -31,6 +31,9 @@ enum class Status { nothing, main_menu, new_game, load_game, resume, reset, save
 					story_mode, maker_mode, play_level, make_level, load_level,
 					go_to_intro_1, go_to_intro_2, go_to_intro_3, go_to_intro_4, help, ret_pause};
 
+// // please add to this enum whenever you add a sound effect
+enum class Sound_Effects { silence, robot_hurt, open_door, door_locked, collision, rocket, landing };
+
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..
 struct vec2 { float x, y; };

@@ -92,15 +92,13 @@ void World::update(float elapsed_ms)
 	if (!is_level_load_pan) {
 		follow_speed = 0.1f;
 		follow_point = add(player_pos, { 0.f, camera_offset });
-		std::string sound_effect = m_level.update(elapsed_ms);
-		if (sound_effect.length() > 0) {
-			if (sound_effect == "collision") {
-				Mix_PlayChannel(-1, m_collision_effect, 0);
-			} else if ("landing") {
-				Mix_FadeInChannel(-1, m_landing_effect, 0, 5);
-			} else {
-				Mix_PlayChannel(-1, m_robot_hurt_effect, 0);
+		Sound_Effects sound_effect = m_level.update(elapsed_ms);
+		if (sound_effect != Sound_Effects::silence) {
+			int fade_in_ms = 0;
+			if (sound_effect == Sound_Effects::landing) {
+				fade_in_ms = 5;
 			}
+			Mix_FadeInChannel(-1, m_sound_effects[sound_effect], 0, fade_in_ms);
 		}
 	} else if (on_load_delay > 0) {
 		follow_speed = 0.f;
@@ -202,31 +200,34 @@ bool World::handle_key_press(GLFWwindow* window, int key, int action)
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
 		camera_offset -= CAMERA_PAN_OFFSET;
 	}
-	std::string r = m_level.handle_key_press(key, action, key_input_states);
-	if (r.length() > 0) {
-		if (r == "flying") {
-			int channel = Mix_PlayChannel(-1, m_rocket_effect, -1);
+	std::pair<std::string, Sound_Effects> r = m_level.handle_key_press(key, action, key_input_states);
+	std::string action_dest = r.first;
+	Sound_Effects effect = r.second;
+
+	if (effect != Sound_Effects::silence)
+	{
+		if (effect == Sound_Effects::rocket) {
+			int channel = Mix_PlayChannel(-1, m_sound_effects[effect], -1);
 			Mix_GroupChannel(channel, 1);
-		} else if (r == "falling") {
-			int channel = Mix_FadeOutGroup(1, 1050);
-		} else if (r == "door locked") {
-			int channel = Mix_PlayChannel(-1, m_locked_door_effect, 0);
-		} else {
-			if (r == "quit" || r == "complete")
-			{
-				m_exit();
-				return true;
-			}
-			else
-			{
-				if (find(m_unlocked.begin(), m_unlocked.end(), r) == m_unlocked.end())
-				{
-					m_unlocked.push_back(r);
-				}
-				Mix_PlayChannel(-1, m_open_door_effect, 0);
-				load_level(r);
-			}
+		} else if (effect == Sound_Effects::door_locked) {
+			Mix_PlayChannel(-1, m_sound_effects[effect], 0);
 		}
+	}
+	if (Mix_GroupAvailable(1))
+		Mix_FadeOutGroup(1, 1050);
+	if (action_dest == "quit" || action_dest == "complete")
+	{
+		m_exit();
+		return true;
+	}
+	else
+	{
+		if (find(m_unlocked.begin(), m_unlocked.end(), action_dest) == m_unlocked.end())
+		{
+			m_unlocked.push_back(action_dest);
+		}
+		Mix_PlayChannel(-1, m_sound_effects[Sound_Effects::open_door], 0);
+		load_level(action_dest);	
 	}
 	return true;
 }
@@ -277,30 +278,33 @@ void World::start_sounds()
 	const int numGhosts = m_level.get_num_ghosts();
 
 	m_background_music =  Mix_LoadMUS(numGhosts > 0 ? audio_path("ghosts.wav") : audio_path("background.wav"));
-	m_robot_hurt_effect = Mix_LoadWAV(audio_path("salmon_dead.wav"));
-	m_open_door_effect = Mix_LoadWAV(audio_path("open_door.wav"));
-	m_locked_door_effect = Mix_LoadWAV(audio_path("locked.wav"));
-	m_rocket_effect = Mix_LoadWAV(audio_path("rocket.wav"));
-	m_collision_effect = Mix_LoadWAV(audio_path("collision.wav"));
-	m_landing_effect = Mix_LoadWAV(audio_path("impactMining_000.ogg"));
+	m_sound_effects[Sound_Effects::robot_hurt] = Mix_LoadWAV(audio_path("salmon_dead.wav"));
+	m_sound_effects[Sound_Effects::open_door] = Mix_LoadWAV(audio_path("open_door.wav"));
+	m_sound_effects[Sound_Effects::door_locked] = Mix_LoadWAV(audio_path("locked.wav"));
+	m_sound_effects[Sound_Effects::rocket] = Mix_LoadWAV(audio_path("rocket.wav"));
+	m_sound_effects[Sound_Effects::collision] = Mix_LoadWAV(audio_path("collision.wav"));
+	m_sound_effects[Sound_Effects::landing] = Mix_LoadWAV(audio_path("impactMining_000.ogg"));
 
 	// set the volume for the music and sound effects
 	Mix_VolumeMusic((int)(MIX_MAX_VOLUME / 5));
-	Mix_VolumeChunk(m_robot_hurt_effect, MIX_MAX_VOLUME/2);
-	Mix_VolumeChunk(m_open_door_effect, MIX_MAX_VOLUME/4);
-	Mix_VolumeChunk(m_locked_door_effect, MIX_MAX_VOLUME); // locked door effect kind of quiet, so make it louder
-	Mix_VolumeChunk(m_rocket_effect, MIX_MAX_VOLUME/3);
-	Mix_VolumeChunk(m_collision_effect, MIX_MAX_VOLUME/9);
-	Mix_VolumeChunk(m_landing_effect, MIX_MAX_VOLUME/4);
+	Mix_VolumeChunk(m_sound_effects[Sound_Effects::robot_hurt], MIX_MAX_VOLUME/2);
+	Mix_VolumeChunk(m_sound_effects[Sound_Effects::open_door], MIX_MAX_VOLUME/4);
+	Mix_VolumeChunk(m_sound_effects[Sound_Effects::door_locked], MIX_MAX_VOLUME); // locked door effect kind of quiet, so make it louder
+	Mix_VolumeChunk(m_sound_effects[Sound_Effects::rocket], MIX_MAX_VOLUME/3);
+	Mix_VolumeChunk(m_sound_effects[Sound_Effects::collision], MIX_MAX_VOLUME/9);
+	Mix_VolumeChunk(m_sound_effects[Sound_Effects::landing], MIX_MAX_VOLUME/4);
 
-	if (
-		m_background_music == nullptr || m_open_door_effect == nullptr || m_robot_hurt_effect == nullptr ||
-		m_locked_door_effect == nullptr || m_rocket_effect == nullptr || m_collision_effect == nullptr ||
-		m_landing_effect == nullptr
-	)
-	{
+	// check that we have correctly loaded bgm and sounds
+	if (m_background_music == nullptr) {
 		fprintf(stderr, "Failed to game sounds\n %s\n", Mix_GetError());
 		return;
+	}
+
+	for (auto& effect : m_sound_effects) {
+		if (effect.second == nullptr) {
+			fprintf(stderr, "Failed to game sounds\n %s\n", Mix_GetError());
+			return;
+		}
 	}
 
 	// Playing background music indefinitely
@@ -310,29 +314,11 @@ void World::start_sounds()
 void World::stop_sounds()
 {
 	// free sound effects
-	if (m_robot_hurt_effect != nullptr) {
-		Mix_FreeChunk(m_robot_hurt_effect);
-		m_robot_hurt_effect = nullptr;
-	}
-	if (m_open_door_effect != nullptr) {
-		Mix_FreeChunk(m_open_door_effect);
-		m_open_door_effect = nullptr;
-	}
-	if (m_locked_door_effect != nullptr) {
-		Mix_FreeChunk(m_locked_door_effect);
-		m_locked_door_effect = nullptr;
-	}
-	if (m_rocket_effect != nullptr) {
-		Mix_FreeChunk(m_rocket_effect);
-		m_rocket_effect = nullptr;
-	}
-	if (m_collision_effect != nullptr) {
-		Mix_FreeChunk(m_collision_effect);
-		m_collision_effect = nullptr;
-	}
-	if (m_landing_effect != nullptr) {
-		Mix_FreeChunk(m_landing_effect);
-		m_landing_effect = nullptr;
+	for (auto& effect : m_sound_effects) {
+		if (effect.second != nullptr) {
+			Mix_FreeChunk(effect.second);
+			effect.second = nullptr;
+		}
 	}
 	// free background music
 	stop_music();
