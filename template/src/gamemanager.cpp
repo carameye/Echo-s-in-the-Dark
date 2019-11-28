@@ -524,7 +524,6 @@ void GameManager::draw_loading_screen()
 
 void GameManager::back_to_maker_menu()
 {
-	m_world.stop_music();
 	m_world.destroy();
 	m_in_maker = false;
 	m_in_menu = true;

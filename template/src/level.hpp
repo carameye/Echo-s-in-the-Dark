@@ -35,9 +35,6 @@ class Level
 	// Gets the position of the player
 	vec2 get_player_position() const;
 
-	// Returns the number of ghosts in the level
-	int get_num_ghosts() const;
-
     // Interact with the current level interactable
     std::string interact();
 
@@ -56,6 +53,7 @@ class Level
 	std::string get_current_level();
 
     void handle_mouse_scroll(double yoffset);
+	float get_min_ghost_distance();
 
 private:
     // Spawn entities

@@ -17,6 +17,7 @@ namespace
 {
 	const size_t CAMERA_PAN_OFFSET = 200;
 	const size_t UPDATE_FREEZE_DURATION = 2000;
+	const size_t GHOST_DANGER_DIST = 435.f;
 }
 
 World::World()
@@ -95,10 +96,18 @@ void World::update(float elapsed_ms)
 		Sound_Effects sound_effect = m_level.update(elapsed_ms);
 		if (sound_effect != Sound_Effects::silence) {
 			int fade_in_ms = 0;
-			if (sound_effect == Sound_Effects::landing) {
+			if (sound_effect == Sound_Effects::collision) {
 				fade_in_ms = 5;
 			}
 			Mix_FadeInChannel(-1, m_sound_effects[sound_effect], 0, fade_in_ms);
+		}
+		float distance_from_ghost = m_level.get_min_ghost_distance();
+		if (distance_from_ghost < GHOST_DANGER_DIST && !m_close_to_ghosts) {
+			Mix_FadeInMusic(m_ghost_approach_background, -1, 1500);
+			m_close_to_ghosts = true;
+		} else if (distance_from_ghost >= GHOST_DANGER_DIST && m_close_to_ghosts) {
+			Mix_FadeInMusic(m_background_music, -1, 1500);
+			m_close_to_ghosts = false;
 		}
 	} else if (on_load_delay > 0) {
 		follow_speed = 0.f;
@@ -209,25 +218,24 @@ bool World::handle_key_press(GLFWwindow* window, int key, int action)
 		if (effect == Sound_Effects::rocket) {
 			int channel = Mix_PlayChannel(-1, m_sound_effects[effect], -1);
 			Mix_GroupChannel(channel, 1);
-		} else if (effect == Sound_Effects::door_locked) {
+		} else if (effect == Sound_Effects::falling) {
+			Mix_FadeOutGroup(1, 1050);
+		} else {
 			Mix_PlayChannel(-1, m_sound_effects[effect], 0);
 		}
 	}
-	if (Mix_GroupAvailable(1))
-		Mix_FadeOutGroup(1, 1050);
 	if (action_dest == "quit" || action_dest == "complete")
 	{
 		m_exit();
 		return true;
 	}
-	else
+	else if (action_dest.length() > 0)
 	{
 		if (find(m_unlocked.begin(), m_unlocked.end(), action_dest) == m_unlocked.end())
 		{
 			m_unlocked.push_back(action_dest);
 		}
-		Mix_PlayChannel(-1, m_sound_effects[Sound_Effects::open_door], 0);
-		load_level(action_dest);	
+		load_level(action_dest, Sound_Effects::open_door);
 	}
 	return true;
 }
@@ -275,15 +283,13 @@ void World::start_sounds()
 		return;
 	}
 
-	const int numGhosts = m_level.get_num_ghosts();
-
-	m_background_music =  Mix_LoadMUS(numGhosts > 0 ? audio_path("ghosts.wav") : audio_path("background.wav"));
-	m_sound_effects[Sound_Effects::robot_hurt] = Mix_LoadWAV(audio_path("salmon_dead.wav"));
+	m_background_music =  Mix_LoadMUS(audio_path("background.wav"));
+	m_ghost_approach_background = Mix_LoadMUS(audio_path("ghosts.wav"));
+	m_sound_effects[Sound_Effects::robot_hurt] = Mix_LoadWAV(audio_path("robot_hurt.wav"));
 	m_sound_effects[Sound_Effects::open_door] = Mix_LoadWAV(audio_path("open_door.wav"));
 	m_sound_effects[Sound_Effects::door_locked] = Mix_LoadWAV(audio_path("locked.wav"));
 	m_sound_effects[Sound_Effects::rocket] = Mix_LoadWAV(audio_path("rocket.wav"));
-	m_sound_effects[Sound_Effects::collision] = Mix_LoadWAV(audio_path("collision.wav"));
-	m_sound_effects[Sound_Effects::landing] = Mix_LoadWAV(audio_path("impactMining_000.ogg"));
+	m_sound_effects[Sound_Effects::collision] = Mix_LoadWAV(audio_path("impactMining_000.ogg"));
 
 	// set the volume for the music and sound effects
 	Mix_VolumeMusic((int)(MIX_MAX_VOLUME / 5));
@@ -291,11 +297,10 @@ void World::start_sounds()
 	Mix_VolumeChunk(m_sound_effects[Sound_Effects::open_door], MIX_MAX_VOLUME/4);
 	Mix_VolumeChunk(m_sound_effects[Sound_Effects::door_locked], MIX_MAX_VOLUME); // locked door effect kind of quiet, so make it louder
 	Mix_VolumeChunk(m_sound_effects[Sound_Effects::rocket], MIX_MAX_VOLUME/3);
-	Mix_VolumeChunk(m_sound_effects[Sound_Effects::collision], MIX_MAX_VOLUME/9);
-	Mix_VolumeChunk(m_sound_effects[Sound_Effects::landing], MIX_MAX_VOLUME/4);
+	Mix_VolumeChunk(m_sound_effects[Sound_Effects::collision], MIX_MAX_VOLUME/4);
 
 	// check that we have correctly loaded bgm and sounds
-	if (m_background_music == nullptr) {
+	if (m_background_music == nullptr || m_ghost_approach_background == nullptr) {
 		fprintf(stderr, "Failed to game sounds\n %s\n", Mix_GetError());
 		return;
 	}
@@ -308,7 +313,7 @@ void World::start_sounds()
 	}
 
 	// Playing background music indefinitely
-	Mix_FadeInMusic(m_background_music, -1, 1500);
+	Mix_FadeInMusic(m_close_to_ghosts ? m_ghost_approach_background : m_background_music, -1, 1500);
 }
 
 void World::stop_sounds()
@@ -321,14 +326,13 @@ void World::stop_sounds()
 		}
 	}
 	// free background music
-	stop_music();
-}
-
-void World::stop_music()
-{
 	if (m_background_music != nullptr) {
 		Mix_FreeMusic(m_background_music);
 		m_background_music = nullptr;
+	}
+	if (m_ghost_approach_background != nullptr) {
+		Mix_FreeMusic(m_ghost_approach_background);
+		m_ghost_approach_background = nullptr;
 	}
 
 	Mix_CloseAudio();
@@ -366,12 +370,15 @@ void World::reset()
 	m_level.reset_level();
 }
 
-void World::load_level(std::string level)
+void World::load_level(std::string level, Sound_Effects on_load_effect)
 {
-	stop_music();
+	stop_sounds();
 	m_load();
 	bool valid = m_level.parse_level(level, m_unlocked, m_robot_ls_pos);
 	start_sounds();
+	if (on_load_effect != Sound_Effects::silence) {
+		Mix_PlayChannel(-1, m_sound_effects[on_load_effect], 0);
+	}
 
 	if (valid)
 	{

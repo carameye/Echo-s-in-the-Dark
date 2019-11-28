@@ -133,6 +133,7 @@ void Ghost::set_level_graph(LevelGraph* graph)
 }
 
 void Ghost::update_is_chasing(vec3 headlight_color) {
+	Sound_Effects sound_effect = Sound_Effects::silence;
     if (colour_is_white(m_colour) || colour_is_white(headlight_color)) {
         m_is_chasing = true;
         return;
@@ -150,4 +151,8 @@ void Ghost::set_path()
 
 bool Ghost::colour_is_white(vec3 colour) {
 	return colour.x == 1.f && colour.y == 1.f && colour.z == 1.f;
+}
+
+float Ghost::dist_from_goal() {
+	return len(sub(mc.position, m_goal));
 }

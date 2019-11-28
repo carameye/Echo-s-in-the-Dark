@@ -49,6 +49,8 @@ public:
 	// Set path
 	void set_path();
 
+	float dist_from_goal();
+
 private:
     vec3 m_colour;
     bool m_is_chasing;

@@ -48,7 +48,6 @@ public:
 	// Manage sounds and background music
 	void start_sounds();
 	void stop_sounds();
-	void stop_music();
 
 	// Begin level
 	void start_level(bool new_game);
@@ -67,7 +66,7 @@ public:
 
 private:
 	// Draw loading screen, parse level, set camera pos
-	void load_level(std::string level);
+	void load_level(std::string level, Sound_Effects on_load_effect = Sound_Effects::silence);
 
 	// Plays game introduction. Should only be called if player selects new game
     void play_intro();
@@ -100,7 +99,9 @@ private:
 
 	// game sounds
 	Mix_Music* m_background_music;
+	Mix_Music* m_ghost_approach_background;
 	std::map<Sound_Effects, Mix_Chunk*> m_sound_effects;
+	bool m_close_to_ghosts = false;
 
 	// C++ rng
 	std::default_random_engine m_rng;

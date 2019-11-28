@@ -67,7 +67,7 @@ std::string Door::perform_action()
         return action;
     }
     if (m_locked) {
-        return "door locked";
+        return "locked";
     }
     // otherwise, no destination specified
     // so, stay at current location

@@ -171,14 +171,14 @@ Sound_Effects Level::update(float elapsed_ms) {
                 translation = new_robot_pos.y - robot_pos.y;
                 if (brick.get_position().y > new_robot_pos.y) {
                     if (!m_robot.is_grounded()) {
-                        sound_effect = Sound_Effects::landing;
+                        sound_effect = Sound_Effects::collision;
                     }
                     m_robot.set_grounded();
                 }
             }
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_y)) {
-                sound_effect = Sound_Effects::landing;
+                sound_effect = Sound_Effects::collision;
                 m_robot.set_head_velocity({m_robot.get_head_velocity().x, 0.f});
 
                 float circle_width = brick_size / 2.f;
@@ -268,10 +268,6 @@ vec2 Level::get_starting_camera_position() const {
 
 vec2 Level::get_player_position() const {
 	return m_robot.get_position();
-}
-
-int Level::get_num_ghosts() const {
-    return (int)m_ghosts.size();
 }
 
 std::string Level::interact()
@@ -466,7 +462,9 @@ std::pair<std::string, Sound_Effects> Level::handle_key_press(int key, int actio
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
         input_states[key] = action;
-		m_robot.stop_flying();
+        m_robot.stop_flying();
+        key_press_result.second = Sound_Effects::falling;
+        return key_press_result;
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
         input_states[key] = action;
@@ -479,13 +477,12 @@ std::pair<std::string, Sound_Effects> Level::handle_key_press(int key, int actio
 
     if (action == GLFW_RELEASE && key == GLFW_KEY_F) {
         std::string destination = interact();
-        if (destination == "door locked") {
+        if (destination == "locked") {
             key_press_result.second = Sound_Effects::door_locked;
-            return key_press_result;
         } else {
             key_press_result.first = destination;
-            return key_press_result;
         }
+        return key_press_result;
     }
 
     // headlight toggle
@@ -657,4 +654,15 @@ void Level::reset_level() {
     for (auto &ghost : m_ghosts) {
         ghost->set_position(reset_positions[pos_i++]);
     }
+}
+
+float Level::get_min_ghost_distance() {
+    float min_ghost_dist = INFINITY;
+    for(auto& ghost : m_ghosts) {
+        float dist = ghost->dist_from_goal();
+        if (dist < min_ghost_dist) {
+            min_ghost_dist = dist;
+        }
+    }
+    return min_ghost_dist;
 }
