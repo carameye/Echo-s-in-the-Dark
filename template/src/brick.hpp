@@ -11,6 +11,7 @@ class Brick : public Entity
     static RenderComponent rrc;
     static RenderComponent grc;
     static RenderComponent brc;
+    static RenderComponent irc;
 
 	MotionComponent mc;
 
@@ -31,11 +32,11 @@ public:
 	// Returns the bricks hitbox for collision detection
 	Hitbox get_hitbox() const;
 
-    bool get_is_visible();
+    bool get_is_collidable();
 
     vec3 get_colour();
 
 private:
     vec3 m_colour;
-    bool m_is_visible;
+    bool m_is_collidable;
 };

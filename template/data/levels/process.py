@@ -92,6 +92,10 @@ def convert(filepath):
                     obj["colour"] = { "r": 0.0, "g": 0.0, "b": 1.0 }
                     bricks.append(obj)
                     continue
+                if char is "I":
+                    obj["colour"] = { "r": 0.0, "g": 0.0, "b": 0.0 }
+                    bricks.append(obj)
+                    continue
                 if char is "Y":
                     obj["colour"] = { "r": 1.0, "g": 0.0, "b": 0.0 }
                     ghosts.append(obj)

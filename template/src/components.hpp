@@ -25,6 +25,7 @@ struct RenderComponent
 	Transform transform;
 	bool render = true;
 	int can_be_hidden = 0;
+    int is_invisible = 0;
 	vec3 colour = {1.f, 1.f, 1.f};
 	float alpha;
 

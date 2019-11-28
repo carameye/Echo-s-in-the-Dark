@@ -662,6 +662,60 @@ src/main.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/maker.obj: src/maker.cpp.obj
+
+.PHONY : src/maker.obj
+
+# target to build an object file
+src/maker.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/maker.cpp.obj
+.PHONY : src/maker.cpp.obj
+
+src/maker.i: src/maker.cpp.i
+
+.PHONY : src/maker.i
+
+# target to preprocess a source file
+src/maker.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/maker.cpp.i
+.PHONY : src/maker.cpp.i
+
+src/maker.s: src/maker.cpp.s
+
+.PHONY : src/maker.s
+
+# target to generate assembly for a file
+src/maker.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/maker.cpp.s
+.PHONY : src/maker.cpp.s
+
+src/maker_level.obj: src/maker_level.cpp.obj
+
+.PHONY : src/maker_level.obj
+
+# target to build an object file
+src/maker_level.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/maker_level.cpp.obj
+.PHONY : src/maker_level.cpp.obj
+
+src/maker_level.i: src/maker_level.cpp.i
+
+.PHONY : src/maker_level.i
+
+# target to preprocess a source file
+src/maker_level.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/maker_level.cpp.i
+.PHONY : src/maker_level.cpp.i
+
+src/maker_level.s: src/maker_level.cpp.s
+
+.PHONY : src/maker_level.s
+
+# target to generate assembly for a file
+src/maker_level.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/maker_level.cpp.s
+.PHONY : src/maker_level.cpp.s
+
 src/sign.obj: src/sign.cpp.obj
 
 .PHONY : src/sign.obj
@@ -920,6 +974,12 @@ help:
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s
+	@echo ... src/maker.obj
+	@echo ... src/maker.i
+	@echo ... src/maker.s
+	@echo ... src/maker_level.obj
+	@echo ... src/maker_level.i
+	@echo ... src/maker_level.s
 	@echo ... src/sign.obj
 	@echo ... src/sign.i
 	@echo ... src/sign.s
