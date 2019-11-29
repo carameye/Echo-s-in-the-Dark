@@ -277,9 +277,12 @@ void World::handle_mouse_scroll(double yoffset) {
 
 void World::start_sounds()
 {
+	if (Mix_Init(MIX_INIT_OGG)) {
+		fprintf(stderr, "Mix_Init: Failed to init support for ogg files\n");
+	}
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
 	{
-		fprintf(stderr, "Failed to open audio device");
+		fprintf(stderr, "Failed to open audio device\n");
 		return;
 	}
 
@@ -336,6 +339,7 @@ void World::stop_sounds()
 	}
 
 	Mix_CloseAudio();
+	Mix_Quit();
 }
 
 void World::start_level(bool new_game)
