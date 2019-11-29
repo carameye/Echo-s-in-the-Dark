@@ -277,8 +277,10 @@ void World::handle_mouse_scroll(double yoffset) {
 
 void World::start_sounds()
 {
-	if (Mix_Init(MIX_INIT_OGG)) {
+	int mix_init_flags = Mix_Init(MIX_INIT_OGG);
+	if (mix_init_flags != MIX_INIT_OGG) {
 		fprintf(stderr, "Mix_Init: Failed to init support for ogg files\n");
+		return;
 	}
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
 	{
