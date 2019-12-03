@@ -1,5 +1,26 @@
 # ECHOs in the Dark
 
+## Final Game Report:
+
+For this milestone, we:
+
+Fixed the following from ideas from crossplay/previous bugs:
+- Added the ability to change light colors to the mouse so that player can always have one hand on mouse to direct light, and one on keyboard
+
+Have completed the following parts of our plan:
+- Added story element that tie together the game play, and give players a concrete goal while playing the game
+- Added intro cut scene
+- Added cut scene for successfull completion of the game
+- Added more sound effects
+- Added invisible blocks which react the way that normal ones do, but are invisible. (Mainly for menue screens and level select)
+- Added new sprites for level selection
+- Added new ghost sprites (we were worried that the first draft didn't completely fit with our overall theme)
+- Added more refined clues for player about where there are 'hidden' bricks
+
+Have made changes that were not in the plan but were small extra features we thought were good ideas:
+- Pushable Blocks
+- Level Editor for continued playability (Not actually very small at all! Go Harlan!)
+
 ## Playable Game Report:
 
 
@@ -42,6 +63,7 @@ When building levels:
   - C = Brick that shows up only in red light
   - M = Brick that shows up only in green light
   - N = Brick that shows up only in blue light
+  - I = Brick that never appear, but are always interactable
   
 Ghosts:
   
