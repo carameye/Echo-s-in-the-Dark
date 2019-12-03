@@ -28,6 +28,7 @@ public:
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
 	void on_click(GLFWwindow* window, int button, int action, int mods);
+    void on_scroll(GLFWwindow* window, double xoffset, double yoffset);
 
 	// Load menus
 	void load_main_menu();

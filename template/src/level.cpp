@@ -471,6 +471,17 @@ void Level::handle_mouse_click(int button, int action) {
     }
 }
 
+void Level::handle_mouse_scroll(double yoffset) {
+    if (yoffset > 0) {
+        m_light.set_next_light_channel();
+        m_has_colour_changed = true;
+    }
+    else {
+        m_light.set_prev_light_channel();
+        m_has_colour_changed = true;
+    }
+}
+
 std::string Level::get_current_level()
 {
     return m_level;

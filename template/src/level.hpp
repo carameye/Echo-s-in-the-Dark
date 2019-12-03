@@ -54,6 +54,8 @@ class Level
 	// Get the name of the current level
 	std::string get_current_level();
 
+    void handle_mouse_scroll(double yoffset);
+
 private:
     // Spawn entities
 	bool spawn_robot(vec2 position);
