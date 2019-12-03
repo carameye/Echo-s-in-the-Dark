@@ -465,6 +465,10 @@ void Level::handle_mouse_click(int button, int action) {
         m_light.set_next_light_channel();
         m_has_colour_changed = true;
     }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        m_light.set_prev_light_channel();
+        m_has_colour_changed = true;
+    }
 }
 
 std::string Level::get_current_level()

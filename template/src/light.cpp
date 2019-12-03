@@ -159,6 +159,18 @@ void Light::set_next_light_channel() {
     }
 }
 
+void Light::set_prev_light_channel() {
+    if  (isWhite(m_headlight_channel)){
+        m_headlight_channel = {0.f, 0.f, 1.f};
+    } else if  (isRed(m_headlight_channel)) {
+        m_headlight_channel = {1.f, 1.f, 1.f};
+    } else if (isGreen(m_headlight_channel)) {
+        m_headlight_channel = {1.f, 0.f, 0.f};
+    }else{
+        m_headlight_channel = {0.f, 1.f, 0.f};
+    }
+}
+
 void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& size, std::vector<Torch*> torches){
     // Setting shaders
     glUseProgram(effect.program);

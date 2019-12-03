@@ -41,6 +41,8 @@ public:
     void set_blue_channel();
     void set_next_light_channel();
 
+    void set_prev_light_channel();
+
 private:
     vec2 m_light_position;
     float ambient = 0.f;
