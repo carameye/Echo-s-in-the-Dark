@@ -39,6 +39,7 @@ public:
     void set_red_channel();
     void set_green_channel();
     void set_blue_channel();
+    void set_next_light_channel();
 
 private:
     vec2 m_light_position;
@@ -51,5 +52,9 @@ private:
 	Effect effect;
 	Motion motion;
 
+	bool isBlue(vec3 color);
+	bool isRed(vec3 color);
+	bool isGreen(vec3 color);
+	bool isWhite(vec3 color);
     void set_rotation(float radians);
 };

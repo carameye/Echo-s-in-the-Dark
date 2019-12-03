@@ -235,6 +235,14 @@ void World::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	m_level.handle_mouse_move(xpos, ypos, camera_pos);
 }
 
+void World::handle_mouse_click(int button, int action)
+{
+    if (is_level_load_pan) {
+        return;
+    }
+    m_level.handle_mouse_click(button, action);
+}
+
 void World::start_sounds()
 {
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)

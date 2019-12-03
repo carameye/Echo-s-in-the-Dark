@@ -41,6 +41,7 @@ public:
 	// Handle input
 	bool handle_key_press(GLFWwindow*, int key, int, int action, int mod);
 	void handle_mouse_move(GLFWwindow* window, double xpos, double ypos);
+    void handle_mouse_click(int button, int action);
 
 	// Manage sounds and background music
 	void start_sounds();

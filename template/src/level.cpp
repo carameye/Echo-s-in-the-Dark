@@ -460,6 +460,13 @@ void Level::handle_mouse_move(double xpos, double ypos, vec2 camera_pos)
 	m_light.convert_mouse_pos_to_rad({ mouse_x, mouse_y }, sub(m_robot.get_head_position(), top_left));
 }
 
+void Level::handle_mouse_click(int button, int action) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+        m_light.set_next_light_channel();
+        m_has_colour_changed = true;
+    }
+}
+
 std::string Level::get_current_level()
 {
     return m_level;

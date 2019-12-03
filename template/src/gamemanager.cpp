@@ -345,11 +345,13 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		default:
 			break;
 		}
-	}
-	else if (m_in_maker)
+	} else if (m_in_maker)
 	{
 		m_maker.handle_mouse_click(window, button, action, mods);
-	}
+	} else
+    {
+        m_world.handle_mouse_click(button, action);
+    }
 }
 
 void GameManager::load_main_menu()
