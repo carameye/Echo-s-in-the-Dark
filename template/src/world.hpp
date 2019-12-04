@@ -63,10 +63,12 @@ private:
 	// Draw loading screen, parse level, set camera pos
 	void load_level(std::string level);
 
+	// Plays game introduction. Should only be called if player selects new game
+    void play_intro();
+
 	// Load state from save file
 	void load();
 
-private:
 	// Load menu access
 	void (*m_load)();
 	void (*m_exit)();
