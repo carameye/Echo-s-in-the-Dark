@@ -49,9 +49,12 @@ class Level
 	// Handle input
 	std::string handle_key_press(int key, int action);
 	void handle_mouse_move(double xpos, double ypos, vec2 camera);
+	void handle_mouse_click(int button, int action);
 
 	// Get the name of the current level
 	std::string get_current_level();
+
+    void handle_mouse_scroll(double yoffset);
 
 private:
     // Spawn entities

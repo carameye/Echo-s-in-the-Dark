@@ -69,9 +69,11 @@ bool GameManager::init(vec2 screen)
 	auto key_redirect = [](GLFWwindow* wnd, int _0, int _1, int _2, int _3) { ((GameManager*)glfwGetWindowUserPointer(wnd))->on_key(wnd, _0, _1, _2, _3); };
 	auto cursor_pos_redirect = [](GLFWwindow* wnd, double _0, double _1) { ((GameManager*)glfwGetWindowUserPointer(wnd))->on_mouse_move(wnd, _0, _1); };
 	auto mouse_button_redirect = [](GLFWwindow* wnd, int _0, int _1, int _2) { ((GameManager*)glfwGetWindowUserPointer(wnd))->on_click(wnd, _0, _1, _2); };
+    auto mouse_scroll_redirect = [](GLFWwindow* wnd, double _0, double _1) { ((GameManager*)glfwGetWindowUserPointer(wnd))->on_scroll(wnd, _0, _1); };
 	glfwSetKeyCallback(m_window, key_redirect);
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 	glfwSetMouseButtonCallback(m_window, mouse_button_redirect);
+	glfwSetScrollCallback(m_window, mouse_scroll_redirect);
 
 	// Initialize audio
 	if (SDL_Init(SDL_INIT_AUDIO) < 0)
@@ -345,11 +347,28 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		default:
 			break;
 		}
-	}
-	else if (m_in_maker)
+	} else if (m_in_maker)
 	{
 		m_maker.handle_mouse_click(window, button, action, mods);
-	}
+	} else
+    {
+        m_world.handle_mouse_click(button, action);
+    }
+}
+
+void GameManager::on_scroll(GLFWwindow *window, double xoffset, double yoffset) {
+    if (m_in_menu)
+    {
+        return;
+    }
+    else if (m_in_maker)
+    {
+        return;
+    }
+    else
+    {
+        m_world.handle_mouse_scroll(yoffset);
+    }
 }
 
 void GameManager::load_main_menu()
@@ -411,3 +430,4 @@ void GameManager::back_to_maker_menu()
 	m_menu = &m_maker_menu;
 	m_menu->start_music();
 }
+
