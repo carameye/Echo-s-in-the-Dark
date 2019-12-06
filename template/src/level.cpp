@@ -7,8 +7,8 @@ using json = nlohmann::json;
 void Level::destroy()
 {
 	// clear all level-dependent resources
-	for (auto& brick : m_bricks) {
-		delete brick;
+	for (auto& brick_element : m_brick_map) {
+		delete brick_element.second;
 	}
 	for (auto& interactable : m_interactables) {
 		delete interactable;
@@ -29,7 +29,7 @@ void Level::destroy()
 	clear_level_components();
 	m_rendering_system.clear();
 	m_interactable = NULL;
-    m_bricks.clear();
+    m_brick_map.clear();
     m_ghosts.clear();
     m_interactables.clear();
     m_signs.clear();
@@ -69,7 +69,8 @@ std::string Level::update(float elapsed_ms) {
         if (headlight_channel.x == 0.f && headlight_channel.y == 0.f && headlight_channel.z == 1.f) {
             m_graph = &m_blue_graph;
         }
-        for (auto &i_brick : m_bricks) {
+        for (auto &brick_element : m_brick_map) {
+            Brick* i_brick = brick_element.second;
             i_brick->update(headlight_channel);
         }
 
@@ -86,11 +87,16 @@ std::string Level::update(float elapsed_ms) {
 
     float translation = new_robot_pos.x - robot_pos.x;
     float translation_head = new_robot_head_pos.x - robot_head_pos.x;
-    for (auto &i_brick : m_bricks) {
-
-        const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
-        const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
-        Brick brick = *i_brick;
+    const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
+    const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
+    vec2 new_brick_pos = to_pixel_position({floor(new_robot_head_pos.x), robot_pos.y});
+    std::vector<vec2> possible_brick_collision_pos = get_brick_positions_around_pos(new_brick_pos);
+    for (auto& pos : possible_brick_collision_pos) {
+        if (m_brick_map.find(pos) == m_brick_map.end()) {
+            // pos was not in the brick map. Therefore, there is no brick at pos, so no collision possible
+            continue;
+        }
+        Brick brick = *m_brick_map[pos];
         bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
@@ -135,11 +141,18 @@ std::string Level::update(float elapsed_ms) {
 
     translation = new_robot_pos.y - robot_pos.y;
     translation_head = new_robot_head_pos.y - robot_head_pos.y;
+    const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
+    const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
+    new_brick_pos = to_pixel_position({robot_pos.x, floor(new_robot_head_pos.x)});
+    possible_brick_collision_pos = get_brick_positions_around_pos(new_brick_pos);
 
-    for (auto &i_brick : m_bricks) {
-        const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
-        const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
-        Brick brick = *i_brick;
+    for (auto& pos : possible_brick_collision_pos) {
+        fprintf(stderr, "brick pos %f %f\n", pos.x, pos.y);
+        if (m_brick_map.find(pos) == m_brick_map.end()) {
+            // pos was not in the brick map. Therefore, there is no brick at pos, so no collision possible
+            continue;
+        }
+        Brick brick = *m_brick_map[pos];
         bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
@@ -224,6 +237,19 @@ std::string Level::update(float elapsed_ms) {
 	}
 
 	return sound_effect;
+}
+
+std::vector<vec2> Level::get_brick_positions_around_pos(vec2 pos) const {
+    std::vector<vec2> brick_positions{
+        pos,
+        add(pos, {0, brick_size}),
+        sub(pos, {0, brick_size}),
+        add(pos, {brick_size, 0}),
+        sub(pos, {brick_size, 0}),
+        add(pos, {brick_size, brick_size}),
+        sub(pos, {brick_size, brick_size}),
+    };
+    return brick_positions;
 }
 
 vec2 Level::get_starting_camera_position() const {
@@ -371,7 +397,7 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
     }
 
     fprintf(stderr, "	built world with %lu doors, %lu ghosts, and %lu bricks\n",
-            m_interactables.size(), m_ghosts.size(), m_bricks.size());
+            m_interactables.size(), m_ghosts.size(), m_brick_map.size());
 
     // Generate the graph
     if (m_ghosts.size() > 0)
@@ -583,7 +609,7 @@ bool Level::spawn_brick(vec2 position, vec3 colour) {
     if (brick->init(next_id++, colour))
     {
         brick->set_position(position);
-        m_bricks.push_back(brick);
+        m_brick_map.insert({position, brick});
         return true;
     }
     fprintf(stderr, "	brick spawn failed\n");
