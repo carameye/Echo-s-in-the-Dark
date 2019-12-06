@@ -59,6 +59,9 @@ public:
 private:
 	// Load screen event trigger
 	void (*m_load)();
+	// music management to be called in init and destroy
+	void start_music();
+	void stop_music();
 
 	// Window handle
 	GLFWwindow* m_window;
@@ -88,4 +91,6 @@ private:
 
 	// track the state of input keys
 	std::unordered_map<int, int> input_key_states;
+
+	Mix_Music* m_background_music;
 };

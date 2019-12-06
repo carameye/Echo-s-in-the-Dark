@@ -325,6 +325,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_is_over = true;
 			break;
 		case Status::story_mode:
+
 			m_menu = &m_story_menu;
 			break;
 		case Status::maker_mode:
@@ -343,6 +344,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
             m_menu = &m_introduction_4_menu;
             break;
 		case Status::make_level:
+			fprintf(stderr, "making level\n");
 			m_menu->stop_music();
 			m_in_menu = false;
 			m_in_maker = true;
