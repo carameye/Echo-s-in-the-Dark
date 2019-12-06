@@ -66,6 +66,8 @@ private:
 	bool spawn_sign(vec2 position, std::string text);
 	bool spawn_background();
 	bool spawn_torch(vec2 position);
+
+	// returns the square of bricks around and at pos. Used for collision checking
 	std::vector<vec2> get_brick_positions_around_pos(vec2 pos) const;
 
 	// For resetting the level

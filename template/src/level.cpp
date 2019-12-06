@@ -87,11 +87,11 @@ std::string Level::update(float elapsed_ms) {
 
     float translation = new_robot_pos.x - robot_pos.x;
     float translation_head = new_robot_head_pos.x - robot_head_pos.x;
-    const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
-    const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
-    vec2 new_brick_pos = to_pixel_position({floor(new_robot_head_pos.x), robot_pos.y});
+    vec2 new_brick_pos = {floor(new_robot_pos.x / brick_size) * brick_size, floor(robot_pos.y / brick_size) * brick_size};
     std::vector<vec2> possible_brick_collision_pos = get_brick_positions_around_pos(new_brick_pos);
     for (auto& pos : possible_brick_collision_pos) {
+        const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
+        const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
         if (m_brick_map.find(pos) == m_brick_map.end()) {
             // pos was not in the brick map. Therefore, there is no brick at pos, so no collision possible
             continue;
@@ -141,13 +141,12 @@ std::string Level::update(float elapsed_ms) {
 
     translation = new_robot_pos.y - robot_pos.y;
     translation_head = new_robot_head_pos.y - robot_head_pos.y;
-    const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
-    const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
-    new_brick_pos = to_pixel_position({robot_pos.x, floor(new_robot_head_pos.x)});
+    new_brick_pos = {floor(robot_pos.x / brick_size) * brick_size, floor(new_robot_pos.y / brick_size) * brick_size};
     possible_brick_collision_pos = get_brick_positions_around_pos(new_brick_pos);
 
     for (auto& pos : possible_brick_collision_pos) {
-        fprintf(stderr, "brick pos %f %f\n", pos.x, pos.y);
+        const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
+        const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
         if (m_brick_map.find(pos) == m_brick_map.end()) {
             // pos was not in the brick map. Therefore, there is no brick at pos, so no collision possible
             continue;
@@ -248,6 +247,8 @@ std::vector<vec2> Level::get_brick_positions_around_pos(vec2 pos) const {
         sub(pos, {brick_size, 0}),
         add(pos, {brick_size, brick_size}),
         sub(pos, {brick_size, brick_size}),
+        add(sub(pos, {0, brick_size}), {brick_size, 0}),
+        add(sub(pos, {brick_size, 0}), {0, brick_size}),
     };
     return brick_positions;
 }
