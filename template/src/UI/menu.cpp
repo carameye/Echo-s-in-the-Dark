@@ -43,7 +43,7 @@ bool Menu::init(GLFWwindow* window, vec2 screen)
 	return true;
 }
 
-bool Menu::setup(std::vector<std::pair<std::string, Status>> buttons)
+bool Menu::setup(std::vector<std::tuple<std::string, Status, vec2>> buttons)
 {
 	float start = 400.f - (buttons.size() * 2.f * brick_size + (buttons.size() - 1) * brick_size) / 2.f;
 
@@ -52,11 +52,13 @@ bool Menu::setup(std::vector<std::pair<std::string, Status>> buttons)
 	for (auto& s : buttons)
 	{
 		Button* b = new Button();
-		b->set_texture_name(s.first);
-		b->set_status(s.second);
-		b->init(next_id++, { 600.f, start + brick_size });
+		b->set_texture_name(std::get<0>(s));
+		b->set_status(std::get<1>(s));
+		vec2 size = std::get<2>(s);
+		b->set_size(size);
+		b->init(next_id++, { 600.f, start + size.y / 2 });
 		m_entities.push_back(b);
-		start += brick_size * 3.f;
+		start += size.y + brick_size;
 	}
 
 	m_rs.process(first, next_id);

@@ -379,46 +379,51 @@ void GameManager::on_scroll(GLFWwindow *window, double xoffset, double yoffset) 
 
 void GameManager::load_main_menu()
 {
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("story_mode.png", Status::story_mode));
-	buttons.push_back(std::make_pair("maker_mode.png", Status::maker_mode));
-	buttons.push_back(std::make_pair("exit.png", Status::exit));
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("story_mode.png", Status::story_mode, button_size));
+	buttons.push_back(std::make_tuple("maker_mode.png", Status::maker_mode, button_size));
+	buttons.push_back(std::make_tuple("exit.png", Status::exit, button_size));
 	m_main_menu.setup(buttons);
 }
 
 void GameManager::load_story_menu()
 {
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("new_game.png", Status::new_game));
-	buttons.push_back(std::make_pair("load_game.png", Status::load_game));
-	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("new_game.png", Status::new_game, button_size));
+	buttons.push_back(std::make_tuple("load_game.png", Status::load_game, button_size));
+	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
 	m_story_menu.setup(buttons);
 }
 
 void GameManager::load_maker_menu()
 {
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("play_level.png", Status::play_level));
-	buttons.push_back(std::make_pair("make_level.png", Status::make_level));
-	buttons.push_back(std::make_pair("load_level.png", Status::load_level));
-	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("play_level.png", Status::play_level, button_size));
+	buttons.push_back(std::make_tuple("make_level.png", Status::make_level, button_size));
+	buttons.push_back(std::make_tuple("load_level.png", Status::load_level, button_size));
+	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
 	m_maker_menu.setup(buttons);
 }
 
 void GameManager::load_pause_menu()
 {
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("resume.png", Status::resume));
-	buttons.push_back(std::make_pair("reset.png", Status::reset));
-	buttons.push_back(std::make_pair("save_game.png", Status::save_game));
-	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("resume.png", Status::resume, button_size));
+	buttons.push_back(std::make_tuple("reset.png", Status::reset, button_size));
+	buttons.push_back(std::make_tuple("save_game.png", Status::save_game, button_size));
+	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
 	m_pause_menu.setup(buttons);
 }
 
 void GameManager::load_loading_menu()
 {
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("loading.png", Status::nothing));
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("loading.png", Status::nothing, button_size));
 	m_load_menu.setup(buttons);
 }
 
