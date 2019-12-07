@@ -151,9 +151,13 @@ void Maker::update(float ms)
 		mouse_moved = false;
 	}
 
-	if (m_click_hold)
+	if (m_left_click_hold)
 	{
-		m_maker_level.handle_mouse_click(mouse_pos.x, mouse_pos.y, camera_pos);
+		m_maker_level.handle_mouse_click(mouse_pos.x, mouse_pos.y, camera_pos, true);
+	}
+	if (m_right_click_hold)
+	{
+		m_maker_level.handle_mouse_click(mouse_pos.x, mouse_pos.y, camera_pos, false);
 	}
 }
 
@@ -217,11 +221,31 @@ void Maker::handle_mouse_click(GLFWwindow* window, int button, int action, int m
 {
 	if (action == GLFW_RELEASE)
 	{
-		m_click_hold = false;
+		switch (button)
+		{
+		case GLFW_MOUSE_BUTTON_LEFT:
+			m_left_click_hold = false;
+			break;
+		case GLFW_MOUSE_BUTTON_RIGHT:
+			m_right_click_hold = false;
+			break;
+		default:
+			break;
+		}
 	}
 	else
 	{
-		m_click_hold = true;
+		switch (button)
+		{
+		case GLFW_MOUSE_BUTTON_LEFT:
+			m_left_click_hold = true;
+			break;
+		case GLFW_MOUSE_BUTTON_RIGHT:
+			m_right_click_hold = true;
+			break;
+		default:
+			break;
+		}
 	}
 }
 

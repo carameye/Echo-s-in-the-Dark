@@ -38,7 +38,7 @@ void MakerLevel::destroy()
 
 vec2 MakerLevel::generate_starter()
 {
-	m_ot = ObjectType::del;
+	m_ot = ObjectType::brick;
 	m_ot_selection = 0;
 
 	min = next_id;
@@ -69,7 +69,7 @@ vec2 MakerLevel::generate_starter()
 
 vec2 MakerLevel::load_level()
 {
-	m_ot = ObjectType::del;
+	m_ot = ObjectType::brick;
 	m_ot_selection = 0;
 
 	min = next_id;
@@ -182,7 +182,8 @@ vec2 MakerLevel::load_level()
 	}
 
 	fprintf(stderr, "	built world with %lu doors, %lu ghosts, and %lu bricks\n",
-		m_interactables.size(), m_ghosts.size(), m_bricks.size());
+		(long unsigned int)m_interactables.size(), (long unsigned int)m_ghosts.size(), 
+		(long unsigned int)m_bricks.size());
 
 	// Spawn the robot
 	vec2 robot_pos = { j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"] };
@@ -201,7 +202,7 @@ void MakerLevel::draw_entities(const mat3& projection, const vec2& camera_shift)
 void MakerLevel::handle_key_press(int key, int action)
 {
 	if (action == GLFW_PRESS && key == GLFW_KEY_TAB) {
-		m_ot_selection = (m_ot_selection + 1) % 6;
+		m_ot_selection = (m_ot_selection + 1) % 5;
 		m_ot = (ObjectType)m_ot_selection;
 	}
 
@@ -235,7 +236,7 @@ void MakerLevel::handle_key_press(int key, int action)
 	}
 }
 
-void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera)
+void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera, bool left)
 {
 	float x = (float)xpos + camera.x - 600.f + brick_size / 2.f;
 	float y = (float)ypos + camera.y - 400.f + brick_size / 2.f;
@@ -248,66 +249,50 @@ void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera)
 
 	int start = next_id;
 
-	if (m_hover_object_is_spawned)
+	if (m_hover_object_is_spawned && left)
 	{
 		m_hover_object_is_spawned = false;
 		return;
 	}
 
-	switch (m_ot)
+	if (left) 
 	{
-	case ObjectType::del:
+		switch (m_ot)
+		{
+		case ObjectType::brick:
+			spawn_brick(position, m_color);
+			break;
+		case ObjectType::torch:
+			spawn_torch(position);
+			break;
+		case ObjectType::door:
+			spawn_door(position, "complete");
+			break;
+		case ObjectType::ghost:
+			spawn_ghost(position, m_color);
+			break;
+		case ObjectType::robot:
+		{
+			if (valid_robot_position(position))
+			{
+				slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = nullptr;
+				m_robot_position = position;
+				slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = &m_robot;
+			}
+			break;
+		}
+		default:
+			break;
+		}
+
+		for (int i = start; i < next_id; i++)
+		{
+			m_rendering_system.add(i);
+		}
+	}
+	else if (!m_hover_object_is_spawned)
+	{
 		delete_object(position);
-		break;
-	case ObjectType::brick:
-		spawn_brick(position, m_color);
-		break;
-	case ObjectType::torch:
-		spawn_torch(position);
-		break;
-	case ObjectType::door:
-		spawn_door(position, "complete");
-		break;
-	case ObjectType::ghost:
-		spawn_ghost(position, m_color);
-		break;
-	case ObjectType::robot:
-	{
-		bool valid = true;
-		int x = position.x / 64.f;
-		int y = position.y / 64.f;
-		for (int i = x - 3; i < x + 4; i++)
-		{
-			for (int j = y - 3; j < y + 4; j++)
-			{
-				if (i >= 0 && i < width && j >= 0 && j < height && slots[i][j] != nullptr && 
-					(std::find(m_bricks.begin(), m_bricks.end(), slots[i][j]) != m_bricks.end() ||
-					std::find(m_ghosts.begin(), m_ghosts.end(), slots[i][j]) != m_ghosts.end()))
-				{
-					valid = false;
-					break;
-				}
-			}
-			if (!valid)
-			{
-				break;
-			}
-		}
-		if (valid)
-		{
-			slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = nullptr;
-			m_robot_position = position;
-			slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = &m_robot;
-		}
-		break;
-	}
-	default:
-		break;
-	}
-	
-	for (int i = start; i < next_id; i++)
-	{
-		m_rendering_system.add(i);
 	}
 }
 
@@ -333,9 +318,6 @@ void MakerLevel::refresh_hover_object(float x, float y)
 
 	switch (m_ot)
 	{
-	case ObjectType::del:
-		m_hover_object_is_spawned = false;
-		break;
 	case ObjectType::brick:
 		m_hover_object_is_spawned = spawn_brick(position, m_color);
 		break;
@@ -349,8 +331,11 @@ void MakerLevel::refresh_hover_object(float x, float y)
 		m_hover_object_is_spawned = spawn_ghost(position, m_color);
 		break;
 	case ObjectType::robot:
-		m_hover_object_is_spawned = false;
-		m_robot.set_position(position);
+		m_hover_object_is_spawned = false;	
+		if (valid_robot_position(position))
+		{
+			m_robot.set_position(position);
+		}
 	default:
 		break;
 	}
@@ -559,6 +544,26 @@ bool MakerLevel::delete_object(vec2 position)
 	if (found)
 	{
 		m_rendering_system.remove(id, clean);
+	}
+
+	return true;
+}
+
+bool MakerLevel::valid_robot_position(vec2 position)
+{
+	int x = (int)(position.x / 64.f);
+	int y = (int)(position.y / 64.f);
+	for (int i = x - 3; i < x + 4; i++)
+	{
+		for (int j = y - 3; j < y + 4; j++)
+		{
+			if (i >= 0 && i < width && j >= 0 && j < height && slots[i][j] != nullptr &&
+				(std::find(m_bricks.begin(), m_bricks.end(), slots[i][j]) != m_bricks.end() ||
+					std::find(m_ghosts.begin(), m_ghosts.end(), slots[i][j]) != m_ghosts.end()))
+			{
+				return false;
+			}
+		}
 	}
 
 	return true;

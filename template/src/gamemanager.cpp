@@ -348,7 +348,8 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		}
 	} else if (m_in_maker)
 	{
-		if (button != GLFW_MOUSE_BUTTON_LEFT || (action != GLFW_PRESS && action != GLFW_RELEASE)) {
+		if ((button != GLFW_MOUSE_BUTTON_LEFT && button != GLFW_MOUSE_BUTTON_RIGHT) || 
+			(action != GLFW_PRESS && action != GLFW_RELEASE)) {
 			return;
 		}
 		m_maker.handle_mouse_click(window, button, action, mods);
