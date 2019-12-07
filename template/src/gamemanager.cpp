@@ -231,13 +231,12 @@ void GameManager::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 
 void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 {
-	if (action != GLFW_PRESS)
-	{
-		return;
-	}
-
 	if (m_in_menu)
 	{
+		if (button != GLFW_MOUSE_BUTTON_LEFT || action != GLFW_PRESS) {
+			return;
+		}
+
 		Status s = m_menu->handle_mouse_button(button, action);
 
 		switch (s)
@@ -349,9 +348,15 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		}
 	} else if (m_in_maker)
 	{
+		if (button != GLFW_MOUSE_BUTTON_LEFT || (action != GLFW_PRESS && action != GLFW_RELEASE)) {
+			return;
+		}
 		m_maker.handle_mouse_click(window, button, action, mods);
 	} else
     {
+		if (action != GLFW_PRESS) {
+			return;
+		}
         m_world.handle_mouse_click(button, action);
     }
 }

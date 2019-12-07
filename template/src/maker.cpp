@@ -150,6 +150,11 @@ void Maker::update(float ms)
 		m_maker_level.handle_mouse_move(mouse_pos.x, mouse_pos.y, camera_pos);
 		mouse_moved = false;
 	}
+
+	if (m_click_hold)
+	{
+		m_maker_level.handle_mouse_click(mouse_pos.x, mouse_pos.y, camera_pos);
+	}
 }
 
 // Should the game be over ?
@@ -210,7 +215,14 @@ void Maker::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
 
 void Maker::handle_mouse_click(GLFWwindow* window, int button, int action, int mods)
 {
-	m_maker_level.handle_mouse_click(mouse_pos.x, mouse_pos.y, camera_pos);
+	if (action == GLFW_RELEASE)
+	{
+		m_click_hold = false;
+	}
+	else
+	{
+		m_click_hold = true;
+	}
 }
 
 void Maker::load()
