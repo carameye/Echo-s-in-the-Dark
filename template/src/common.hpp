@@ -28,7 +28,8 @@
 #define maker_shadow shadow_path "maker_level_brickmap.bmp"
 
 enum class Status { nothing, main_menu, new_game, load_game, resume, reset, save_game, exit,
-					story_mode, maker_mode, play_level, make_level, load_level};
+					story_mode, maker_mode, play_level, make_level, load_level,
+					go_to_intro_1, go_to_intro_2, go_to_intro_3, go_to_intro_4};
 
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..

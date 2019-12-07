@@ -88,6 +88,18 @@ bool GameManager::init(vec2 screen)
 	m_story_menu.init(m_window, screen);
 	load_story_menu();
 
+    m_introduction_1_menu.init(m_window, screen);
+    load_introduction_1_menu();
+
+    m_introduction_2_menu.init(m_window, screen);
+    load_introduction_2_menu();
+
+    m_introduction_3_menu.init(m_window, screen);
+    load_introduction_3_menu();
+
+    m_introduction_4_menu.init(m_window, screen);
+    load_introduction_4_menu();
+
 	m_maker_menu.init(m_window, screen);
 	load_maker_menu();
 
@@ -310,6 +322,18 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		case Status::maker_mode:
 			m_menu = &m_maker_menu;
 			break;
+		case Status::go_to_intro_1:
+		    m_menu = &m_introduction_1_menu;
+		    break;
+        case Status::go_to_intro_2:
+            m_menu = &m_introduction_2_menu;
+            break;
+        case Status::go_to_intro_3:
+            m_menu = &m_introduction_3_menu;
+            break;
+        case Status::go_to_intro_4:
+            m_menu = &m_introduction_4_menu;
+            break;
 		case Status::make_level:
 			m_menu->stop_music();
 			m_in_menu = false;
@@ -364,10 +388,38 @@ void GameManager::load_main_menu()
 void GameManager::load_story_menu()
 {
 	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("new_game.png", Status::new_game));
+	buttons.push_back(std::make_pair("new_game.png", Status::go_to_intro_1));
 	buttons.push_back(std::make_pair("load_game.png", Status::load_game));
 	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
 	m_story_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_1_menu()
+{
+    std::vector<std::pair<std::string, Status>> buttons;
+    buttons.push_back(std::make_pair("intro_1.png", Status::go_to_intro_2));
+    m_introduction_1_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_2_menu()
+{
+    std::vector<std::pair<std::string, Status>> buttons;
+    buttons.push_back(std::make_pair("intro_2.png", Status::go_to_intro_3));
+    m_introduction_2_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_3_menu()
+{
+    std::vector<std::pair<std::string, Status>> buttons;
+    buttons.push_back(std::make_pair("intro_3.png", Status::go_to_intro_4));
+    m_introduction_3_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_4_menu()
+{
+    std::vector<std::pair<std::string, Status>> buttons;
+    buttons.push_back(std::make_pair("intro_4.png", Status::new_game));
+    m_introduction_4_menu.setup(buttons);
 }
 
 void GameManager::load_maker_menu()

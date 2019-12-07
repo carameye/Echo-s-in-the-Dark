@@ -313,7 +313,6 @@ void World::start_level(bool new_game)
 	if (new_game)
 	{
 		m_unlocked = { "level_select", "level_1" };
-		play_intro();
 		load_level("level_select");
 	}
 	else
@@ -338,10 +337,6 @@ bool World::start_maker_level()
 void World::reset()
 {
 	m_level.reset_level();
-}
-
-void World::play_intro() {
-    load_level("intro");
 }
 
 void World::load_level(std::string level)
