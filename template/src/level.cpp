@@ -87,9 +87,10 @@ std::string Level::update(float elapsed_ms) {
 
     float translation = new_robot_pos.x - robot_pos.x;
     float translation_head = new_robot_head_pos.x - robot_head_pos.x;
-    vec2 new_brick_pos = {floor(new_robot_pos.x / brick_size) * brick_size, floor(robot_pos.y / brick_size) * brick_size};
-    std::vector<vec2> possible_brick_collision_pos = get_brick_positions_around_pos(new_brick_pos);
-    for (auto& pos : possible_brick_collision_pos) {
+    // get possible brick collision points after trying to move in x dir
+    std::vector<vec2> possible_brick_collisions = get_brick_positions_around_pos({new_robot_pos.x, robot_pos.y});
+
+    for (auto& pos : possible_brick_collisions) {
         const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
         const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
         if (m_brick_map.find(pos) == m_brick_map.end()) {
@@ -141,10 +142,10 @@ std::string Level::update(float elapsed_ms) {
 
     translation = new_robot_pos.y - robot_pos.y;
     translation_head = new_robot_head_pos.y - robot_head_pos.y;
-    new_brick_pos = {floor(robot_pos.x / brick_size) * brick_size, floor(new_robot_pos.y / brick_size) * brick_size};
-    possible_brick_collision_pos = get_brick_positions_around_pos(new_brick_pos);
+    // get possible brick collision points after trying to move in y dir
+    possible_brick_collisions = get_brick_positions_around_pos({robot_pos.x, new_robot_pos.y});
 
-    for (auto& pos : possible_brick_collision_pos) {
+    for (auto& pos : possible_brick_collisions) {
         const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
         const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
         if (m_brick_map.find(pos) == m_brick_map.end()) {
@@ -239,17 +240,22 @@ std::string Level::update(float elapsed_ms) {
 }
 
 std::vector<vec2> Level::get_brick_positions_around_pos(vec2 pos) const {
+    // round the pos to the nearest brick position
+    pos = {floor(pos.x / brick_size) * brick_size, floor(pos.y / brick_size) * brick_size};
+
+    // get the square of bricks around and at pos
     std::vector<vec2> brick_positions{
         pos,
-        add(pos, {0, brick_size}),
-        sub(pos, {0, brick_size}),
-        add(pos, {brick_size, 0}),
-        sub(pos, {brick_size, 0}),
-        add(pos, {brick_size, brick_size}),
-        sub(pos, {brick_size, brick_size}),
-        add(sub(pos, {0, brick_size}), {brick_size, 0}),
-        add(sub(pos, {brick_size, 0}), {0, brick_size}),
+        add(pos, {0, brick_size}), // brick under pos
+        sub(pos, {0, brick_size}), // brick above pos
+        add(pos, {brick_size, 0}), // brick to right of pos
+        sub(pos, {brick_size, 0}), // brick to left of pos
+        add(pos, {brick_size, brick_size}), // brick diagonal (down + right)
+        sub(pos, {brick_size, brick_size}), // brick diagonal (up + left)
+        add(pos, {brick_size, -brick_size}), // brick diagonal (up + right)
+        add(pos, {-brick_size, brick_size}), // brick diagonal (down + left)
     };
+
     return brick_positions;
 }
 
