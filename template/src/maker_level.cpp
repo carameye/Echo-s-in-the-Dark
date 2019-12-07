@@ -4,6 +4,13 @@
 
 using json = nlohmann::json;
 
+static bool within_range(vec2 p1, vec2 p2, float range)
+{
+	bool x = p1.x > p2.x - range && p1.x < p2.x + range;
+	bool y = p1.y > p2.y - range && p1.y < p2.y + range;
+	return x && y;
+}
+
 void MakerLevel::destroy()
 {
 	// clear all level-dependent resources
@@ -53,7 +60,7 @@ vec2 MakerLevel::generate_starter()
 		}
 	}
 
-	spawn_robot({ 6.f * 64.f, height - 4 * 64.f });
+	spawn_robot({ 6.f * 64.f, height - 5 * 64.f });
 
 	m_rendering_system.process(min, next_id);
 
@@ -265,10 +272,35 @@ void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera)
 		spawn_ghost(position, m_color);
 		break;
 	case ObjectType::robot:
-		slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = nullptr;
-		m_robot_position = position;
-		slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = &m_robot;
+	{
+		bool valid = true;
+		int x = position.x / 64.f;
+		int y = position.y / 64.f;
+		for (int i = x - 3; i < x + 4; i++)
+		{
+			for (int j = y - 3; j < y + 4; j++)
+			{
+				if (i >= 0 && i < width && j >= 0 && j < height && slots[i][j] != nullptr && 
+					(std::find(m_bricks.begin(), m_bricks.end(), slots[i][j]) != m_bricks.end() ||
+					std::find(m_ghosts.begin(), m_ghosts.end(), slots[i][j]) != m_ghosts.end()))
+				{
+					valid = false;
+					break;
+				}
+			}
+			if (!valid)
+			{
+				break;
+			}
+		}
+		if (valid)
+		{
+			slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = nullptr;
+			m_robot_position = position;
+			slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = &m_robot;
+		}
 		break;
+	}
 	default:
 		break;
 	}
@@ -417,87 +449,6 @@ void MakerLevel::process()
 	image.clear();
 }
 
-bool MakerLevel::spawn_door(vec2 position, std::string next_level)
-{
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f) + 1] != nullptr ||
-		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
-	{
-		return false;
-	}
-
-	Door* door = new Door();
-	if (door->init(next_id++, position))
-	{
-		door->set_destination(next_level);
-		m_interactables.push_back(door);
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = door;
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f) + 1] = door;
-		return true;
-	}
-	fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
-	return false;
-}
-
-bool MakerLevel::spawn_ghost(vec2 position, vec3 colour)
-{
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
-		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
-	{
-		return false;
-	}
-
-	Ghost* ghost = new Ghost();
-	if (ghost->init(next_id++, colour, colour))
-	{
-		ghost->set_position(position);
-		m_ghosts.push_back(ghost);
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = ghost;
-		return true;
-	}
-	return false;
-}
-
-bool MakerLevel::spawn_robot(vec2 position)
-{
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
-		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
-	{
-		return false;
-	}
-
-	if (m_robot.init(next_id, false))
-	{
-		m_robot_position = position;
-		next_id += 104;
-		m_robot.set_position(position);
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = &m_robot;
-		return true;
-	}
-	fprintf(stderr, "	robot spawn failed\n");
-	return false;
-}
-
-bool MakerLevel::spawn_torch(vec2 position) 
-{
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
-		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
-	{
-		return false;
-	}
-
-	Torch* torch = new Torch();
-	if (torch->init(next_id++))
-	{
-		torch->set_position(position);
-		m_torches.push_back(torch);
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = torch;
-		return true;
-	}
-	fprintf(stderr, "	torch spawn failed\n");
-	return false;
-}
-
 bool MakerLevel::delete_object(vec2 position)
 {
 	int x = (int)(position.x / 64.f);
@@ -613,10 +564,93 @@ bool MakerLevel::delete_object(vec2 position)
 	return true;
 }
 
-bool MakerLevel::spawn_brick(vec2 position, vec3 colour) 
+bool MakerLevel::spawn_door(vec2 position, std::string next_level)
+{
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f) + 1] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
+	{
+		return false;
+	}
+
+	Door* door = new Door();
+	if (door->init(next_id++, position))
+	{
+		door->set_destination(next_level);
+		m_interactables.push_back(door);
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = door;
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f) + 1] = door;
+		return true;
+	}
+	fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
+	return false;
+}
+
+bool MakerLevel::spawn_ghost(vec2 position, vec3 colour)
+{
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height ||
+		within_range(position, m_robot.get_position(), 4.f * 64.f))
+	{
+		return false;
+	}
+
+	Ghost* ghost = new Ghost();
+	if (ghost->init(next_id++, colour, colour))
+	{
+		ghost->set_position(position);
+		m_ghosts.push_back(ghost);
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = ghost;
+		return true;
+	}
+	return false;
+}
+
+bool MakerLevel::spawn_robot(vec2 position)
 {
 	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
 		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
+	{
+		return false;
+	}
+
+	if (m_robot.init(next_id, false))
+	{
+		m_robot_position = position;
+		next_id += 104;
+		m_robot.set_position(position);
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = &m_robot;
+		return true;
+	}
+	fprintf(stderr, "	robot spawn failed\n");
+	return false;
+}
+
+bool MakerLevel::spawn_torch(vec2 position) 
+{
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
+	{
+		return false;
+	}
+
+	Torch* torch = new Torch();
+	if (torch->init(next_id++))
+	{
+		torch->set_position(position);
+		m_torches.push_back(torch);
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = torch;
+		return true;
+	}
+	fprintf(stderr, "	torch spawn failed\n");
+	return false;
+}
+
+bool MakerLevel::spawn_brick(vec2 position, vec3 colour) 
+{
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height ||
+		within_range(position, m_robot.get_position(), 4.f * 64.f))
 	{
 		return false;
 	}
