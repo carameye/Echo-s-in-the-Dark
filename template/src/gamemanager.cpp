@@ -397,28 +397,32 @@ void GameManager::load_story_menu()
 void GameManager::load_introduction_1_menu()
 {
     std::vector<std::pair<std::string, Status>> buttons;
-    buttons.push_back(std::make_pair("intro_1.png", Status::go_to_intro_2));
+    buttons.push_back(std::make_pair("intro_1.png", Status::nothing));
+    buttons.push_back(std::make_pair("next.png", Status::go_to_intro_2));
     m_introduction_1_menu.setup(buttons);
 }
 
 void GameManager::load_introduction_2_menu()
 {
     std::vector<std::pair<std::string, Status>> buttons;
-    buttons.push_back(std::make_pair("intro_2.png", Status::go_to_intro_3));
+    buttons.push_back(std::make_pair("intro_2.png", Status::nothing));
+    buttons.push_back(std::make_pair("next.png", Status::go_to_intro_3));
     m_introduction_2_menu.setup(buttons);
 }
 
 void GameManager::load_introduction_3_menu()
 {
     std::vector<std::pair<std::string, Status>> buttons;
-    buttons.push_back(std::make_pair("intro_3.png", Status::go_to_intro_4));
+    buttons.push_back(std::make_pair("intro_3.png", Status::nothing));
+    buttons.push_back(std::make_pair("next.png", Status::go_to_intro_4));
     m_introduction_3_menu.setup(buttons);
 }
 
 void GameManager::load_introduction_4_menu()
 {
     std::vector<std::pair<std::string, Status>> buttons;
-    buttons.push_back(std::make_pair("intro_4.png", Status::new_game));
+    buttons.push_back(std::make_pair("intro_4.png", Status::nothing));
+    buttons.push_back(std::make_pair("next.png", Status::new_game));
     m_introduction_4_menu.setup(buttons);
 }
 
