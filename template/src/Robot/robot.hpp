@@ -69,7 +69,7 @@ public:
     void set_energy_bar_position(vec2 position);
 
 	// Returns the robots hitbox for collision detection
-	Hitbox get_hitbox(vec2 translation) const;
+	Hitbox get_hitbox(vec2 translation);
 
     // Returns the robots head hitbox for collision detection
     Hitbox get_head_hitbox(vec2 translation) const;
@@ -96,10 +96,13 @@ private:
 	SmokeSystem m_smoke_system;
 	FlightEnergyBar m_energy_bar;
     RobotHat m_hat;
+    Hitbox m_hitbox;
 	bool m_grounded;
 	bool m_should_stop_smoke;
 	bool m_is_accelerating_right;
 	bool m_is_accelerating_left;
 	bool m_is_flying;
 	float m_available_flight_time;
+
+    void calculate_hitbox();
 };

@@ -4,9 +4,6 @@
 #include <cmath>
 
 Texture Ghost::s_ghost_texture;
-Texture Ghost::s_red_ghost_texture;
-Texture Ghost::s_green_ghost_texture;
-Texture Ghost::s_blue_ghost_texture;
 
 bool Ghost::init(int id, vec3 colour, vec3 headlight_colour)
 {

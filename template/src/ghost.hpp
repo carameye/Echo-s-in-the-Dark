@@ -8,9 +8,6 @@
 class Ghost : public Entity
 {
 	static Texture s_ghost_texture;
-    static Texture s_red_ghost_texture;
-    static Texture s_green_ghost_texture;
-    static Texture s_blue_ghost_texture;
 	vec2 m_goal;
 	std::vector<vec2> m_path;
 	LevelGraph* m_level_graph;
