@@ -1010,7 +1010,7 @@ typedef void (* GLFWcursorenterfun)(GLFWwindow*,int);
  *
  *  @ingroup input
  */
-typedef void (* GLFWscrollfun)(GLFWwindow*,double,double);
+typedef void (*  GLFWscrollfun)(GLFWwindow*,double,double);
 
 /*! @brief The function signature for keyboard key callbacks.
  *

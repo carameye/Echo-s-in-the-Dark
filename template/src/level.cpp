@@ -7,8 +7,8 @@ using json = nlohmann::json;
 void Level::destroy()
 {
 	// clear all level-dependent resources
-	for (auto& brick : m_bricks) {
-		delete brick;
+	for (auto& brick_element : m_brick_map) {
+		delete brick_element.second;
 	}
 	for (auto& interactable : m_interactables) {
 		delete interactable;
@@ -29,7 +29,7 @@ void Level::destroy()
 	clear_level_components();
 	m_rendering_system.clear();
 	m_interactable = NULL;
-    m_bricks.clear();
+    m_brick_map.clear();
     m_ghosts.clear();
     m_interactables.clear();
     m_signs.clear();
@@ -69,7 +69,8 @@ std::string Level::update(float elapsed_ms) {
         if (headlight_channel.x == 0.f && headlight_channel.y == 0.f && headlight_channel.z == 1.f) {
             m_graph = &m_blue_graph;
         }
-        for (auto &i_brick : m_bricks) {
+        for (auto &brick_element : m_brick_map) {
+            Brick* i_brick = brick_element.second;
             i_brick->update(headlight_channel);
         }
 
@@ -86,11 +87,17 @@ std::string Level::update(float elapsed_ms) {
 
     float translation = new_robot_pos.x - robot_pos.x;
     float translation_head = new_robot_head_pos.x - robot_head_pos.x;
-    for (auto &i_brick : m_bricks) {
+    // get possible brick collision points after trying to move in x dir
+    std::vector<vec2> possible_brick_collisions = get_brick_positions_around_pos({new_robot_pos.x, robot_pos.y});
 
+    for (auto& pos : possible_brick_collisions) {
         const auto &robot_hitbox_x = m_robot.get_hitbox({translation, 0.f});
         const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
-        Brick brick = *i_brick;
+        if (m_brick_map.find(pos) == m_brick_map.end()) {
+            // pos was not in the brick map. Therefore, there is no brick at pos, so no collision possible
+            continue;
+        }
+        Brick brick = *m_brick_map[pos];
         bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
@@ -135,11 +142,17 @@ std::string Level::update(float elapsed_ms) {
 
     translation = new_robot_pos.y - robot_pos.y;
     translation_head = new_robot_head_pos.y - robot_head_pos.y;
+    // get possible brick collision points after trying to move in y dir
+    possible_brick_collisions = get_brick_positions_around_pos({robot_pos.x, new_robot_pos.y});
 
-    for (auto &i_brick : m_bricks) {
+    for (auto& pos : possible_brick_collisions) {
         const auto &robot_hitbox_y = m_robot.get_hitbox({0.f, translation});
         const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
-        Brick brick = *i_brick;
+        if (m_brick_map.find(pos) == m_brick_map.end()) {
+            // pos was not in the brick map. Therefore, there is no brick at pos, so no collision possible
+            continue;
+        }
+        Brick brick = *m_brick_map[pos];
         bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
@@ -224,6 +237,26 @@ std::string Level::update(float elapsed_ms) {
 	}
 
 	return sound_effect;
+}
+
+std::vector<vec2> Level::get_brick_positions_around_pos(vec2 pos) const {
+    // round the pos to the nearest brick position
+    pos = {floor(pos.x / brick_size) * brick_size, floor(pos.y / brick_size) * brick_size};
+
+    // get the square of bricks around and at pos
+    std::vector<vec2> brick_positions{
+        pos,
+        add(pos, {0, brick_size}), // brick under pos
+        sub(pos, {0, brick_size}), // brick above pos
+        add(pos, {brick_size, 0}), // brick to right of pos
+        sub(pos, {brick_size, 0}), // brick to left of pos
+        add(pos, {brick_size, brick_size}), // brick diagonal (down + right)
+        sub(pos, {brick_size, brick_size}), // brick diagonal (up + left)
+        add(pos, {brick_size, -brick_size}), // brick diagonal (up + right)
+        add(pos, {-brick_size, brick_size}), // brick diagonal (down + left)
+    };
+
+    return brick_positions;
 }
 
 vec2 Level::get_starting_camera_position() const {
@@ -371,7 +404,7 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
     }
 
     fprintf(stderr, "	built world with %lu doors, %lu ghosts, and %lu bricks\n",
-            m_interactables.size(), m_ghosts.size(), m_bricks.size());
+            m_interactables.size(), m_ghosts.size(), m_brick_map.size());
 
     // Generate the graph
     if (m_ghosts.size() > 0)
@@ -458,6 +491,28 @@ void Level::handle_mouse_move(double xpos, double ypos, vec2 camera_pos)
     float mouse_y = (float) ypos;
 	vec2 top_left = sub(camera_pos, { 600.f, 400.f });
 	m_light.convert_mouse_pos_to_rad({ mouse_x, mouse_y }, sub(m_robot.get_head_position(), top_left));
+}
+
+void Level::handle_mouse_click(int button, int action) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+        m_light.set_next_light_channel();
+        m_has_colour_changed = true;
+    }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        m_light.set_prev_light_channel();
+        m_has_colour_changed = true;
+    }
+}
+
+void Level::handle_mouse_scroll(double yoffset) {
+    if (yoffset > 0) {
+        m_light.set_next_light_channel();
+        m_has_colour_changed = true;
+    }
+    else {
+        m_light.set_prev_light_channel();
+        m_has_colour_changed = true;
+    }
 }
 
 std::string Level::get_current_level()
@@ -561,7 +616,7 @@ bool Level::spawn_brick(vec2 position, vec3 colour) {
     if (brick->init(next_id++, colour))
     {
         brick->set_position(position);
-        m_bricks.push_back(brick);
+        m_brick_map.insert({position, brick});
         return true;
     }
     fprintf(stderr, "	brick spawn failed\n");

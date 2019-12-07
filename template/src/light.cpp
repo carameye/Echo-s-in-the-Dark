@@ -124,24 +124,50 @@ vec3 Light::get_headlight_channel(){
 }
 
 void Light::set_red_channel(){
-    if  (m_headlight_channel.x == 1.0 && m_headlight_channel.y == 0.0 && m_headlight_channel.z == 0.0){
+    if  (isRed(m_headlight_channel)) {
         m_headlight_channel = {1.f, 1.f, 1.f};
     } else{
         m_headlight_channel = {1.f, 0.f, 0.f};
     }
 }
+
 void Light::set_green_channel(){
-    if  (m_headlight_channel.x == 0.0 && m_headlight_channel.y == 1.0 && m_headlight_channel.z == 0.0){
+    if  (isGreen(m_headlight_channel)){
         m_headlight_channel = {1.f, 1.f, 1.f};
     } else{
         m_headlight_channel = {0.f, 1.f, 0.f};
     }
 }
+
 void Light::set_blue_channel(){
-    if  (m_headlight_channel.x == 0.0 && m_headlight_channel.y == 0.0 && m_headlight_channel.z == 1.0){
+    if  (isBlue(m_headlight_channel)){
         m_headlight_channel = {1.f, 1.f, 1.f};
     } else{
         m_headlight_channel = {0.f, 0.f, 1.f};
+    }
+}
+
+void Light::set_next_light_channel() {
+    if  (isWhite(m_headlight_channel)){
+        m_headlight_channel = {1.f, 0.f, 0.f};
+    } else if  (isRed(m_headlight_channel)) {
+        m_headlight_channel = {0.f, 1.f, 0.f};
+    } else if (isGreen(m_headlight_channel)) {
+        m_headlight_channel = {0.f, 0.f, 1.f};
+    }else{
+        m_headlight_channel = {1.f, 1.f, 1.f};
+    }
+}
+
+void Light::set_prev_light_channel() {
+    if  (isWhite(m_headlight_channel)){
+        m_headlight_channel = {0.f, 0.f, 1.f};
+    } else if  (isRed(m_headlight_channel)) {
+        m_headlight_channel = {1.f, 1.f, 1.f};
+    } else if (isGreen(m_headlight_channel)) {
+        m_headlight_channel = {1.f, 0.f, 0.f};
+    }else{
+        m_headlight_channel = {0.f, 1.f, 0.f};
     }
 }
 
@@ -219,3 +245,20 @@ void Light::draw(const mat3& projection, const vec2& camera_shift, const vec2& s
     glDrawArrays(GL_TRIANGLES, 0, 6); // 2*3 indices starting at 0 -> 2 triangles
     glDisableVertexAttribArray(0);
 }
+
+bool Light::isWhite(vec3 color) {
+    return m_headlight_channel.x == 1.0 && m_headlight_channel.y == 1.0 && m_headlight_channel.z == 1.0;
+}
+
+bool Light::isRed(vec3 color) {
+    return m_headlight_channel.x == 1.0 && m_headlight_channel.y == 0.0 && m_headlight_channel.z == 0.0;
+}
+
+bool Light::isBlue(vec3 color) {
+    return m_headlight_channel.x == 0.0 && m_headlight_channel.y == 0.0 && m_headlight_channel.z == 1.0;
+}
+
+bool Light::isGreen(vec3 color) {
+    return m_headlight_channel.x == 0.0 && m_headlight_channel.y == 1.0 && m_headlight_channel.z == 0.0;
+}
+
