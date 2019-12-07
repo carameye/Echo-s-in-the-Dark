@@ -10,6 +10,7 @@
 #include "sign.hpp"
 #include "json.hpp"
 #include <vector>
+#include <unordered_map>
 #include "systems.hpp"
 #include "background.hpp"
 #include "torch.hpp"
@@ -66,6 +67,9 @@ private:
 	bool spawn_background();
 	bool spawn_torch(vec2 position);
 
+	// returns the square of bricks around and at pos. Used for collision checking
+	std::vector<vec2> get_brick_positions_around_pos(vec2 pos) const;
+
 	// For resetting the level
 	void save_level();
 
@@ -78,9 +82,17 @@ private:
 	// Light effect
 	Light m_light;
 
+	// Data structure for unordered_map, using vec2 as key
+	struct vec2Hash {
+		std::size_t operator()(const vec2& v) const
+		{
+			return std::hash<std::string>()(std::to_string(v.x) + "," + std::to_string(v.y));
+		}
+	};
+
     // Level entities
     Robot m_robot;
-    std::vector<Brick*> m_bricks;
+	std::unordered_map<vec2,Brick*, vec2Hash> m_brick_map;
 	std::vector<Ghost*> m_ghosts;
     std::vector<Door*> m_interactables;
 	std::vector<Sign*> m_signs;
