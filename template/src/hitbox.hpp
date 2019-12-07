@@ -76,6 +76,8 @@ class Hitbox
 public:
 	// Constructor
 	Hitbox(std::vector<Circle> circles, std::vector<Square> squares);
+
+	Hitbox();
 	
 	// Returns true if this collides with the given hitbox
 	bool collides_with(Hitbox obj);
