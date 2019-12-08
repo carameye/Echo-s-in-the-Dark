@@ -7,7 +7,7 @@ void RenderingSystem::render(const mat3& projection, const vec2& camera_shift, v
 		RenderComponent* rc = s_render_components[entity];
 		MotionComponent* mc = s_motion_components[entity];
 
-		if (!rc->render)
+		if (!rc->render || len(sub(mul(sub(camera_shift, { 600.f, 400.f }), -1.f), mc->position)) > 30.f * brick_size)
 		{
 			continue;
 		}

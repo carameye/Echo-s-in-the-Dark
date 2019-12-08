@@ -350,6 +350,11 @@ void MakerLevel::refresh_hover_object(float x, float y)
 
 void MakerLevel::process()
 {
+	if (m_hover_object_is_spawned)
+	{
+		delete_object(m_hover_object_position);
+	}
+
 	json j = {};
 	j["size"]["width"] = (int)(width / 64.f);
 	j["size"]["height"] = (int)(height / 64.f);
@@ -419,6 +424,12 @@ void MakerLevel::process()
 
 	for (auto b : m_bricks)
 	{
+		vec3 colour = b->get_colour();
+		if (colour.x == 0.f || colour.y == 0.f || colour.z == 0.f)
+		{
+			continue;
+		}
+
 		int startx = (int)b->get_position().x;
 		int starty = (int)b->get_position().y;
 		for (int i = 0; i < 64; i++)

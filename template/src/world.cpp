@@ -343,6 +343,7 @@ bool World::start_maker_level()
 	if (f.good())
 	{
 		load_level("maker_level");
+		m_load();
 		return true;
 	}
 
