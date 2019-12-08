@@ -520,19 +520,18 @@ void Level::handle_mouse_scroll(double yoffset) {
 			m_scroll_amount = 0;
 		}
 		m_scroll_amount += yoffset;
-		if (m_scroll_amount > 0.95) {
+		if (m_scroll_amount >= 2.0) {
 			m_scroll_amount = 0;
 			m_light.set_next_light_channel();
 			m_has_colour_changed = true;
 		}
-    }
-    else {
+    } else {
 		if (m_scroll_down) {
 			m_scroll_down = false;
 			m_scroll_amount = 0;
 		}
 		m_scroll_amount -= yoffset;
-		if (m_scroll_amount > 0.95) {
+		if (m_scroll_amount >= 2.0) {
 			m_scroll_amount = 0;
 			m_light.set_prev_light_channel();
 			m_has_colour_changed = true;
