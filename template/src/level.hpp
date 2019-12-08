@@ -97,7 +97,7 @@ private:
 
     // Level entities
     Robot m_robot;
-	std::unordered_map<vec2,Brick*, vec2Hash> m_brick_map;
+	std::unordered_map<vec2, Brick*, vec2Hash> m_brick_map;
 	std::vector<Ghost*> m_ghosts;
     std::vector<Door*> m_interactables;
 	std::vector<Sign*> m_signs;

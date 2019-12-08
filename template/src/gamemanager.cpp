@@ -182,6 +182,7 @@ void GameManager::destroy()
 	m_load_menu.destroy();
 	m_world.destroy();
 	m_maker.destroy();
+	m_sound_system->free_sounds();
 
 	glfwDestroyWindow(m_window);
 }
