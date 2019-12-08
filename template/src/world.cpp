@@ -52,6 +52,8 @@ bool World::init(GLFWwindow* window, vec2 screen)
 	// Initialize the screen texture
 	m_screen_tex.create_from_screen(m_window);
 
+	poll_keys(window);
+
 	return true;
 }
 
@@ -180,7 +182,7 @@ bool World::is_over() const
 }
 
 // On key callback
-bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
+bool World::handle_key_press(GLFWwindow* window, int key, int action)
 {
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
 		return false;
@@ -198,7 +200,7 @@ bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
 		camera_offset -= CAMERA_PAN_OFFSET;
 	}
-	std::string r = m_level.handle_key_press(key, action);
+	std::string r = m_level.handle_key_press(key, action, key_input_states);
 	if (r.length() > 0) {
 		if (r == "flying") {
 			int channel = Mix_PlayChannel(-1, m_rocket_effect, -1);
@@ -225,6 +227,18 @@ bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 		}
 	}
 	return true;
+}
+
+void World::poll_keys(GLFWwindow* window)
+{
+	for (auto& input_state : key_input_states) {
+		int key = input_state.first;
+		int old_key_state = input_state.second;
+		int key_state = glfwGetKey(window, key);
+		if (key_state != old_key_state) {
+			handle_key_press(window, key, key_state);
+		}
+	}
 }
 
 void World::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
