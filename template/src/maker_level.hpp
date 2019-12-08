@@ -54,6 +54,7 @@ private:
 	bool delete_object(vec2 position);
 
 	bool valid_robot_position(vec2 position);
+	bool valid_torch_position(vec2 position);
 
 	std::string m_level;
 	float width = 64.f * 40.f, height = 64.f * 40.f;

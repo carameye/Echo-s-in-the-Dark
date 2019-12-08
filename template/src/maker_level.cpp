@@ -43,6 +43,8 @@ vec2 MakerLevel::generate_starter()
 
 	min = next_id;
 
+	spawn_robot({ 6.f * 64.f, height - 5 * 64.f });
+
 	for (float x = 0.f; x < width; x += 64.f)
 	{
 		for (float y = 0.f; y < height; y += 64.f)
@@ -60,7 +62,6 @@ vec2 MakerLevel::generate_starter()
 		}
 	}
 
-	spawn_robot({ 6.f * 64.f, height - 5 * 64.f });
 
 	m_rendering_system.process(min, next_id);
 
@@ -350,6 +351,11 @@ void MakerLevel::refresh_hover_object(float x, float y)
 
 void MakerLevel::process()
 {
+	if (m_hover_object_is_spawned)
+	{
+		delete_object(m_hover_object_position);
+	}
+
 	json j = {};
 	j["size"]["width"] = (int)(width / 64.f);
 	j["size"]["height"] = (int)(height / 64.f);
@@ -419,6 +425,12 @@ void MakerLevel::process()
 
 	for (auto b : m_bricks)
 	{
+		vec3 colour = b->get_colour();
+		if (colour.x == 0.f || colour.y == 0.f || colour.z == 0.f)
+		{
+			continue;
+		}
+
 		int startx = (int)b->get_position().x;
 		int starty = (int)b->get_position().y;
 		for (int i = 0; i < 64; i++)
@@ -569,6 +581,25 @@ bool MakerLevel::valid_robot_position(vec2 position)
 	return true;
 }
 
+bool MakerLevel::valid_torch_position(vec2 position)
+{
+	int x = (int)(position.x / 64.f);
+	int y = (int)(position.y / 64.f);
+	for (int i = x - 7; i < x + 8; i++)
+	{
+		for (int j = y - 7; j < y + 8; j++)
+		{
+			if (i >= 0 && i < width && j >= 0 && j < height && slots[i][j] != nullptr &&
+				std::find(m_torches.begin(), m_torches.end(), slots[i][j]) != m_torches.end())
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 bool MakerLevel::spawn_door(vec2 position, std::string next_level)
 {
 	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
@@ -595,7 +626,7 @@ bool MakerLevel::spawn_ghost(vec2 position, vec3 colour)
 {
 	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
 		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height ||
-		within_range(position, m_robot.get_position(), 4.f * 64.f))
+		within_range(position, m_robot.get_position(), 4.f * 64.f) || m_ghosts.size() > 4)
 	{
 		return false;
 	}
@@ -634,7 +665,8 @@ bool MakerLevel::spawn_robot(vec2 position)
 bool MakerLevel::spawn_torch(vec2 position) 
 {
 	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
-		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height ||
+		!valid_torch_position(position))
 	{
 		return false;
 	}

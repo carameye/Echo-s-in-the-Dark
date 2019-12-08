@@ -438,6 +438,8 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
 
     m_rendering_system.process(min, next_id);
 
+	m_has_colour_changed = true;
+
     return true;
 }
 
