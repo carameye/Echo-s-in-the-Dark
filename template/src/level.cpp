@@ -515,12 +515,28 @@ void Level::handle_mouse_click(int button, int action) {
 
 void Level::handle_mouse_scroll(double yoffset) {
     if (yoffset > 0) {
-        m_light.set_next_light_channel();
-        m_has_colour_changed = true;
+		if (!m_scroll_down) {
+			m_scroll_down = true;
+			m_scroll_amount = 0;
+		}
+		m_scroll_amount += yoffset;
+		if (m_scroll_amount > 0.95) {
+			m_scroll_amount = 0;
+			m_light.set_next_light_channel();
+			m_has_colour_changed = true;
+		}
     }
     else {
-        m_light.set_prev_light_channel();
-        m_has_colour_changed = true;
+		if (m_scroll_down) {
+			m_scroll_down = false;
+			m_scroll_amount = 0;
+		}
+		m_scroll_amount -= yoffset;
+		if (m_scroll_amount > 0.95) {
+			m_scroll_amount = 0;
+			m_light.set_prev_light_channel();
+			m_has_colour_changed = true;
+		}
     }
 }
 

@@ -111,4 +111,7 @@ private:
     bool m_has_colour_changed = true;
 
     std::vector<vec2> reset_positions;
+
+	double m_scroll_amount = 0;
+	bool m_scroll_down = false;
 };
