@@ -7,6 +7,7 @@
 // stlib
 #include <vector>
 #include <random>
+#include <unordered_map>
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
@@ -39,7 +40,7 @@ public:
 	bool is_over() const;
 
 	// Handle input
-	bool handle_key_press(GLFWwindow*, int key, int, int action, int mod);
+	bool handle_key_press(GLFWwindow* window, int key, int action);
 	void handle_mouse_move(GLFWwindow* window, double xpos, double ypos);
     void handle_mouse_click(int button, int action);
     void handle_mouse_scroll(double yoffset);
@@ -60,6 +61,9 @@ public:
 
 	// Save the game to save file
 	void save();
+
+	// Poll the state of the world's input keys
+	void poll_keys(GLFWwindow* window);
 
 private:
 	// Draw loading screen, parse level, set camera pos
@@ -108,4 +112,7 @@ private:
 
 	// Saved level data
 	std::vector<std::string> m_unlocked;
+
+	// used track the input states of keys
+	std::unordered_map<int, int> key_input_states;
 };

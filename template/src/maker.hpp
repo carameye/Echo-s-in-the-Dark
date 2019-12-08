@@ -7,6 +7,7 @@
 // stlib
 #include <vector>
 #include <random>
+#include <unordered_map>
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
@@ -42,7 +43,7 @@ public:
 	bool is_over() const;
 
 	// Handle input
-	bool handle_key_press(GLFWwindow*, int key, int, int action, int mod);
+	bool handle_key_press(GLFWwindow*, int key, int action);
 	void handle_mouse_move(GLFWwindow* window, double xpos, double ypos);
 	void handle_mouse_click(GLFWwindow* window, int button, int action, int mods);
 
@@ -51,6 +52,9 @@ public:
 
 	// Load level from save file
 	void load();
+
+	// Poll the state of the maker's input keys
+	void poll_keys(GLFWwindow* window);
 
 private:
 	// Load screen event trigger
@@ -81,4 +85,7 @@ private:
 
 	// Maker level
 	MakerLevel m_maker_level;
+
+	// track the state of input keys
+	std::unordered_map<int, int> input_key_states;
 };

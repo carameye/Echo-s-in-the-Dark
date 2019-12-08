@@ -209,7 +209,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 	}
 	else if (m_in_maker)
 	{
-		if (!m_maker.handle_key_press(window, key, scancode, action, mod))
+		if (!m_maker.handle_key_press(window, key, action))
 		{
 			m_in_menu = true;
 			m_menu = &m_maker_pause_menu;
@@ -218,7 +218,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 	}
 	else
 	{
-		if (!m_world.handle_key_press(window, key, scancode, action, mod))
+		if (!m_world.handle_key_press(window, key, action))
 		{
 			m_world.stop_sounds();
 			m_in_menu = true;
@@ -265,6 +265,9 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			if (!m_in_maker)
 			{
 				m_world.start_sounds();
+				m_world.poll_keys(window);
+			} else {
+				m_maker.poll_keys(window);
 			}
 			break;
 		case Status::new_game:
@@ -315,6 +318,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			{
 				m_world.reset();
 				m_world.start_sounds();
+				m_world.poll_keys(window);
 			}
 			break;
 		case Status::exit:
