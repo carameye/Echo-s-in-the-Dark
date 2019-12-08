@@ -53,7 +53,6 @@ bool Maker::init(GLFWwindow* window, vec2 screen)
 	mouse_pos = { 0.f, 0.f };
 
 	poll_keys(window);
-	start_music();
 
 	return true;
 }
@@ -75,7 +74,6 @@ void Maker::destroy()
 	glDeleteFramebuffers(1, &m_frame_buffer);
 
 	m_maker_level.destroy();
-	stop_music();
 }
 
 // Render our game world
@@ -285,43 +283,4 @@ void Maker::save()
 {
 	m_load();
 	m_maker_level.process();
-}
-
-void Maker::start_music()
-{
-	int mix_init_flags = Mix_Init(MIX_INIT_OGG);
-	if (mix_init_flags != MIX_INIT_OGG) {
-		fprintf(stderr, "Mix_Init: Failed to init support for ogg files\n");
-		return;
-	}
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device\n");
-		return;
-	}
-
-	m_background_music = Mix_LoadMUS(audio_path("Lonelyhood.ogg"));
-
-	// set the volume for the music and sound effects
-	Mix_VolumeMusic((int)(MIX_MAX_VOLUME / 5));
-
-	// check that we have correctly loaded bgm and sounds
-	if (m_background_music == nullptr) {
-		fprintf(stderr, "Failed to game sounds\n %s\n", Mix_GetError());
-		return;
-	}
-
-	// Playing background music indefinitely
-	Mix_FadeInMusic(m_background_music, -1, 1500);
-}
-
-void Maker::stop_music()
-{
-	if (m_background_music != nullptr) {
-		Mix_FreeMusic(m_background_music);
-		m_background_music = nullptr;
-	}
-
-	Mix_CloseAudio();
-	Mix_Quit();
 }

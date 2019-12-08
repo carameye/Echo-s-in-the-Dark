@@ -133,7 +133,6 @@ void Ghost::set_level_graph(LevelGraph* graph)
 }
 
 void Ghost::update_is_chasing(vec3 headlight_color) {
-	Sound_Effects sound_effect = Sound_Effects::silence;
     if (colour_is_white(m_colour) || colour_is_white(headlight_color)) {
         m_is_chasing = true;
         return;

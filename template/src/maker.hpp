@@ -11,7 +11,6 @@
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
-#include <SDL_mixer.h>
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
@@ -59,9 +58,6 @@ public:
 private:
 	// Load screen event trigger
 	void (*m_load)();
-	// music management to be called in init and destroy
-	void start_music();
-	void stop_music();
 
 	// Window handle
 	GLFWwindow* m_window;
@@ -91,6 +87,4 @@ private:
 
 	// track the state of input keys
 	std::unordered_map<int, int> input_key_states;
-
-	Mix_Music* m_background_music;
 };

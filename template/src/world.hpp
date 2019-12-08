@@ -11,7 +11,6 @@
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
-#include <SDL_mixer.h>
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
@@ -45,10 +44,6 @@ public:
     void handle_mouse_click(int button, int action);
     void handle_mouse_scroll(double yoffset);
 
-	// Manage sounds and background music
-	void start_sounds();
-	void stop_sounds();
-
 	// Begin level
 	void start_level(bool new_game);
 
@@ -66,7 +61,7 @@ public:
 
 private:
 	// Draw loading screen, parse level, set camera pos
-	void load_level(std::string level, Sound_Effects on_load_effect = Sound_Effects::silence);
+	void load_level(std::string level);
 
 	// Plays game introduction. Should only be called if player selects new game
     void play_intro();
@@ -96,12 +91,6 @@ private:
 
 	Level m_level;
 	vec2 m_robot_ls_pos;
-
-	// game sounds
-	Mix_Music* m_background_music;
-	Mix_Music* m_ghost_approach_background;
-	std::map<Sound_Effects, Mix_Chunk*> m_sound_effects;
-	bool m_close_to_ghosts = false;
 
 	// C++ rng
 	std::default_random_engine m_rng;

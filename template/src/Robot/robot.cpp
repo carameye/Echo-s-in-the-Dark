@@ -239,6 +239,8 @@ void Robot::start_flying()
 	rc.texture = &robot_body_flying_texture;
 	mc.physics.scale.x *= 53.f / 45.f;
 	mc.radians = 0.f;
+    // start the rocket sound effect
+    SoundSystem::get_system()->play_sound_effect(Sound_Effects::rocket, -1);
     // If we want made robot fall faster, reset vertical acceleration here.
 }
 
@@ -250,6 +252,8 @@ void Robot::stop_flying()
 	m_should_stop_smoke = true;
 	rc.texture = &robot_body_texture;
 	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
+    // stop the rocket sound effect
+    SoundSystem::get_system()->stop_sound_effect(Sound_Effects::rocket, 1500);
 	// If we want the robot to fall a bit faster, set vertical acceleration here. Positive number, make it a const
 }
 

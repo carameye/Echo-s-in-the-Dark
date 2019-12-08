@@ -17,7 +17,6 @@ namespace
 {
 	const size_t CAMERA_PAN_OFFSET = 200;
 	const size_t UPDATE_FREEZE_DURATION = 2000;
-	const size_t GHOST_DANGER_DIST = 435.f;
 }
 
 World::World()
@@ -69,9 +68,6 @@ void World::destroy()
 {
 	glDeleteFramebuffers(1, &m_frame_buffer);
 
-	// free all sound resources
-	stop_sounds();
-
 	m_level.destroy();
 }
 
@@ -93,22 +89,7 @@ void World::update(float elapsed_ms)
 	if (!is_level_load_pan) {
 		follow_speed = 0.1f;
 		follow_point = add(player_pos, { 0.f, camera_offset });
-		Sound_Effects sound_effect = m_level.update(elapsed_ms);
-		if (sound_effect != Sound_Effects::silence) {
-			int fade_in_ms = 0;
-			if (sound_effect == Sound_Effects::collision) {
-				fade_in_ms = 5;
-			}
-			Mix_FadeInChannel(-1, m_sound_effects[sound_effect], 0, fade_in_ms);
-		}
-		float distance_from_ghost = m_level.get_min_ghost_distance();
-		if (distance_from_ghost < GHOST_DANGER_DIST && !m_close_to_ghosts) {
-			Mix_FadeInMusic(m_ghost_approach_background, -1, 1500);
-			m_close_to_ghosts = true;
-		} else if (distance_from_ghost >= GHOST_DANGER_DIST && m_close_to_ghosts) {
-			Mix_FadeInMusic(m_background_music, -1, 1500);
-			m_close_to_ghosts = false;
-		}
+		m_level.update(elapsed_ms);
 	} else if (on_load_delay > 0) {
 		follow_speed = 0.f;
 		on_load_delay -= elapsed_ms;
@@ -209,33 +190,20 @@ bool World::handle_key_press(GLFWwindow* window, int key, int action)
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
 		camera_offset -= CAMERA_PAN_OFFSET;
 	}
-	std::pair<std::string, Sound_Effects> r = m_level.handle_key_press(key, action, key_input_states);
-	std::string action_dest = r.first;
-	Sound_Effects effect = r.second;
+	std::string action_dest = m_level.handle_key_press(key, action, key_input_states);
 
-	if (effect != Sound_Effects::silence)
-	{
-		if (effect == Sound_Effects::rocket) {
-			int channel = Mix_PlayChannel(-1, m_sound_effects[effect], -1);
-			Mix_GroupChannel(channel, 1);
-		} else if (effect == Sound_Effects::falling) {
-			Mix_FadeOutGroup(1, 1050);
-		} else {
-			Mix_PlayChannel(-1, m_sound_effects[effect], 0);
-		}
-	}
 	if (action_dest == "quit" || action_dest == "complete")
 	{
 		m_exit();
 		return true;
 	}
-	else if (action_dest.length() > 0)
+	else if (action_dest.length() > 0 && action_dest != "locked")
 	{
 		if (find(m_unlocked.begin(), m_unlocked.end(), action_dest) == m_unlocked.end())
 		{
 			m_unlocked.push_back(action_dest);
 		}
-		load_level(action_dest, Sound_Effects::open_door);
+		load_level(action_dest);
 	}
 	return true;
 }
@@ -275,75 +243,6 @@ void World::handle_mouse_scroll(double yoffset) {
     m_level.handle_mouse_scroll(yoffset);
 }
 
-void World::start_sounds()
-{
-	int mix_init_flags = Mix_Init(MIX_INIT_OGG);
-	if (mix_init_flags != MIX_INIT_OGG) {
-		fprintf(stderr, "Mix_Init: Failed to init support for ogg files\n");
-		return;
-	}
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device\n");
-		return;
-	}
-
-	m_background_music =  Mix_LoadMUS(audio_path("background.wav"));
-	m_ghost_approach_background = Mix_LoadMUS(audio_path("ghosts.wav"));
-	m_sound_effects[Sound_Effects::robot_hurt] = Mix_LoadWAV(audio_path("robot_hurt.wav"));
-	m_sound_effects[Sound_Effects::open_door] = Mix_LoadWAV(audio_path("open_door.wav"));
-	m_sound_effects[Sound_Effects::door_locked] = Mix_LoadWAV(audio_path("locked.wav"));
-	m_sound_effects[Sound_Effects::rocket] = Mix_LoadWAV(audio_path("rocket.wav"));
-	m_sound_effects[Sound_Effects::collision] = Mix_LoadWAV(audio_path("impactMining_000.ogg"));
-
-	// set the volume for the music and sound effects
-	Mix_VolumeMusic((int)(MIX_MAX_VOLUME / 5));
-	Mix_VolumeChunk(m_sound_effects[Sound_Effects::robot_hurt], MIX_MAX_VOLUME/2);
-	Mix_VolumeChunk(m_sound_effects[Sound_Effects::open_door], MIX_MAX_VOLUME/4);
-	Mix_VolumeChunk(m_sound_effects[Sound_Effects::door_locked], MIX_MAX_VOLUME); // locked door effect kind of quiet, so make it louder
-	Mix_VolumeChunk(m_sound_effects[Sound_Effects::rocket], MIX_MAX_VOLUME/3);
-	Mix_VolumeChunk(m_sound_effects[Sound_Effects::collision], MIX_MAX_VOLUME/4);
-
-	// check that we have correctly loaded bgm and sounds
-	if (m_background_music == nullptr || m_ghost_approach_background == nullptr) {
-		fprintf(stderr, "Failed to game sounds\n %s\n", Mix_GetError());
-		return;
-	}
-
-	for (auto& effect : m_sound_effects) {
-		if (effect.second == nullptr) {
-			fprintf(stderr, "Failed to game sounds\n %s\n", Mix_GetError());
-			return;
-		}
-	}
-
-	// Playing background music indefinitely
-	Mix_FadeInMusic(m_close_to_ghosts ? m_ghost_approach_background : m_background_music, -1, 1500);
-}
-
-void World::stop_sounds()
-{
-	// free sound effects
-	for (auto& effect : m_sound_effects) {
-		if (effect.second != nullptr) {
-			Mix_FreeChunk(effect.second);
-			effect.second = nullptr;
-		}
-	}
-	// free background music
-	if (m_background_music != nullptr) {
-		Mix_FreeMusic(m_background_music);
-		m_background_music = nullptr;
-	}
-	if (m_ghost_approach_background != nullptr) {
-		Mix_FreeMusic(m_ghost_approach_background);
-		m_ghost_approach_background = nullptr;
-	}
-
-	Mix_CloseAudio();
-	Mix_Quit();
-}
-
 void World::start_level(bool new_game)
 {
 	if (new_game)
@@ -376,15 +275,10 @@ void World::reset()
 	m_level.reset_level();
 }
 
-void World::load_level(std::string level, Sound_Effects on_load_effect)
+void World::load_level(std::string level)
 {
-	stop_sounds();
 	m_load();
 	bool valid = m_level.parse_level(level, m_unlocked, m_robot_ls_pos);
-	start_sounds();
-	if (on_load_effect != Sound_Effects::silence) {
-		Mix_PlayChannel(-1, m_sound_effects[on_load_effect], 0);
-	}
 
 	if (valid)
 	{

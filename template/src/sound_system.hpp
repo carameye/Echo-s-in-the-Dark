@@ -4,31 +4,41 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
-std::map<Music, Mix_Music*> m_background_music;
+#include "vector"
 
 // a singleton implementation of the SoundSystem
 class SoundSystem {
 
-	static SoundSystem* system;
-
     public:
 	static SoundSystem* get_system();
 
-	// stops all the current playing sounds and destroys the current sound system
-	void destroy();
+	// free all the sound and music resources.
+	void free_sounds();
 
-	// manage current sounds and music
+	// changes the current background music
 	void play_bgm(Music bgm);
-	void play_sound_effect(Sound_Effects sound_effect, int channel = -1, int loops = 0, int fade_in_ms = 0);
-	void stop_sound_effect(int channel, int fade_out_ms);
+
+	// plays a sound effect
+	// if an effect's loop is -1, adds the channel on which the effect is played to m_effect_channels
+	void play_sound_effect(Sound_Effects sound_effect, int loops = 0, int fade_in_ms = 0, int channel = -1);
+
+	// stops the sound effect from playing on all channels
+	// removes the sound effect from m_effect_channels, if the sound effect is in the map
+	void stop_sound_effect(Sound_Effects sound_effect, int fade_out_ms);
+
+	// since the SoundSystem is a singleton, make sure that you cannot create copies of the SoundSystem
+	// delete any implementation for the copy constructor and the copy assignment operator
+	SoundSystem(const SoundSystem&) = delete;
+	SoundSystem& operator=(const SoundSystem&) = delete;
 
     private:
 	// initialize a new sound system
 	SoundSystem();
 
-	// free all the sound and music resources. Called on destroy.
-	void free_sounds();
-
 	// maps of all the music and sounds that can be played
+	std::map<Music, Mix_Music*> m_background_music;
 	std::map<Sound_Effects, Mix_Chunk*> m_sound_effects;
+
+	// a map of all the channels on which a sound_effect is being played
+	std::map<Sound_Effects, std::vector<int>> m_effect_channels;
 };

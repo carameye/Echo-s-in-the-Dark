@@ -70,17 +70,10 @@ bool GameManager::init(vec2 screen)
 	glfwSetMouseButtonCallback(m_window, mouse_button_redirect);
 	glfwSetScrollCallback(m_window, mouse_scroll_redirect);
 
-	// Initialize audio
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	{
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return false;
-	}
+	m_sound_sytem = SoundSystem::get_system();
 
 	m_main_menu.init(m_window, screen);
 	load_main_menu();
-
-	m_main_menu.start_music();
 
 	m_story_menu.init(m_window, screen);
 	load_story_menu();
@@ -199,11 +192,10 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 	{
 		if (!m_menu->handle_key_press(window, key, scancode, action, mod))
 		{
-			m_menu->stop_music();
 			m_in_menu = false;
 			if (!m_in_maker)
 			{
-				m_world.start_sounds();
+				m_sound_sytem->play_bgm(Music::standard);
 			}
 		}
 	}
@@ -213,17 +205,16 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			m_in_menu = true;
 			m_menu = &m_maker_pause_menu;
-			m_menu->start_music();
+			m_sound_sytem->play_bgm(Music::menu);
 		}
 	}
 	else
 	{
 		if (!m_world.handle_key_press(window, key, action))
 		{
-			m_world.stop_sounds();
 			m_in_menu = true;
 			m_menu = &m_world_pause_menu;
-			m_menu->start_music();
+			m_sound_sytem->play_bgm(Music::menu);
 		}
 	}
 }
@@ -260,35 +251,33 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			return;
 			break;
 		case Status::resume:
-			m_menu->stop_music();
 			m_in_menu = false;
 			if (!m_in_maker)
 			{
-				m_world.start_sounds();
+				m_sound_sytem->play_bgm(Music::standard);
 				m_world.poll_keys(window);
 			} else {
+				m_sound_sytem->play_bgm(Music::level_builder);
 				m_maker.poll_keys(window);
 			}
 			break;
 		case Status::new_game:
-			m_menu->stop_music();
 			m_in_menu = false;
 			m_in_maker = false;
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load, exit);
-			m_world.start_sounds();
 			m_world.start_level(true);
+			m_sound_sytem->play_bgm(Music::standard);
 			break;
 		case Status::load_game:
-			m_menu->stop_music();
 			m_in_menu = false;
 			m_in_maker = false;
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load, exit);
 			m_world.start_level(false);
-			m_world.start_sounds();
+			m_sound_sytem->play_bgm(Music::standard);
 			break;
 		case Status::main_menu:
 			m_menu = &m_main_menu;
@@ -305,7 +294,6 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			}
 			break;
 		case Status::reset:
-			m_menu->stop_music();
 			m_in_menu = false;
 			if (m_in_maker)
 			{
@@ -313,11 +301,12 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 				m_maker.init(m_window, m_screen);
 				m_maker.set_load_trigger(load);
 				m_maker.generate_starter();
+				m_sound_sytem->play_bgm(Music::level_builder);
 			}
 			else
 			{
 				m_world.reset();
-				m_world.start_sounds();
+				m_sound_sytem->play_bgm(Music::standard);
 				m_world.poll_keys(window);
 			}
 			break;
@@ -345,16 +334,15 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
             break;
 		case Status::make_level:
 			fprintf(stderr, "making level\n");
-			m_menu->stop_music();
 			m_in_menu = false;
 			m_in_maker = true;
 			m_maker.destroy();
 			m_maker.init(m_window, m_screen);
 			m_maker.set_load_trigger(load);
 			m_maker.generate_starter();
+			m_sound_sytem->play_bgm(Music::level_builder);
 			break;
 		case Status::play_level:
-			m_menu->stop_music();
 			m_maker.save();
 			m_in_menu = false;
 			m_in_maker = false;
@@ -364,18 +352,17 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			if (!m_world.start_maker_level()) {
 				m_world.destroy();
 				m_in_menu = true;
-				m_menu->start_music();
 			}
-			m_world.start_sounds();
+			m_sound_sytem->play_bgm(Music::standard);
 			break;
 		case Status::load_level:
-			m_menu->stop_music();
 			m_in_menu = false;
 			m_in_maker = true;
 			m_maker.destroy();
 			m_maker.init(m_window, m_screen);
 			m_maker.set_load_trigger(load);
 			m_maker.load();
+			m_sound_sytem->play_bgm(Music::level_builder);
 			break;
 		case Status::help:
 			m_menu = &m_maker_help_menu;
@@ -530,6 +517,6 @@ void GameManager::back_to_maker_menu()
 	m_in_maker = false;
 	m_in_menu = true;
 	m_menu = &m_maker_menu;
-	m_menu->start_music();
+	m_sound_sytem->play_bgm(Music::menu);
 }
 

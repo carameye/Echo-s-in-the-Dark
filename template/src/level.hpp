@@ -14,6 +14,7 @@
 #include "systems.hpp"
 #include "background.hpp"
 #include "torch.hpp"
+#include "sound_system.hpp"
 
 class Level
 {
@@ -27,7 +28,7 @@ class Level
 	void destroy();
 
     // Update level entites, returns name of audio file to be played if something happens on update
-    Sound_Effects update(float elapsed_ms);
+    void update(float elapsed_ms);
 
     // Gets the camera position when the level first starts
     vec2 get_starting_camera_position() const;
@@ -45,7 +46,7 @@ class Level
 	bool parse_level(std::string level, std::vector<std::string> unlocked, vec2 start_pos);
 
 	// Handle input
-	std::pair<std::string, Sound_Effects> handle_key_press(int key, int action, std::unordered_map<int, int> &input_states);
+	std::string handle_key_press(int key, int action, std::unordered_map<int, int> &input_states);
 	void handle_mouse_move(double xpos, double ypos, vec2 camera);
 	void handle_mouse_click(int button, int action);
 
@@ -53,7 +54,6 @@ class Level
 	std::string get_current_level();
 
     void handle_mouse_scroll(double yoffset);
-	float get_min_ghost_distance();
 
 private:
     // Spawn entities
@@ -64,6 +64,10 @@ private:
 	bool spawn_sign(vec2 position, std::string text);
 	bool spawn_background();
 	bool spawn_torch(vec2 position);
+
+	// get the closest ghost to the robot
+	float get_min_ghost_distance();
+	bool m_close_to_ghosts = false;
 
 	// returns the square of bricks around and at pos. Used for collision checking
 	std::vector<vec2> get_brick_positions_around_pos(vec2 pos) const;

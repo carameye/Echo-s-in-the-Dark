@@ -7,6 +7,7 @@
 #include "robot_head.hpp"
 #include "robot_shoulders.hpp"
 #include "flight_energy_bar.hpp"
+#include "sound_system.hpp"
 
 class Robot : public Entity
 {
