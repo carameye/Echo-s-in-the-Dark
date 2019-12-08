@@ -33,8 +33,14 @@ public:
 	// Load menus
 	void load_main_menu();
 	void load_story_menu();
+    void load_introduction_1_menu();
+    void load_introduction_2_menu();
+    void load_introduction_3_menu();
+    void load_introduction_4_menu();
 	void load_maker_menu();
-	void load_pause_menu();
+	void load_world_pause_menu();
+	void load_maker_pause_menu();
+	void load_maker_help_menu();
 	void load_loading_menu();
 	void draw_loading_screen();
 	void back_to_maker_menu();
@@ -55,8 +61,14 @@ private:
 	Menu* m_menu;
 	Menu m_main_menu;
 	Menu m_story_menu;
+	Menu m_introduction_1_menu;
+    Menu m_introduction_2_menu;
+    Menu m_introduction_3_menu;
+    Menu m_introduction_4_menu;
 	Menu m_maker_menu;
-	Menu m_pause_menu;
+	Menu m_world_pause_menu;
+	Menu m_maker_pause_menu;
+	Menu m_maker_help_menu;
 	Menu m_load_menu;
 
 	// Should end game

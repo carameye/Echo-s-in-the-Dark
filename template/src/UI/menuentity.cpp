@@ -12,14 +12,18 @@ bool MenuEntity::init(int id, vec2 position)
 	m_mc.acceleration = { 0.f , 0.f };
 	m_mc.radians = 0.f;
 
-	width = 8.f * brick_size;
-	height = 2.f * brick_size;
 	m_mc.physics.scale = { width / m_rc.texture->width, height / m_rc.texture->height };
 
 	s_ui_render_components[id] = &m_rc;
 	s_ui_motion_components[id] = &m_mc;
 
 	return true;
+}
+
+void MenuEntity::set_size(vec2 size)
+{
+	width = size.x;
+	height = size.y;
 }
 
 bool Button::init(int id, vec2 position)
@@ -42,8 +46,8 @@ bool Button::init(int id, vec2 position)
 
 void Button::hover(vec2 p)
 {
-	vec2 tl = sub(m_mc.position, {width / 2, height / 2});
-	vec2 br = add(m_mc.position, { width / 2, height / 2 });
+	vec2 tl = sub(m_mc.position, { width / 2.f, height / 2.f });
+	vec2 br = add(m_mc.position, { width / 2.f, height / 2.f });
 	if (p.x >= tl.x && p.x <= br.x && p.y >= tl.y && p.y <= br.y)
 	{
 		m_hover = true;
