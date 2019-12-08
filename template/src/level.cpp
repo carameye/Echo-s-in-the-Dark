@@ -4,6 +4,12 @@
 
 using json = nlohmann::json;
 
+namespace
+{
+    const size_t GHOST_DANGER_DIST = 500.f;
+    const size_t COLLISION_SOUND_MIN_VEL = 5.f;
+}
+
 void Level::destroy()
 {
 	// clear all level-dependent resources
@@ -48,8 +54,10 @@ void Level::draw_light(const mat3 &projection, const vec2 &camera_shift) {
     m_light.draw(projection, camera_shift, {width, height}, m_torches);
 }
 
-std::string Level::update(float elapsed_ms) {
-	std::string sound_effect = "";
+void Level::update(float elapsed_ms) {
+
+    SoundSystem* sound_system = SoundSystem::get_system();
+
     vec2 robot_pos = m_robot.get_position();
     vec2 robot_head_pos = m_robot.get_head_position();
 
@@ -101,8 +109,11 @@ std::string Level::update(float elapsed_ms) {
         bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
-                sound_effect = "collision";
-                m_robot.set_velocity({0.f, m_robot.get_velocity().y});
+                vec2 vel = m_robot.get_velocity();
+                if (std::abs(vel.x) >= COLLISION_SOUND_MIN_VEL) {
+                    sound_system->play_sound_effect(Sound_Effects::collision);
+                }
+                m_robot.set_velocity({0.f, vel.y});
 
                 float circle_width = brick_size / 2.f;
                 if (abs(m_robot.get_position().y - brick.get_position().y) > brick_size / 2.f) {
@@ -119,8 +130,11 @@ std::string Level::update(float elapsed_ms) {
 
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_x)) {
-                sound_effect = "collision";
-                m_robot.set_head_velocity({0.f, m_robot.get_head_velocity().y});
+                vec2 head_vel = m_robot.get_head_velocity();
+                if (std::abs(head_vel.x) >= COLLISION_SOUND_MIN_VEL) {
+                    sound_system->play_sound_effect(Sound_Effects::collision);
+                }
+                m_robot.set_head_velocity({0.f, head_vel.y});
 
                 float circle_width = brick_size / 2.f;
                 if (abs(m_robot.get_head_position().y - brick.get_position().y) > brick_size / 2.f) {
@@ -156,8 +170,11 @@ std::string Level::update(float elapsed_ms) {
         bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
-                // sound_effect = "collision";
-                m_robot.set_velocity({m_robot.get_velocity().x, 0.f});
+                vec2 vel = m_robot.get_velocity();
+                if (std::abs(vel.y) >= COLLISION_SOUND_MIN_VEL) {
+                    sound_system->play_sound_effect(Sound_Effects::collision);
+                }
+                m_robot.set_velocity({vel.x, 0.f});
 
                 float circle_width = brick_size / 2.f;
                 if (abs(m_robot.get_position().x - brick.get_position().x) > brick_size / 2.f) {
@@ -170,13 +187,17 @@ std::string Level::update(float elapsed_ms) {
                 new_robot_pos.y = get_closest_point(robot_pos.y, brick.get_position().y, circle_width,
                                                     brick_size / 2.f);
                 translation = new_robot_pos.y - robot_pos.y;
-                if (brick.get_position().y > new_robot_pos.y)
+                if (brick.get_position().y > new_robot_pos.y) {
                     m_robot.set_grounded();
+                }
             }
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_y)) {
-                sound_effect = "collision";
-                m_robot.set_head_velocity({m_robot.get_head_velocity().x, 0.f});
+                vec2 head_vel = m_robot.get_head_velocity();
+                if (std::abs(head_vel.y) >= COLLISION_SOUND_MIN_VEL) {
+                    sound_system->play_sound_effect(Sound_Effects::collision);
+                }
+                m_robot.set_head_velocity({head_vel.x, 0.f});
 
                 float circle_width = brick_size / 2.f;
                 if (abs(m_robot.get_head_position().x - brick.get_position().x) > brick_size / 2.f) {
@@ -190,6 +211,11 @@ std::string Level::update(float elapsed_ms) {
                                                          21);
                 translation_head = new_robot_head_pos.y - robot_head_pos.y;
             }
+        }
+        Music level_bgm = get_level_music();
+        if (level_bgm != prev_bgm) {
+            sound_system->play_bgm(level_bgm);
+            prev_bgm = level_bgm;
         }
     }
 
@@ -206,7 +232,7 @@ std::string Level::update(float elapsed_ms) {
         ghost->set_goal(m_robot.get_position());
         ghost->update(elapsed_ms);
         if (ghost->get_hitbox().collides_with(new_robot_hitbox)) {
-			sound_effect = "samlon_dead.wav";
+            sound_system->play_sound_effect(Sound_Effects::robot_hurt);
             reset_level();
         }
     }
@@ -235,8 +261,6 @@ std::string Level::update(float elapsed_ms) {
 	for (auto& background : m_backgrounds) {
 		background->update(elapsed_ms, m_robot.get_velocity());
 	}
-
-	return sound_effect;
 }
 
 std::vector<vec2> Level::get_brick_positions_around_pos(vec2 pos) const {
@@ -265,10 +289,6 @@ vec2 Level::get_starting_camera_position() const {
 
 vec2 Level::get_player_position() const {
 	return m_robot.get_position();
-}
-
-int Level::get_num_ghosts() const {
-    return (int)m_ghosts.size();
 }
 
 std::string Level::interact()
@@ -445,10 +465,9 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
 
 std::string Level::handle_key_press(int key, int action, std::unordered_map<int, int> &input_states)
 {
-	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+    if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
         input_states[key] = action;
 		m_robot.start_flying();
-        return "flying";
 	}
 	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
         input_states[key] = action;
@@ -461,8 +480,7 @@ std::string Level::handle_key_press(int key, int action, std::unordered_map<int,
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
         input_states[key] = action;
-		m_robot.stop_flying();
-        return "falling";
+        m_robot.stop_flying();
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
         input_states[key] = action;
@@ -661,4 +679,26 @@ void Level::reset_level() {
     for (auto &ghost : m_ghosts) {
         ghost->set_position(reset_positions[pos_i++]);
     }
+}
+
+float Level::get_min_ghost_distance() {
+    float min_ghost_dist = INFINITY;
+    for(auto& ghost : m_ghosts) {
+        float dist = ghost->dist_from_goal();
+        if (dist < min_ghost_dist) {
+            min_ghost_dist = dist;
+        }
+    }
+    return min_ghost_dist;
+}
+
+Music Level::get_level_music()
+{
+    // if the robot is near to a ghost, play the ghost bgm, otherwise, play the standard music
+    float dist_from_ghost = get_min_ghost_distance();
+
+    if (dist_from_ghost <= GHOST_DANGER_DIST) {
+        return Music::ghost_approach;
+    }
+    return Music::standard;
 }

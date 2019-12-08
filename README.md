@@ -6,13 +6,14 @@ For this milestone, we:
 
 Fixed the following from ideas from crossplay/previous bugs:
 - Added the ability to change light colors to the mouse so that player can always have one hand on mouse to direct light, and one on keyboard
-- Fixed lag and memory issue y refactoring the way we were storing bricks 
+- Fixed lag and memory issues by refactoring the way we were storing bricks 
 
 Have completed the following parts of our plan:
 - Added story element that tie together the game play, and give players a concrete goal while playing the game
 - Added intro story and information about background
 - Added cut scene for successfull completion of the game
 - Added more sound effects
+- Made a new sound system for better sound management
 - Added invisible blocks which react the way that normal ones do, but are invisible. (Mainly for menu screens and level select)
 - Added new sprites for level selection
 - Added new ghost sprites (we were worried that the first draft didn't completely fit with our overall theme)

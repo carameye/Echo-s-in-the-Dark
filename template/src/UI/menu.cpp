@@ -16,30 +16,6 @@ bool Menu::init(GLFWwindow* window, vec2 screen)
 	// Initialize the screen texture
 	m_screen_tex.create_from_screen(m_window);
 
-	//-------------------------------------------------------------------------
-	// Loading music and sounds
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	{
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return false;
-	}
-
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return false;
-	}
-
-	m_background_music = Mix_LoadMUS(audio_path("menu.wav"));
-	int vol = Mix_VolumeMusic(MIX_MAX_VOLUME/3);
-
-	if (m_background_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds\n %s\n make sure the data directory is present",
-			audio_path("menu.wav"));
-		return false;
-	}
-
 	return true;
 }
 
@@ -162,36 +138,4 @@ Status Menu::handle_mouse_button(int button, int action)
 	}
 
 	return Status::nothing;
-}
-
-void Menu::start_music()
-{
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return;
-	}
-
-	m_background_music = Mix_LoadMUS(audio_path("menu.wav"));
-	Mix_VolumeMusic(MIX_MAX_VOLUME/3);
-
-	if (m_background_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds\n %s\n make sure the data directory is present",
-			audio_path("menu.wav"));
-		return;
-	}
-
-	// Playing background music indefinitely
-	Mix_PlayMusic(m_background_music, -1);
-}
-
-void Menu::stop_music()
-{
-	if (m_background_music != nullptr) {
-		Mix_FreeMusic(m_background_music);
-		m_background_music = nullptr;
-	}
-
-	Mix_CloseAudio();
 }

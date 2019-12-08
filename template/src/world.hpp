@@ -11,7 +11,6 @@
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
-#include <SDL_mixer.h>
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
@@ -45,11 +44,6 @@ public:
     void handle_mouse_click(int button, int action);
     void handle_mouse_scroll(double yoffset);
 
-	// Manage sounds and background music
-	void start_sounds();
-	void stop_sounds();
-	void stop_music();
-
 	// Begin level
 	void start_level(bool new_game);
 
@@ -64,6 +58,9 @@ public:
 
 	// Poll the state of the world's input keys
 	void poll_keys(GLFWwindow* window);
+
+	// Gets the proper music to play
+	Music get_background_music();
 
 private:
 	// Draw loading screen, parse level, set camera pos
@@ -97,14 +94,6 @@ private:
 
 	Level m_level;
 	vec2 m_robot_ls_pos;
-
-	// game sounds
-	Mix_Music* m_background_music;
-	Mix_Chunk* m_robot_hurt_effect;
-	Mix_Chunk* m_open_door_effect;
-	Mix_Chunk* m_locked_door_effect;
-	Mix_Chunk* m_rocket_effect;
-	Mix_Chunk* m_collision_effect;
 
 	// C++ rng
 	std::default_random_engine m_rng;

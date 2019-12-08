@@ -14,6 +14,7 @@
 #include "systems.hpp"
 #include "background.hpp"
 #include "torch.hpp"
+#include "sound_system.hpp"
 
 class Level
 {
@@ -27,16 +28,13 @@ class Level
 	void destroy();
 
     // Update level entites, returns name of audio file to be played if something happens on update
-    std::string update(float elapsed_ms);
+    void update(float elapsed_ms);
 
     // Gets the camera position when the level first starts
     vec2 get_starting_camera_position() const;
 
 	// Gets the position of the player
 	vec2 get_player_position() const;
-
-	// Returns the number of ghosts in the level
-	int get_num_ghosts() const;
 
     // Interact with the current level interactable
     std::string interact();
@@ -57,6 +55,9 @@ class Level
 
     void handle_mouse_scroll(double yoffset);
 
+	// Get the proper music to play for the level
+	Music get_level_music();
+
 private:
     // Spawn entities
 	bool spawn_robot(vec2 position);
@@ -66,6 +67,10 @@ private:
 	bool spawn_sign(vec2 position, std::string text);
 	bool spawn_background();
 	bool spawn_torch(vec2 position);
+
+	// get the closest ghost to the robot
+	float get_min_ghost_distance();
+	Music prev_bgm = Music::standard;
 
 	// returns the square of bricks around and at pos. Used for collision checking
 	std::vector<vec2> get_brick_positions_around_pos(vec2 pos) const;

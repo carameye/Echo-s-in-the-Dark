@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "hitbox.hpp"
 #include "components.hpp"
+#include "sound_system.hpp"
 
 #include <vector>
 #include <cmath>

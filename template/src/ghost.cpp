@@ -151,3 +151,7 @@ void Ghost::set_path()
 bool Ghost::colour_is_white(vec3 colour) {
 	return colour.x == 1.f && colour.y == 1.f && colour.z == 1.f;
 }
+
+float Ghost::dist_from_goal() {
+	return len(sub(mc.position, m_goal));
+}

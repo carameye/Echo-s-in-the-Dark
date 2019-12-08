@@ -3,6 +3,7 @@
 #include "world.hpp"
 #include "UI/menu.hpp"
 #include "maker.hpp"
+#include "sound_system.hpp"
 
 #include <stack>
 
@@ -46,6 +47,9 @@ public:
 	void back_to_maker_menu();
 
 private:
+	// Sound System
+	SoundSystem* m_sound_system;
+
 	// Window information
 	GLFWwindow* m_window;
 	vec2 m_screen;
