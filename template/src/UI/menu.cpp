@@ -45,7 +45,18 @@ bool Menu::init(GLFWwindow* window, vec2 screen)
 
 bool Menu::setup(std::vector<std::tuple<std::string, Status, vec2>> buttons)
 {
-	float start = 400.f - (buttons.size() * 2.f * brick_size + (buttons.size() - 1) * brick_size) / 2.f;
+	float size = 0.f;
+	for (auto& s : buttons)
+	{
+		size += std::get<2>(s).y;
+	}
+
+	if (buttons.size() > 0)
+	{
+		size += (buttons.size() - 1) * brick_size;
+	}
+
+	float start = 400.f - size / 2.f;
 
 	int first = next_id;
 

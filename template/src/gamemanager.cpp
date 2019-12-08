@@ -14,11 +14,6 @@ namespace
 
 static GameManager* gm;
 
-static void pause()
-{
-	gm->load_pause_menu();
-}
-
 static void load()
 {
 	gm->draw_loading_screen();
@@ -93,8 +88,14 @@ bool GameManager::init(vec2 screen)
 	m_maker_menu.init(m_window, screen);
 	load_maker_menu();
 
-	m_pause_menu.init(m_window, screen);
-	load_pause_menu();
+	m_world_pause_menu.init(m_window, screen);
+	load_world_pause_menu();
+
+	m_maker_pause_menu.init(m_window, screen);
+	load_maker_pause_menu();
+
+	m_maker_help_menu.init(m_window, screen);
+	load_maker_help_menu();
 
 	m_load_menu.init(m_window, screen);
 	load_loading_menu();
@@ -170,7 +171,9 @@ bool GameManager::game_over()
 void GameManager::destroy()
 {
 	m_main_menu.destroy();
-	m_pause_menu.destroy();
+	m_world_pause_menu.destroy();
+	m_maker_pause_menu.destroy();
+	m_maker_help_menu.destroy();
 	m_load_menu.destroy();
 	m_world.destroy();
 	m_maker.destroy();
@@ -197,7 +200,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 		if (!m_maker.handle_key_press(window, key, scancode, action, mod))
 		{
 			m_in_menu = true;
-			m_menu = &m_pause_menu;
+			m_menu = &m_maker_pause_menu;
 			m_menu->start_music();
 		}
 	}
@@ -207,7 +210,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			m_world.stop_sounds();
 			m_in_menu = true;
-			m_menu = &m_pause_menu;
+			m_menu = &m_world_pause_menu;
 			m_menu->start_music();
 		}
 	}
@@ -322,6 +325,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			break;
 		case Status::play_level:
 			m_menu->stop_music();
+			m_maker.save();
 			m_in_menu = false;
 			m_in_maker = false;
 			m_world.destroy();
@@ -342,6 +346,12 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_maker.init(m_window, m_screen);
 			m_maker.set_load_trigger(load);
 			m_maker.load();
+			break;
+		case Status::help:
+			m_menu = &m_maker_help_menu;
+			break;
+		case Status::ret_pause:
+			m_menu = &m_maker_pause_menu;
 			break;
 		default:
 			break;
@@ -401,14 +411,13 @@ void GameManager::load_maker_menu()
 {
 	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
 	std::vector<std::tuple<std::string, Status, vec2>> buttons;
-	buttons.push_back(std::make_tuple("play_level.png", Status::play_level, button_size));
 	buttons.push_back(std::make_tuple("make_level.png", Status::make_level, button_size));
 	buttons.push_back(std::make_tuple("load_level.png", Status::load_level, button_size));
 	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
 	m_maker_menu.setup(buttons);
 }
 
-void GameManager::load_pause_menu()
+void GameManager::load_world_pause_menu()
 {
 	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
 	std::vector<std::tuple<std::string, Status, vec2>> buttons;
@@ -416,7 +425,28 @@ void GameManager::load_pause_menu()
 	buttons.push_back(std::make_tuple("reset.png", Status::reset, button_size));
 	buttons.push_back(std::make_tuple("save_game.png", Status::save_game, button_size));
 	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
-	m_pause_menu.setup(buttons);
+	m_world_pause_menu.setup(buttons);
+}
+
+void GameManager::load_maker_pause_menu()
+{
+	vec2 button_size = { 4.f * brick_size, 1.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("resume.png", Status::resume, button_size));
+	buttons.push_back(std::make_tuple("reset.png", Status::reset, button_size));
+	buttons.push_back(std::make_tuple("play_level.png", Status::play_level, button_size));
+	buttons.push_back(std::make_tuple("help_button.png", Status::help, button_size));
+	buttons.push_back(std::make_tuple("save_game.png", Status::save_game, button_size));
+	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
+	m_maker_pause_menu.setup(buttons);
+}
+
+void GameManager::load_maker_help_menu()
+{
+	vec2 button_size = { 1200.f, 800.f };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("maker_help_screen.png", Status::ret_pause, button_size));
+	m_maker_help_menu.setup(buttons);
 }
 
 void GameManager::load_loading_menu()
