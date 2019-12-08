@@ -443,27 +443,33 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
     return true;
 }
 
-std::string Level::handle_key_press(int key, int action)
+std::string Level::handle_key_press(int key, int action, std::unordered_map<int, int> &input_states)
 {
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+        input_states[key] = action;
 		m_robot.start_flying();
         return "flying";
 	}
 	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+        input_states[key] = action;
 		m_robot.set_is_accelerating_left(true);
 	}
 	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+        input_states[key] = action;
 		m_robot.set_is_accelerating_right(true);
 	}
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE) {
+        input_states[key] = action;
 		m_robot.stop_flying();
         return "falling";
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)) {
+        input_states[key] = action;
 		m_robot.set_is_accelerating_left(false);
 	}
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)) {
+        input_states[key] = action;
 		m_robot.set_is_accelerating_right(false);
 	}
 

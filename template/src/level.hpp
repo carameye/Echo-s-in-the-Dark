@@ -48,7 +48,7 @@ class Level
 	bool parse_level(std::string level, std::vector<std::string> unlocked, vec2 start_pos);
 
 	// Handle input
-	std::string handle_key_press(int key, int action);
+	std::string handle_key_press(int key, int action, std::unordered_map<int, int> &input_states);
 	void handle_mouse_move(double xpos, double ypos, vec2 camera);
 	void handle_mouse_click(int button, int action);
 

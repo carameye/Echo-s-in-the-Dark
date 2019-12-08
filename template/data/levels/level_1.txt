@@ -3,7 +3,6 @@ level_2
 level_select
 enddoors
 fly
-fly_duration
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B                       T  B
@@ -29,5 +28,5 @@ B                     BBBBBB
 B                          B
 B          R               B
 B       D     T            B
-B          S     S         B
+B          S               B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB

@@ -85,6 +85,18 @@ bool GameManager::init(vec2 screen)
 	m_story_menu.init(m_window, screen);
 	load_story_menu();
 
+    m_introduction_1_menu.init(m_window, screen);
+    load_introduction_1_menu();
+
+    m_introduction_2_menu.init(m_window, screen);
+    load_introduction_2_menu();
+
+    m_introduction_3_menu.init(m_window, screen);
+    load_introduction_3_menu();
+
+    m_introduction_4_menu.init(m_window, screen);
+    load_introduction_4_menu();
+
 	m_maker_menu.init(m_window, screen);
 	load_maker_menu();
 
@@ -197,7 +209,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 	}
 	else if (m_in_maker)
 	{
-		if (!m_maker.handle_key_press(window, key, scancode, action, mod))
+		if (!m_maker.handle_key_press(window, key, action))
 		{
 			m_in_menu = true;
 			m_menu = &m_maker_pause_menu;
@@ -206,7 +218,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 	}
 	else
 	{
-		if (!m_world.handle_key_press(window, key, scancode, action, mod))
+		if (!m_world.handle_key_press(window, key, action))
 		{
 			m_world.stop_sounds();
 			m_in_menu = true;
@@ -253,6 +265,9 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			if (!m_in_maker)
 			{
 				m_world.start_sounds();
+				m_world.poll_keys(window);
+			} else {
+				m_maker.poll_keys(window);
 			}
 			break;
 		case Status::new_game:
@@ -303,6 +318,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			{
 				m_world.reset();
 				m_world.start_sounds();
+				m_world.poll_keys(window);
 			}
 			break;
 		case Status::exit:
@@ -314,6 +330,18 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		case Status::maker_mode:
 			m_menu = &m_maker_menu;
 			break;
+		case Status::go_to_intro_1:
+		    m_menu = &m_introduction_1_menu;
+		    break;
+        case Status::go_to_intro_2:
+            m_menu = &m_introduction_2_menu;
+            break;
+        case Status::go_to_intro_3:
+            m_menu = &m_introduction_3_menu;
+            break;
+        case Status::go_to_intro_4:
+            m_menu = &m_introduction_4_menu;
+            break;
 		case Status::make_level:
 			m_menu->stop_music();
 			m_in_menu = false;
@@ -358,7 +386,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		}
 	} else if (m_in_maker)
 	{
-		if ((button != GLFW_MOUSE_BUTTON_LEFT && button != GLFW_MOUSE_BUTTON_RIGHT) || 
+		if ((button != GLFW_MOUSE_BUTTON_LEFT && button != GLFW_MOUSE_BUTTON_RIGHT) ||
 			(action != GLFW_PRESS && action != GLFW_RELEASE)) {
 			return;
 		}
@@ -399,12 +427,44 @@ void GameManager::load_main_menu()
 
 void GameManager::load_story_menu()
 {
-	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+    vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
 	std::vector<std::tuple<std::string, Status, vec2>> buttons;
-	buttons.push_back(std::make_tuple("new_game.png", Status::new_game, button_size));
+	buttons.push_back(std::make_tuple("new_game.png", Status::go_to_intro_1, button_size));
 	buttons.push_back(std::make_tuple("load_game.png", Status::load_game, button_size));
 	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
 	m_story_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_1_menu()
+{
+    vec2 button_size = { 1200.f, 800.f };
+    std::vector<std::tuple<std::string, Status, vec2>> buttons;
+    buttons.push_back(std::make_tuple("intro_1_full.png", Status::go_to_intro_2, button_size));
+    m_introduction_1_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_2_menu()
+{
+    vec2 button_size = { 1200.f, 800.f };
+    std::vector<std::tuple<std::string, Status, vec2>> buttons;
+    buttons.push_back(std::make_tuple("intro_2_full.png", Status::go_to_intro_3, button_size));
+    m_introduction_2_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_3_menu()
+{
+    vec2 button_size = { 1200.f, 800.f };
+    std::vector<std::tuple<std::string, Status, vec2>> buttons;
+    buttons.push_back(std::make_tuple("intro_3_full.png", Status::go_to_intro_4, button_size));
+    m_introduction_3_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_4_menu()
+{
+    vec2 button_size = { 1200.f, 800.f };
+    std::vector<std::tuple<std::string, Status, vec2>> buttons;
+    buttons.push_back(std::make_tuple("intro_4_full.png", Status::new_game, button_size));
+    m_introduction_4_menu.setup(buttons);
 }
 
 void GameManager::load_maker_menu()

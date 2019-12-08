@@ -52,6 +52,8 @@ bool Maker::init(GLFWwindow* window, vec2 screen)
 	camera_pos = { 0.f, 0.f };
 	mouse_pos = { 0.f, 0.f };
 
+	poll_keys(window);
+
 	return true;
 }
 
@@ -168,40 +170,50 @@ bool Maker::is_over() const
 }
 
 // On key callback
-bool Maker::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
+bool Maker::handle_key_press(GLFWwindow*, int key, int action)
 {
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
 		return false;
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_W) {
+		input_key_states[key] = action;
 		movement[0] = true;
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_A) {
+		input_key_states[key] = action;
 		movement[1] = true;
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_S) {
+		input_key_states[key] = action;
 		movement[2] = true;
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_D) {
+		input_key_states[key] = action;
 		movement[3] = true;
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_LEFT_SHIFT) {
+		input_key_states[key] = action;
 		faster = true;
 	}
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_W) {
+		input_key_states[key] = action;
 		movement[0] = false;
 	}
 	if (action == GLFW_RELEASE && key == GLFW_KEY_A) {
+		input_key_states[key] = action;
 		movement[1] = false;
 	}
 	if (action == GLFW_RELEASE && key == GLFW_KEY_S) {
+		input_key_states[key] = action;
 		movement[2] = false;
 	}
 	if (action == GLFW_RELEASE && key == GLFW_KEY_D) {
+		input_key_states[key] = action;
 		movement[3] = false;
 	}
 	if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT_SHIFT) {
+		input_key_states[key] = action;
 		faster = false;
 	}
 
@@ -209,6 +221,18 @@ bool Maker::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 	mouse_moved = true;
 
 	return true;
+}
+
+void Maker::poll_keys(GLFWwindow* window)
+{
+	for (auto& input_state : input_key_states) {
+		int key = input_state.first;
+		int old_key_state = input_state.second;
+		int key_state = glfwGetKey(window, key);
+		if (key_state != old_key_state) {
+			handle_key_press(window, key, key_state);
+		}
+	}
 }
 
 void Maker::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
