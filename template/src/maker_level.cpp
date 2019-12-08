@@ -4,6 +4,13 @@
 
 using json = nlohmann::json;
 
+static bool within_range(vec2 p1, vec2 p2, float range)
+{
+	bool x = p1.x > p2.x - range && p1.x < p2.x + range;
+	bool y = p1.y > p2.y - range && p1.y < p2.y + range;
+	return x && y;
+}
+
 void MakerLevel::destroy()
 {
 	// clear all level-dependent resources
@@ -31,7 +38,7 @@ void MakerLevel::destroy()
 
 vec2 MakerLevel::generate_starter()
 {
-	m_ot = ObjectType::del;
+	m_ot = ObjectType::brick;
 	m_ot_selection = 0;
 
 	min = next_id;
@@ -53,7 +60,7 @@ vec2 MakerLevel::generate_starter()
 		}
 	}
 
-	spawn_robot({ 6.f * 64.f, height - 4 * 64.f });
+	spawn_robot({ 6.f * 64.f, height - 5 * 64.f });
 
 	m_rendering_system.process(min, next_id);
 
@@ -62,7 +69,7 @@ vec2 MakerLevel::generate_starter()
 
 vec2 MakerLevel::load_level()
 {
-	m_ot = ObjectType::del;
+	m_ot = ObjectType::brick;
 	m_ot_selection = 0;
 
 	min = next_id;
@@ -175,7 +182,8 @@ vec2 MakerLevel::load_level()
 	}
 
 	fprintf(stderr, "	built world with %lu doors, %lu ghosts, and %lu bricks\n",
-		m_interactables.size(), m_ghosts.size(), m_bricks.size());
+		(long unsigned int)m_interactables.size(), (long unsigned int)m_ghosts.size(), 
+		(long unsigned int)m_bricks.size());
 
 	// Spawn the robot
 	vec2 robot_pos = { j["spawn"]["pos"]["x"], j["spawn"]["pos"]["y"] };
@@ -194,7 +202,7 @@ void MakerLevel::draw_entities(const mat3& projection, const vec2& camera_shift)
 void MakerLevel::handle_key_press(int key, int action)
 {
 	if (action == GLFW_PRESS && key == GLFW_KEY_TAB) {
-		m_ot_selection = (m_ot_selection + 1) % 6;
+		m_ot_selection = (m_ot_selection + 1) % 5;
 		m_ot = (ObjectType)m_ot_selection;
 	}
 
@@ -228,7 +236,7 @@ void MakerLevel::handle_key_press(int key, int action)
 	}
 }
 
-void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera)
+void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera, bool left)
 {
 	float x = (float)xpos + camera.x - 600.f + brick_size / 2.f;
 	float y = (float)ypos + camera.y - 400.f + brick_size / 2.f;
@@ -241,41 +249,50 @@ void MakerLevel::handle_mouse_click(double xpos, double ypos, vec2 camera)
 
 	int start = next_id;
 
-	if (m_hover_object_is_spawned)
+	if (m_hover_object_is_spawned && left)
 	{
 		m_hover_object_is_spawned = false;
 		return;
 	}
 
-	switch (m_ot)
+	if (left) 
 	{
-	case ObjectType::del:
-		delete_object(position);
-		break;
-	case ObjectType::brick:
-		spawn_brick(position, m_color);
-		break;
-	case ObjectType::torch:
-		spawn_torch(position);
-		break;
-	case ObjectType::door:
-		spawn_door(position, "complete");
-		break;
-	case ObjectType::ghost:
-		spawn_ghost(position, m_color);
-		break;
-	case ObjectType::robot:
-		slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = nullptr;
-		m_robot_position = position;
-		slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = &m_robot;
-		break;
-	default:
-		break;
+		switch (m_ot)
+		{
+		case ObjectType::brick:
+			spawn_brick(position, m_color);
+			break;
+		case ObjectType::torch:
+			spawn_torch(position);
+			break;
+		case ObjectType::door:
+			spawn_door(position, "complete");
+			break;
+		case ObjectType::ghost:
+			spawn_ghost(position, m_color);
+			break;
+		case ObjectType::robot:
+		{
+			if (valid_robot_position(position))
+			{
+				slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = nullptr;
+				m_robot_position = position;
+				slots[(int)(m_robot_position.x / 64.f)][(int)(m_robot_position.y / 64.f)] = &m_robot;
+			}
+			break;
+		}
+		default:
+			break;
+		}
+
+		for (int i = start; i < next_id; i++)
+		{
+			m_rendering_system.add(i);
+		}
 	}
-	
-	for (int i = start; i < next_id; i++)
+	else if (!m_hover_object_is_spawned)
 	{
-		m_rendering_system.add(i);
+		delete_object(position);
 	}
 }
 
@@ -301,9 +318,6 @@ void MakerLevel::refresh_hover_object(float x, float y)
 
 	switch (m_ot)
 	{
-	case ObjectType::del:
-		m_hover_object_is_spawned = false;
-		break;
 	case ObjectType::brick:
 		m_hover_object_is_spawned = spawn_brick(position, m_color);
 		break;
@@ -317,8 +331,11 @@ void MakerLevel::refresh_hover_object(float x, float y)
 		m_hover_object_is_spawned = spawn_ghost(position, m_color);
 		break;
 	case ObjectType::robot:
-		m_hover_object_is_spawned = false;
-		m_robot.set_position(position);
+		m_hover_object_is_spawned = false;	
+		if (valid_robot_position(position))
+		{
+			m_robot.set_position(position);
+		}
 	default:
 		break;
 	}
@@ -415,87 +432,6 @@ void MakerLevel::process()
 
 	image.save_image(maker_shadow);
 	image.clear();
-}
-
-bool MakerLevel::spawn_door(vec2 position, std::string next_level)
-{
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f) + 1] != nullptr ||
-		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
-	{
-		return false;
-	}
-
-	Door* door = new Door();
-	if (door->init(next_id++, position))
-	{
-		door->set_destination(next_level);
-		m_interactables.push_back(door);
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = door;
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f) + 1] = door;
-		return true;
-	}
-	fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
-	return false;
-}
-
-bool MakerLevel::spawn_ghost(vec2 position, vec3 colour)
-{
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
-		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
-	{
-		return false;
-	}
-
-	Ghost* ghost = new Ghost();
-	if (ghost->init(next_id++, colour, colour))
-	{
-		ghost->set_position(position);
-		m_ghosts.push_back(ghost);
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = ghost;
-		return true;
-	}
-	return false;
-}
-
-bool MakerLevel::spawn_robot(vec2 position)
-{
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
-		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
-	{
-		return false;
-	}
-
-	if (m_robot.init(next_id, false))
-	{
-		m_robot_position = position;
-		next_id += 104;
-		m_robot.set_position(position);
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = &m_robot;
-		return true;
-	}
-	fprintf(stderr, "	robot spawn failed\n");
-	return false;
-}
-
-bool MakerLevel::spawn_torch(vec2 position) 
-{
-	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
-		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
-	{
-		return false;
-	}
-
-	Torch* torch = new Torch();
-	if (torch->init(next_id++))
-	{
-		torch->set_position(position);
-		m_torches.push_back(torch);
-		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = torch;
-		return true;
-	}
-	fprintf(stderr, "	torch spawn failed\n");
-	return false;
 }
 
 bool MakerLevel::delete_object(vec2 position)
@@ -613,10 +549,113 @@ bool MakerLevel::delete_object(vec2 position)
 	return true;
 }
 
-bool MakerLevel::spawn_brick(vec2 position, vec3 colour) 
+bool MakerLevel::valid_robot_position(vec2 position)
+{
+	int x = (int)(position.x / 64.f);
+	int y = (int)(position.y / 64.f);
+	for (int i = x - 3; i < x + 4; i++)
+	{
+		for (int j = y - 3; j < y + 4; j++)
+		{
+			if (i >= 0 && i < width && j >= 0 && j < height && slots[i][j] != nullptr &&
+				(std::find(m_bricks.begin(), m_bricks.end(), slots[i][j]) != m_bricks.end() ||
+					std::find(m_ghosts.begin(), m_ghosts.end(), slots[i][j]) != m_ghosts.end()))
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool MakerLevel::spawn_door(vec2 position, std::string next_level)
+{
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f) + 1] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
+	{
+		return false;
+	}
+
+	Door* door = new Door();
+	if (door->init(next_id++, position))
+	{
+		door->set_destination(next_level);
+		m_interactables.push_back(door);
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = door;
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f) + 1] = door;
+		return true;
+	}
+	fprintf(stderr, "	door spawn at (%f, %f) failed\n", position.x, position.y);
+	return false;
+}
+
+bool MakerLevel::spawn_ghost(vec2 position, vec3 colour)
+{
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height ||
+		within_range(position, m_robot.get_position(), 4.f * 64.f))
+	{
+		return false;
+	}
+
+	Ghost* ghost = new Ghost();
+	if (ghost->init(next_id++, colour, colour))
+	{
+		ghost->set_position(position);
+		m_ghosts.push_back(ghost);
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = ghost;
+		return true;
+	}
+	return false;
+}
+
+bool MakerLevel::spawn_robot(vec2 position)
 {
 	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
 		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
+	{
+		return false;
+	}
+
+	if (m_robot.init(next_id, false))
+	{
+		m_robot_position = position;
+		next_id += 104;
+		m_robot.set_position(position);
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = &m_robot;
+		return true;
+	}
+	fprintf(stderr, "	robot spawn failed\n");
+	return false;
+}
+
+bool MakerLevel::spawn_torch(vec2 position) 
+{
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height)
+	{
+		return false;
+	}
+
+	Torch* torch = new Torch();
+	if (torch->init(next_id++))
+	{
+		torch->set_position(position);
+		m_torches.push_back(torch);
+		slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] = torch;
+		return true;
+	}
+	fprintf(stderr, "	torch spawn failed\n");
+	return false;
+}
+
+bool MakerLevel::spawn_brick(vec2 position, vec3 colour) 
+{
+	if (slots[(int)(position.x / 64.f)][(int)(position.y / 64.f)] != nullptr ||
+		position.x < 0.f || position.x > width || position.y < 0.f || position.y > height ||
+		within_range(position, m_robot.get_position(), 4.f * 64.f))
 	{
 		return false;
 	}

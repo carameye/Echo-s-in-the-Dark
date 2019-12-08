@@ -72,6 +72,8 @@ private:
 	// Mouse position
 	vec2 mouse_pos;
 	bool mouse_moved = false;
+	bool m_left_click_hold = false;
+	bool m_right_click_hold = false;
 
 	// Camera movement direction
 	bool movement[4] = { false, false, false, false };

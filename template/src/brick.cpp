@@ -98,9 +98,10 @@ vec2 Brick::get_position()const
 void Brick::set_position(vec2 position)
 {
 	mc.position = position;
+	calculate_hitbox();
 }
 
-Hitbox Brick::get_hitbox() const
+void Brick::calculate_hitbox()
 {
     std::vector<Square> squares(1);
     float width = brick_size;
@@ -110,7 +111,12 @@ Hitbox Brick::get_hitbox() const
     Square square(position, (int)width);
     squares[0] = square;
     Hitbox hitbox({}, squares);
-    return hitbox;
+    m_hitbox = hitbox;
+}
+
+Hitbox Brick::get_hitbox() const
+{
+    return m_hitbox;
 }
 
 bool Brick::get_is_collidable() {

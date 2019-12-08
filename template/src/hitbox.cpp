@@ -7,6 +7,11 @@ Hitbox::Hitbox(std::vector<Circle> circles, std::vector<Square> squares)
 	this->squares = squares;
 }
 
+Hitbox::Hitbox()
+{
+
+}
+
 bool Hitbox::collides_with(Hitbox hb)
 {
 	for (Circle c : this->circles)

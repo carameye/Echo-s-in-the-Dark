@@ -37,6 +37,9 @@ public:
     vec3 get_colour();
 
 private:
+    Hitbox m_hitbox;
     vec3 m_colour;
     bool m_is_collidable;
+
+    void calculate_hitbox();
 };

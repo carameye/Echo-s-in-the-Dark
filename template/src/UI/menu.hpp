@@ -16,7 +16,7 @@ public:
 	bool init(GLFWwindow* window, vec2 screen);
 
 	// Setup entities
-	bool setup(std::vector<std::pair<std::string, Status>> buttons);
+	bool setup(std::vector<std::tuple<std::string, Status, vec2>> buttons);
 
 	// Releases all associated resources
 	void destroy();

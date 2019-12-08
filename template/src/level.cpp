@@ -404,7 +404,8 @@ bool Level::parse_level(std::string level, std::vector<std::string> unlocked, ve
     }
 
     fprintf(stderr, "	built world with %lu doors, %lu ghosts, and %lu bricks\n",
-            m_interactables.size(), m_ghosts.size(), m_brick_map.size());
+		(long unsigned int)m_interactables.size(), (long unsigned int)m_ghosts.size(), 
+		(long unsigned int)m_brick_map.size());
 
     // Generate the graph
     if (m_ghosts.size() > 0)
