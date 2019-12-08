@@ -59,6 +59,9 @@ public:
 	// Poll the state of the world's input keys
 	void poll_keys(GLFWwindow* window);
 
+	// Gets the proper music to play
+	Music get_background_music();
+
 private:
 	// Draw loading screen, parse level, set camera pos
 	void load_level(std::string level);

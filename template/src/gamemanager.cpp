@@ -70,7 +70,7 @@ bool GameManager::init(vec2 screen)
 	glfwSetMouseButtonCallback(m_window, mouse_button_redirect);
 	glfwSetScrollCallback(m_window, mouse_scroll_redirect);
 
-	m_sound_sytem = SoundSystem::get_system();
+	m_sound_system = SoundSystem::get_system();
 
 	m_main_menu.init(m_window, screen);
 	load_main_menu();
@@ -195,7 +195,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 			m_in_menu = false;
 			if (!m_in_maker)
 			{
-				m_sound_sytem->play_bgm(Music::standard);
+				m_sound_system->play_bgm(m_world.get_background_music());
 			}
 		}
 	}
@@ -205,7 +205,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			m_in_menu = true;
 			m_menu = &m_maker_pause_menu;
-			m_sound_sytem->play_bgm(Music::menu);
+			m_sound_system->play_bgm(Music::menu);
 		}
 	}
 	else
@@ -214,7 +214,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			m_in_menu = true;
 			m_menu = &m_world_pause_menu;
-			m_sound_sytem->play_bgm(Music::menu);
+			m_sound_system->play_bgm(Music::menu);
 		}
 	}
 }
@@ -254,10 +254,10 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_in_menu = false;
 			if (!m_in_maker)
 			{
-				m_sound_sytem->play_bgm(Music::standard);
+				m_sound_system->play_bgm(m_world.get_background_music());
 				m_world.poll_keys(window);
 			} else {
-				m_sound_sytem->play_bgm(Music::level_builder);
+				m_sound_system->play_bgm(Music::level_builder);
 				m_maker.poll_keys(window);
 			}
 			break;
@@ -268,7 +268,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load, exit);
 			m_world.start_level(true);
-			m_sound_sytem->play_bgm(Music::standard);
+			m_sound_system->play_bgm(m_world.get_background_music());
 			break;
 		case Status::load_game:
 			m_in_menu = false;
@@ -277,7 +277,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load, exit);
 			m_world.start_level(false);
-			m_sound_sytem->play_bgm(Music::standard);
+			m_sound_system->play_bgm(m_world.get_background_music());
 			break;
 		case Status::main_menu:
 			m_menu = &m_main_menu;
@@ -301,12 +301,12 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 				m_maker.init(m_window, m_screen);
 				m_maker.set_load_trigger(load);
 				m_maker.generate_starter();
-				m_sound_sytem->play_bgm(Music::level_builder);
+				m_sound_system->play_bgm(Music::level_builder);
 			}
 			else
 			{
 				m_world.reset();
-				m_sound_sytem->play_bgm(Music::standard);
+				m_sound_system->play_bgm(m_world.get_background_music());
 				m_world.poll_keys(window);
 			}
 			break;
@@ -340,7 +340,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_maker.init(m_window, m_screen);
 			m_maker.set_load_trigger(load);
 			m_maker.generate_starter();
-			m_sound_sytem->play_bgm(Music::level_builder);
+			m_sound_system->play_bgm(Music::level_builder);
 			break;
 		case Status::play_level:
 			m_maker.save();
@@ -353,7 +353,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 				m_world.destroy();
 				m_in_menu = true;
 			}
-			m_sound_sytem->play_bgm(Music::standard);
+			m_sound_system->play_bgm(m_world.get_background_music());
 			break;
 		case Status::load_level:
 			m_in_menu = false;
@@ -362,7 +362,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_maker.init(m_window, m_screen);
 			m_maker.set_load_trigger(load);
 			m_maker.load();
-			m_sound_sytem->play_bgm(Music::level_builder);
+			m_sound_system->play_bgm(Music::level_builder);
 			break;
 		case Status::help:
 			m_menu = &m_maker_help_menu;
@@ -517,6 +517,6 @@ void GameManager::back_to_maker_menu()
 	m_in_maker = false;
 	m_in_menu = true;
 	m_menu = &m_maker_menu;
-	m_sound_sytem->play_bgm(Music::menu);
+	m_sound_system->play_bgm(Music::menu);
 }
 

@@ -322,3 +322,8 @@ void World::save()
 		o.close();
 	}
 }
+
+Music World::get_background_music()
+{
+	return m_level.get_level_music();
+}

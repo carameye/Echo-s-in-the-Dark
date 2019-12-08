@@ -6,6 +6,7 @@ SoundSystem::SoundSystem() {
 		fprintf(stderr, "Failed to open audio device\n");
 		return;
 	}
+	// allocate more channels so can play more sounds at once
 	Mix_AllocateChannels(MIX_CHANNELS * 2);
 
 	m_background_music[Music::standard] =  Mix_LoadMUS(audio_path("background.wav"));
@@ -23,8 +24,8 @@ SoundSystem::SoundSystem() {
 	Mix_VolumeChunk(m_sound_effects[Sound_Effects::robot_hurt], MIX_MAX_VOLUME/2);
 	Mix_VolumeChunk(m_sound_effects[Sound_Effects::open_door], MIX_MAX_VOLUME/4);
 	Mix_VolumeChunk(m_sound_effects[Sound_Effects::door_locked], MIX_MAX_VOLUME); // locked door effect kind of quiet, so make it louder
-	Mix_VolumeChunk(m_sound_effects[Sound_Effects::rocket], MIX_MAX_VOLUME/5);
-	Mix_VolumeChunk(m_sound_effects[Sound_Effects::collision], MIX_MAX_VOLUME/10);
+	Mix_VolumeChunk(m_sound_effects[Sound_Effects::rocket], MIX_MAX_VOLUME/3);
+	Mix_VolumeChunk(m_sound_effects[Sound_Effects::collision], MIX_MAX_VOLUME/5);
 
 	// check that we have correctly loaded bgm and sounds
 	for (auto& bgm : m_background_music) {
@@ -86,7 +87,7 @@ void SoundSystem::play_sound_effect(Sound_Effects effect, int loops, int fade_in
 		m_effect_channels[effect].push_back(channel);
 	}
 	if (Mix_FadeInChannel(channel, m_sound_effects[effect], 0, fade_in_ms) == -1) {
-		fprintf(stderr, "SoundSystem play_sound_effect error: %s\n", Mix_GetError());
+		fprintf(stderr, "SoundSystem play_sound_effect error %s\n", Mix_GetError());
 	};
 }
 

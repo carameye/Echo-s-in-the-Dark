@@ -48,7 +48,7 @@ public:
 
 private:
 	// Sound System
-	SoundSystem* m_sound_sytem;
+	SoundSystem* m_sound_system;
 
 	// Window information
 	GLFWwindow* m_window;

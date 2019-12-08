@@ -201,14 +201,11 @@ void Level::update(float elapsed_ms) {
                 translation_head = new_robot_head_pos.y - robot_head_pos.y;
             }
         }
-        float distance_from_ghosts = get_min_ghost_distance();
-        if (distance_from_ghosts <= GHOST_DANGER_DIST && !m_close_to_ghosts) {
-           sound_system->play_bgm(Music::ghost_approach);
-           m_close_to_ghosts = true;
-       } else if (distance_from_ghosts > GHOST_DANGER_DIST && m_close_to_ghosts) {
-           sound_system->play_bgm(Music::standard);
-           m_close_to_ghosts = false;
-       }
+        Music level_bgm = get_level_music();
+        if (level_bgm != prev_bgm) {
+            sound_system->play_bgm(level_bgm);
+            prev_bgm = level_bgm;
+        }
     }
 
     m_robot.set_position(new_robot_pos);
@@ -667,4 +664,15 @@ float Level::get_min_ghost_distance() {
         }
     }
     return min_ghost_dist;
+}
+
+Music Level::get_level_music()
+{
+    // if the robot is near to a ghost, play the ghost bgm, otherwise, play the standard music
+    float dist_from_ghost = get_min_ghost_distance();
+
+    if (dist_from_ghost <= GHOST_DANGER_DIST) {
+        return Music::ghost_approach;
+    }
+    return Music::standard;
 }
