@@ -7,6 +7,7 @@ using json = nlohmann::json;
 namespace
 {
     const size_t GHOST_DANGER_DIST = 500.f;
+    const size_t COLLISION_SOUND_MIN_VEL = 5.f;
 }
 
 void Level::destroy()
@@ -108,8 +109,11 @@ void Level::update(float elapsed_ms) {
         bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_x)) {
-                sound_system->play_sound_effect(Sound_Effects::collision);
-                m_robot.set_velocity({0.f, m_robot.get_velocity().y});
+                vec2 vel = m_robot.get_velocity();
+                if (std::abs(vel.x) >= COLLISION_SOUND_MIN_VEL) {
+                    sound_system->play_sound_effect(Sound_Effects::collision);
+                }
+                m_robot.set_velocity({0.f, vel.y});
 
                 float circle_width = brick_size / 2.f;
                 if (abs(m_robot.get_position().y - brick.get_position().y) > brick_size / 2.f) {
@@ -126,8 +130,11 @@ void Level::update(float elapsed_ms) {
 
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_x)) {
-                sound_system->play_sound_effect(Sound_Effects::collision);
-                m_robot.set_head_velocity({0.f, m_robot.get_head_velocity().y});
+                vec2 head_vel = m_robot.get_head_velocity();
+                if (std::abs(head_vel.x) >= COLLISION_SOUND_MIN_VEL) {
+                    sound_system->play_sound_effect(Sound_Effects::collision);
+                }
+                m_robot.set_head_velocity({0.f, head_vel.y});
 
                 float circle_width = brick_size / 2.f;
                 if (abs(m_robot.get_head_position().y - brick.get_position().y) > brick_size / 2.f) {
@@ -163,7 +170,11 @@ void Level::update(float elapsed_ms) {
         bool should_check_collisions = brick.get_is_collidable();
         if (should_check_collisions) {
             if (brick.get_hitbox().collides_with(robot_hitbox_y)) {
-                m_robot.set_velocity({m_robot.get_velocity().x, 0.f});
+                vec2 vel = m_robot.get_velocity();
+                if (std::abs(vel.y) >= COLLISION_SOUND_MIN_VEL) {
+                    sound_system->play_sound_effect(Sound_Effects::collision);
+                }
+                m_robot.set_velocity({vel.x, 0.f});
 
                 float circle_width = brick_size / 2.f;
                 if (abs(m_robot.get_position().x - brick.get_position().x) > brick_size / 2.f) {
@@ -177,16 +188,16 @@ void Level::update(float elapsed_ms) {
                                                     brick_size / 2.f);
                 translation = new_robot_pos.y - robot_pos.y;
                 if (brick.get_position().y > new_robot_pos.y) {
-                    if (!m_robot.is_grounded()) {
-                        sound_system->play_sound_effect(Sound_Effects::collision);
-                    }
                     m_robot.set_grounded();
                 }
             }
 
             if (brick.get_hitbox().collides_with(robot_head_hitbox_y)) {
-                sound_system->play_sound_effect(Sound_Effects::collision);
-                m_robot.set_head_velocity({m_robot.get_head_velocity().x, 0.f});
+                vec2 head_vel = m_robot.get_head_velocity();
+                if (std::abs(head_vel.y) >= COLLISION_SOUND_MIN_VEL) {
+                    sound_system->play_sound_effect(Sound_Effects::collision);
+                }
+                m_robot.set_head_velocity({head_vel.x, 0.f});
 
                 float circle_width = brick_size / 2.f;
                 if (abs(m_robot.get_head_position().x - brick.get_position().x) > brick_size / 2.f) {
