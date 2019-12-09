@@ -62,12 +62,16 @@ Hitbox Door::get_hitbox() const
 
 std::string Door::perform_action()
 {
+    SoundSystem* sound_system = SoundSystem::get_system();
+
     if (!m_locked && action.length() > 0) {
         // go to destination
+        sound_system->play_sound_effect(Sound_Effects::open_door);
         return action;
     }
     if (m_locked) {
-        return "door locked";
+        sound_system->play_sound_effect(Sound_Effects::door_locked);
+        return "locked";
     }
     // otherwise, no destination specified
     // so, stay at current location

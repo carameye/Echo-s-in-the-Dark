@@ -9,6 +9,9 @@ public:
 	// Initialize
 	virtual bool init(int id, vec2 position);
 
+	// Set the size
+	void set_size(vec2 size);
+
 protected:
 	// ID for ECS
 	int m_id;

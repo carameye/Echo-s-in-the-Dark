@@ -14,11 +14,6 @@ namespace
 
 static GameManager* gm;
 
-static void pause()
-{
-	gm->load_pause_menu();
-}
-
 static void load()
 {
 	gm->draw_loading_screen();
@@ -75,29 +70,43 @@ bool GameManager::init(vec2 screen)
 	glfwSetMouseButtonCallback(m_window, mouse_button_redirect);
 	glfwSetScrollCallback(m_window, mouse_scroll_redirect);
 
-	// Initialize audio
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	{
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return false;
-	}
+	m_sound_system = SoundSystem::get_system();
 
 	m_main_menu.init(m_window, screen);
 	load_main_menu();
 
-	m_main_menu.start_music();
-
 	m_story_menu.init(m_window, screen);
 	load_story_menu();
+
+    m_introduction_1_menu.init(m_window, screen);
+    load_introduction_1_menu();
+
+    m_introduction_2_menu.init(m_window, screen);
+    load_introduction_2_menu();
+
+    m_introduction_3_menu.init(m_window, screen);
+    load_introduction_3_menu();
+
+    m_introduction_4_menu.init(m_window, screen);
+    load_introduction_4_menu();
 
 	m_maker_menu.init(m_window, screen);
 	load_maker_menu();
 
-	m_pause_menu.init(m_window, screen);
-	load_pause_menu();
+	m_world_pause_menu.init(m_window, screen);
+	load_world_pause_menu();
+
+	m_maker_pause_menu.init(m_window, screen);
+	load_maker_pause_menu();
+
+	m_maker_help_menu.init(m_window, screen);
+	load_maker_help_menu();
 
 	m_load_menu.init(m_window, screen);
 	load_loading_menu();
+
+	m_settings_menu.init(m_window, screen);
+	load_settings_menu();
 
 	m_in_menu = true;
 	m_menu = &m_main_menu;
@@ -170,10 +179,13 @@ bool GameManager::game_over()
 void GameManager::destroy()
 {
 	m_main_menu.destroy();
-	m_pause_menu.destroy();
+	m_world_pause_menu.destroy();
+	m_maker_pause_menu.destroy();
+	m_maker_help_menu.destroy();
 	m_load_menu.destroy();
 	m_world.destroy();
 	m_maker.destroy();
+	m_sound_system->free_sounds();
 
 	glfwDestroyWindow(m_window);
 }
@@ -184,31 +196,29 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 	{
 		if (!m_menu->handle_key_press(window, key, scancode, action, mod))
 		{
-			m_menu->stop_music();
 			m_in_menu = false;
 			if (!m_in_maker)
 			{
-				m_world.start_sounds();
+				m_sound_system->play_bgm(m_world.get_background_music());
 			}
 		}
 	}
 	else if (m_in_maker)
 	{
-		if (!m_maker.handle_key_press(window, key, scancode, action, mod))
+		if (!m_maker.handle_key_press(window, key, action))
 		{
 			m_in_menu = true;
-			m_menu = &m_pause_menu;
-			m_menu->start_music();
+			m_menu = &m_maker_pause_menu;
+			m_sound_system->play_bgm(Music::menu);
 		}
 	}
 	else
 	{
-		if (!m_world.handle_key_press(window, key, scancode, action, mod))
+		if (!m_world.handle_key_press(window, key, action))
 		{
-			m_world.stop_sounds();
 			m_in_menu = true;
-			m_menu = &m_pause_menu;
-			m_menu->start_music();
+			m_menu = &m_world_pause_menu;
+			m_sound_system->play_bgm(Music::menu);
 		}
 	}
 }
@@ -231,13 +241,12 @@ void GameManager::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 
 void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 {
-	if (action != GLFW_PRESS)
-	{
-		return;
-	}
-
 	if (m_in_menu)
 	{
+		if (button != GLFW_MOUSE_BUTTON_LEFT || action != GLFW_PRESS) {
+			return;
+		}
+
 		Status s = m_menu->handle_mouse_button(button, action);
 
 		switch (s)
@@ -246,32 +255,33 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			return;
 			break;
 		case Status::resume:
-			m_menu->stop_music();
 			m_in_menu = false;
 			if (!m_in_maker)
 			{
-				m_world.start_sounds();
+				m_sound_system->play_bgm(m_world.get_background_music());
+				m_world.poll_keys(window);
+			} else {
+				m_sound_system->play_bgm(Music::level_builder);
+				m_maker.poll_keys(window);
 			}
 			break;
 		case Status::new_game:
-			m_menu->stop_music();
 			m_in_menu = false;
 			m_in_maker = false;
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load, exit);
-			m_world.start_sounds();
 			m_world.start_level(true);
+			m_sound_system->play_bgm(m_world.get_background_music());
 			break;
 		case Status::load_game:
-			m_menu->stop_music();
 			m_in_menu = false;
 			m_in_maker = false;
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
 			m_world.set_pl_functions(load, exit);
 			m_world.start_level(false);
-			m_world.start_sounds();
+			m_sound_system->play_bgm(m_world.get_background_music());
 			break;
 		case Status::main_menu:
 			m_menu = &m_main_menu;
@@ -288,7 +298,6 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			}
 			break;
 		case Status::reset:
-			m_menu->stop_music();
 			m_in_menu = false;
 			if (m_in_maker)
 			{
@@ -296,33 +305,49 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 				m_maker.init(m_window, m_screen);
 				m_maker.set_load_trigger(load);
 				m_maker.generate_starter();
+				m_sound_system->play_bgm(Music::level_builder);
 			}
 			else
 			{
 				m_world.reset();
-				m_world.start_sounds();
+				m_sound_system->play_bgm(m_world.get_background_music());
+				m_world.poll_keys(window);
 			}
 			break;
 		case Status::exit:
 			m_is_over = true;
 			break;
 		case Status::story_mode:
+
 			m_menu = &m_story_menu;
 			break;
 		case Status::maker_mode:
 			m_menu = &m_maker_menu;
 			break;
+		case Status::go_to_intro_1:
+		    m_menu = &m_introduction_1_menu;
+		    break;
+        case Status::go_to_intro_2:
+            m_menu = &m_introduction_2_menu;
+            break;
+        case Status::go_to_intro_3:
+            m_menu = &m_introduction_3_menu;
+            break;
+        case Status::go_to_intro_4:
+            m_menu = &m_introduction_4_menu;
+            break;
 		case Status::make_level:
-			m_menu->stop_music();
+			fprintf(stderr, "making level\n");
 			m_in_menu = false;
 			m_in_maker = true;
 			m_maker.destroy();
 			m_maker.init(m_window, m_screen);
 			m_maker.set_load_trigger(load);
 			m_maker.generate_starter();
+			m_sound_system->play_bgm(Music::level_builder);
 			break;
 		case Status::play_level:
-			m_menu->stop_music();
+			m_maker.save();
 			m_in_menu = false;
 			m_in_maker = false;
 			m_world.destroy();
@@ -331,27 +356,54 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			if (!m_world.start_maker_level()) {
 				m_world.destroy();
 				m_in_menu = true;
-				m_menu->start_music();
 			}
-			m_world.start_sounds();
+			m_sound_system->play_bgm(m_world.get_background_music());
 			break;
 		case Status::load_level:
-			m_menu->stop_music();
 			m_in_menu = false;
 			m_in_maker = true;
 			m_maker.destroy();
 			m_maker.init(m_window, m_screen);
 			m_maker.set_load_trigger(load);
 			m_maker.load();
+			m_sound_system->play_bgm(Music::level_builder);
+			break;
+		case Status::help:
+			m_menu = &m_maker_help_menu;
+			break;
+		case Status::ret_pause:
+			m_menu = &m_maker_pause_menu;
+			break;
+		case Status::settings:
+			m_menu = &m_settings_menu;
+			break;
+		case Status::dec_sens:
+			if (scroll_sensitivity < 16.f)
+			{
+				scroll_sensitivity *= 2.f;
+			}
+			break;
+		case Status::inc_sens:
+			if (scroll_sensitivity > 1.f)
+			{
+				scroll_sensitivity /= 2.f;
+			}
 			break;
 		default:
 			break;
 		}
 	} else if (m_in_maker)
 	{
+		if ((button != GLFW_MOUSE_BUTTON_LEFT && button != GLFW_MOUSE_BUTTON_RIGHT) ||
+			(action != GLFW_PRESS && action != GLFW_RELEASE)) {
+			return;
+		}
 		m_maker.handle_mouse_click(window, button, action, mods);
 	} else
     {
+		if (action != GLFW_PRESS) {
+			return;
+		}
         m_world.handle_mouse_click(button, action);
     }
 }
@@ -373,47 +425,115 @@ void GameManager::on_scroll(GLFWwindow *window, double xoffset, double yoffset) 
 
 void GameManager::load_main_menu()
 {
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("story_mode.png", Status::story_mode));
-	buttons.push_back(std::make_pair("maker_mode.png", Status::maker_mode));
-	buttons.push_back(std::make_pair("exit.png", Status::exit));
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("story_mode.png", Status::story_mode, button_size));
+	buttons.push_back(std::make_tuple("maker_mode.png", Status::maker_mode, button_size));
+	buttons.push_back(std::make_tuple("settings.png", Status::settings, button_size));
+	buttons.push_back(std::make_tuple("exit.png", Status::exit, button_size));
 	m_main_menu.setup(buttons);
 }
 
 void GameManager::load_story_menu()
 {
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("new_game.png", Status::new_game));
-	buttons.push_back(std::make_pair("load_game.png", Status::load_game));
-	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
+    vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("new_game.png", Status::go_to_intro_1, button_size));
+	buttons.push_back(std::make_tuple("load_game.png", Status::load_game, button_size));
+	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
 	m_story_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_1_menu()
+{
+    vec2 button_size = { 1200.f, 800.f };
+    std::vector<std::tuple<std::string, Status, vec2>> buttons;
+    buttons.push_back(std::make_tuple("intro_1_full.png", Status::go_to_intro_2, button_size));
+    m_introduction_1_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_2_menu()
+{
+    vec2 button_size = { 1200.f, 800.f };
+    std::vector<std::tuple<std::string, Status, vec2>> buttons;
+    buttons.push_back(std::make_tuple("intro_2_full.png", Status::go_to_intro_3, button_size));
+    m_introduction_2_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_3_menu()
+{
+    vec2 button_size = { 1200.f, 800.f };
+    std::vector<std::tuple<std::string, Status, vec2>> buttons;
+    buttons.push_back(std::make_tuple("intro_3_full.png", Status::go_to_intro_4, button_size));
+    m_introduction_3_menu.setup(buttons);
+}
+
+void GameManager::load_introduction_4_menu()
+{
+    vec2 button_size = { 1200.f, 800.f };
+    std::vector<std::tuple<std::string, Status, vec2>> buttons;
+    buttons.push_back(std::make_tuple("intro_4_full.png", Status::new_game, button_size));
+    m_introduction_4_menu.setup(buttons);
 }
 
 void GameManager::load_maker_menu()
 {
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("play_level.png", Status::play_level));
-	buttons.push_back(std::make_pair("make_level.png", Status::make_level));
-	buttons.push_back(std::make_pair("load_level.png", Status::load_level));
-	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("make_level.png", Status::make_level, button_size));
+	buttons.push_back(std::make_tuple("load_level.png", Status::load_level, button_size));
+	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
 	m_maker_menu.setup(buttons);
 }
 
-void GameManager::load_pause_menu()
+void GameManager::load_world_pause_menu()
 {
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("resume.png", Status::resume));
-	buttons.push_back(std::make_pair("reset.png", Status::reset));
-	buttons.push_back(std::make_pair("save_game.png", Status::save_game));
-	buttons.push_back(std::make_pair("main_menu.png", Status::main_menu));
-	m_pause_menu.setup(buttons);
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("resume.png", Status::resume, button_size));
+	buttons.push_back(std::make_tuple("reset.png", Status::reset, button_size));
+	buttons.push_back(std::make_tuple("save_game.png", Status::save_game, button_size));
+	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
+	m_world_pause_menu.setup(buttons);
+}
+
+void GameManager::load_maker_pause_menu()
+{
+	vec2 button_size = { 4.f * brick_size, 1.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("resume.png", Status::resume, button_size));
+	buttons.push_back(std::make_tuple("reset.png", Status::reset, button_size));
+	buttons.push_back(std::make_tuple("play_level.png", Status::play_level, button_size));
+	buttons.push_back(std::make_tuple("help_button.png", Status::help, button_size));
+	buttons.push_back(std::make_tuple("save_game.png", Status::save_game, button_size));
+	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
+	m_maker_pause_menu.setup(buttons);
+}
+
+void GameManager::load_maker_help_menu()
+{
+	vec2 button_size = { 1200.f, 800.f };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("maker_help_screen.png", Status::ret_pause, button_size));
+	m_maker_help_menu.setup(buttons);
 }
 
 void GameManager::load_loading_menu()
 {
-	std::vector<std::pair<std::string, Status>> buttons;
-	buttons.push_back(std::make_pair("loading.png", Status::nothing));
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("loading.png", Status::nothing, button_size));
 	m_load_menu.setup(buttons);
+}
+
+void GameManager::load_settings_menu()
+{
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("inc_sens.png", Status::inc_sens, button_size));
+	buttons.push_back(std::make_tuple("dec_sens.png", Status::dec_sens, button_size));
+	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
+	m_settings_menu.setup(buttons);
 }
 
 void GameManager::draw_loading_screen()
@@ -423,11 +543,10 @@ void GameManager::draw_loading_screen()
 
 void GameManager::back_to_maker_menu()
 {
-	m_world.stop_music();
 	m_world.destroy();
 	m_in_maker = false;
 	m_in_menu = true;
 	m_menu = &m_maker_menu;
-	m_menu->start_music();
+	m_sound_system->play_bgm(Music::menu);
 }
 

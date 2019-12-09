@@ -5,7 +5,6 @@
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
-#include <SDL_mixer.h>
 #include <vector>
 #include <utility>
 
@@ -16,7 +15,7 @@ public:
 	bool init(GLFWwindow* window, vec2 screen);
 
 	// Setup entities
-	bool setup(std::vector<std::pair<std::string, Status>> buttons);
+	bool setup(std::vector<std::tuple<std::string, Status, vec2>> buttons);
 
 	// Releases all associated resources
 	void destroy();
@@ -32,10 +31,6 @@ public:
 	void handle_mouse_move(GLFWwindow* window, double xpos, double ypos);
 	Status handle_mouse_button(int button, int action);
 
-	// Manage music
-	void start_music();
-	void stop_music();
-
 private:
 	// Window handle
 	GLFWwindow* m_window;
@@ -48,9 +43,6 @@ private:
 
 	// Rendering system
 	RenderingSystem m_rs;
-
-	// Music
-	Mix_Music* m_background_music;
 
 	// State
 	bool m_is_over = false;

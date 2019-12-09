@@ -15,7 +15,7 @@
 
 #include <vector>
 
-enum class ObjectType { del, brick, torch, door, ghost, robot };
+enum class ObjectType { brick, torch, door, ghost, robot };
 
 class MakerLevel
 {
@@ -35,7 +35,7 @@ public:
 
 	// Handle input
 	void handle_key_press(int key, int action);
-	void handle_mouse_click(double xpos, double ypos, vec2 camera);
+	void handle_mouse_click(double xpos, double ypos, vec2 camera, bool left);
 	void handle_mouse_move(float xpos, float ypos, vec2 camera_pos);
 
 	// Refresh the object that is hovering under the mouse
@@ -53,11 +53,14 @@ private:
 	bool spawn_torch(vec2 position);
 	bool delete_object(vec2 position);
 
+	bool valid_robot_position(vec2 position);
+	bool valid_torch_position(vec2 position);
+
 	std::string m_level;
 	float width = 64.f * 40.f, height = 64.f * 40.f;
 
-	ObjectType m_lot = ObjectType::del;
-	ObjectType m_ot = ObjectType::del;
+	ObjectType m_lot = ObjectType::brick;
+	ObjectType m_ot = ObjectType::brick;
 	int m_ot_selection = 0;
 	vec3 m_color = { 1.f, 1.f, 1.f };
 	bool m_hover_object_is_spawned = false;
