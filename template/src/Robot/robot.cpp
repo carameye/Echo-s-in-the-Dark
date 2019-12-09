@@ -69,7 +69,7 @@ bool Robot::init(int id, bool use_parts)
 	m_is_accelerating_left = false;
 	m_is_flying = false;
 
-    calculate_hitbox();
+    // calculate_hitbox();
 	return valid;
 }
 
@@ -217,8 +217,21 @@ void Robot::set_energy_bar_position(vec2 position) {
 
 Hitbox Robot::get_hitbox(vec2 translation)
 {
-    m_hitbox.translate(translation);
-    return m_hitbox;
+    std::vector<Circle> circles(1);
+
+    vec2 position = mc.position;
+
+    position.x += translation.x;
+    position.y += translation.y;
+
+    int radius = (int)brick_size / 2;
+    Circle circle(position, radius);
+    circles[0] = circle;
+
+    Hitbox hitbox(circles, {});
+    // TODO: figure out why this line is not working
+    // hitbox.translate(translation);
+    return hitbox;
 }
 
 void Robot::calculate_hitbox()

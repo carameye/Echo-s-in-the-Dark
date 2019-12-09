@@ -28,24 +28,14 @@ bool Sign::init(int id, std::string sign_text, vec2 position)
 
 	hide_text();
 
+	calculate_hitbox();
+
 	return m_text.init(id + 1, sign_text, position);
 }
 
 Hitbox Sign::get_hitbox() const
 {
-	std::vector<Square> squares(2);
-
-	float width = brick_size;
-	vec2 position = mc.position;
-	position.x -= width / 2;
-	position.y += width / 2;
-	Square top(position, (int)width);
-	Square bot(add(position, { 0.f, width }), (int)width);
-	squares[0] = top;
-	squares[1] = bot;
-
-	Hitbox hitbox({}, squares);
-	return hitbox;
+    return m_hitbox;
 }
 
 void Sign::show_text()
@@ -56,4 +46,20 @@ void Sign::show_text()
 void Sign::hide_text()
 {
 	m_text.set_status(false);
+}
+
+void Sign::calculate_hitbox() {
+    std::vector<Square> squares(2);
+
+    float width = brick_size;
+    vec2 position = mc.position;
+    position.x -= width / 2;
+    position.y += width / 2;
+    Square top(position, (int)width);
+    Square bot(add(position, { 0.f, width }), (int)width);
+    squares[0] = top;
+    squares[1] = bot;
+
+    Hitbox hitbox({}, squares);
+    m_hitbox = hitbox;
 }
