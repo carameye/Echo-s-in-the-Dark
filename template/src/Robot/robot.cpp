@@ -300,4 +300,9 @@ void Robot::set_head_direction(bool b) {
     m_hat.set_direction(b);
 }
 
+void Robot::destroy()
+{
+	m_smoke_system.destroy();
+}
+
 

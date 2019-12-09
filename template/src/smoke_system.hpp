@@ -9,8 +9,6 @@ class SmokeSystem : public Entity
 	static Texture test_texture;
 
 public:
-	~SmokeSystem();
-
 	bool init(int id);
 
     void update(float ms, vec2 robot_position, vec2 robot_velocity);
@@ -18,6 +16,8 @@ public:
 	void start_smoke();
 
 	void stop_smoke();
+
+	void destroy();
 
 private:
 	std::vector<Smoke*> m_active_smokes;

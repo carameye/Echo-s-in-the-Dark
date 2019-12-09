@@ -93,6 +93,8 @@ public:
 
     void set_head_direction(bool b);
 
+	void destroy();
+
 private:
 	RobotHead m_head;
 	RobotShoulders m_shoulders;
