@@ -119,7 +119,7 @@ void Robot::update(float ms)
 
     if (m_is_flying) {
         m_grounded = false;
-        m_available_flight_time = fmax(m_available_flight_time -= ms, 0);
+        m_available_flight_time = (float)fmax(m_available_flight_time -= ms, 0);
         if (m_available_flight_time == 0) {
             stop_flying();
         }
