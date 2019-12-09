@@ -6,8 +6,8 @@ using json = nlohmann::json;
 
 namespace
 {
-    const size_t GHOST_DANGER_DIST = 500.f;
-    const size_t COLLISION_SOUND_MIN_VEL = 5.f;
+    const size_t GHOST_DANGER_DIST = 500;
+    const size_t COLLISION_SOUND_MIN_VEL = 5;
 }
 
 void Level::destroy()
@@ -539,8 +539,6 @@ void Level::handle_mouse_scroll(double yoffset) {
 		}
 		m_scroll_amount += yoffset;
 		if (m_scroll_amount >= scroll_sensitivity) {
-			fprintf(stderr, "%f\n", scroll_sensitivity);
-			fprintf(stderr, "%f\n", m_scroll_amount);
 			m_scroll_amount = 0;
 			m_light.set_next_light_channel();
 			m_has_colour_changed = true;
@@ -552,8 +550,6 @@ void Level::handle_mouse_scroll(double yoffset) {
 		}
 		m_scroll_amount -= yoffset;
 		if (m_scroll_amount >= scroll_sensitivity) {
-			fprintf(stderr, "%f\n", scroll_sensitivity);
-			fprintf(stderr, "%f\n", m_scroll_amount);
 			m_scroll_amount = 0;
 			m_light.set_prev_light_channel();
 			m_has_colour_changed = true;

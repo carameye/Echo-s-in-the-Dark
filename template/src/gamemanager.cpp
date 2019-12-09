@@ -381,14 +381,12 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			if (scroll_sensitivity < 16.f)
 			{
 				scroll_sensitivity *= 2.f;
-				fprintf(stderr, "%f\n", scroll_sensitivity);
 			}
 			break;
 		case Status::inc_sens:
 			if (scroll_sensitivity > 1.f)
 			{
 				scroll_sensitivity /= 2.f;
-				fprintf(stderr, "%f\n", scroll_sensitivity);
 			}
 			break;
 		default:
