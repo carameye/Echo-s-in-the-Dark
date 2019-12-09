@@ -29,7 +29,8 @@
 
 enum class Status { nothing, main_menu, new_game, load_game, resume, reset, save_game, exit,
 					story_mode, maker_mode, play_level, make_level, load_level,
-					go_to_intro_1, go_to_intro_2, go_to_intro_3, go_to_intro_4, help, ret_pause };
+					go_to_intro_1, go_to_intro_2, go_to_intro_3, go_to_intro_4, help, ret_pause,
+					settings, inc_sens, dec_sens };
 
 // please add to this enum whenever you add background music
 enum class Music { standard, menu, level_builder, ghost_approach };
@@ -63,6 +64,8 @@ vec2 to_pixel_position(vec2 pos);
 
 static const float brick_size = 64.f;
 static const float TOLERANCE = 0.005f;
+
+extern double scroll_sensitivity;
 
 float get_closest_point(float last_pos, float tile_pos, float circle_width, float tile_width);
 bool within_range(float val, float low, float high);

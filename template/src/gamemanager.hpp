@@ -43,6 +43,7 @@ public:
 	void load_maker_pause_menu();
 	void load_maker_help_menu();
 	void load_loading_menu();
+	void load_settings_menu();
 	void draw_loading_screen();
 	void back_to_maker_menu();
 
@@ -74,6 +75,7 @@ private:
 	Menu m_maker_pause_menu;
 	Menu m_maker_help_menu;
 	Menu m_load_menu;
+	Menu m_settings_menu;
 
 	// Should end game
 	bool m_is_over = false;

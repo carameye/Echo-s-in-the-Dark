@@ -105,6 +105,9 @@ bool GameManager::init(vec2 screen)
 	m_load_menu.init(m_window, screen);
 	load_loading_menu();
 
+	m_settings_menu.init(m_window, screen);
+	load_settings_menu();
+
 	m_in_menu = true;
 	m_menu = &m_main_menu;
 
@@ -371,6 +374,23 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		case Status::ret_pause:
 			m_menu = &m_maker_pause_menu;
 			break;
+		case Status::settings:
+			m_menu = &m_settings_menu;
+			break;
+		case Status::dec_sens:
+			if (scroll_sensitivity < 16.f)
+			{
+				scroll_sensitivity *= 2.f;
+				fprintf(stderr, "%f\n", scroll_sensitivity);
+			}
+			break;
+		case Status::inc_sens:
+			if (scroll_sensitivity > 1.f)
+			{
+				scroll_sensitivity /= 2.f;
+				fprintf(stderr, "%f\n", scroll_sensitivity);
+			}
+			break;
 		default:
 			break;
 		}
@@ -411,6 +431,7 @@ void GameManager::load_main_menu()
 	std::vector<std::tuple<std::string, Status, vec2>> buttons;
 	buttons.push_back(std::make_tuple("story_mode.png", Status::story_mode, button_size));
 	buttons.push_back(std::make_tuple("maker_mode.png", Status::maker_mode, button_size));
+	buttons.push_back(std::make_tuple("settings.png", Status::settings, button_size));
 	buttons.push_back(std::make_tuple("exit.png", Status::exit, button_size));
 	m_main_menu.setup(buttons);
 }
@@ -505,6 +526,16 @@ void GameManager::load_loading_menu()
 	std::vector<std::tuple<std::string, Status, vec2>> buttons;
 	buttons.push_back(std::make_tuple("loading.png", Status::nothing, button_size));
 	m_load_menu.setup(buttons);
+}
+
+void GameManager::load_settings_menu()
+{
+	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("inc_sens.png", Status::inc_sens, button_size));
+	buttons.push_back(std::make_tuple("dec_sens.png", Status::dec_sens, button_size));
+	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
+	m_settings_menu.setup(buttons);
 }
 
 void GameManager::draw_loading_screen()
