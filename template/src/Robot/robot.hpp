@@ -72,7 +72,7 @@ public:
     void set_energy_bar_position(vec2 position);
 
 	// Returns the robots hitbox for collision detection
-	Hitbox get_hitbox(vec2 translation);
+	Hitbox get_hitbox();
 
     // Returns the robots head hitbox for collision detection
     Hitbox get_head_hitbox(vec2 translation) const;
