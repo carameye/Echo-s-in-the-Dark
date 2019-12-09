@@ -102,7 +102,8 @@ void Level::update(float elapsed_ms) {
     for (auto& pos : possible_brick_collisions) {
         Hitbox robot_hitbox_x = m_robot.get_hitbox();
         robot_hitbox_x.translate({translation, 0.f});
-        const auto &robot_head_hitbox_x = m_robot.get_head_hitbox({ translation_head, 0.f});
+        Hitbox robot_head_hitbox_x = m_robot.get_head_hitbox();
+        robot_head_hitbox_x.translate({ translation_head, 0.f});
         if (m_brick_map.find(pos) == m_brick_map.end()) {
             // pos was not in the brick map. Therefore, there is no brick at pos, so no collision possible
             continue;
@@ -164,7 +165,8 @@ void Level::update(float elapsed_ms) {
     for (auto& pos : possible_brick_collisions) {
         Hitbox robot_hitbox_y = m_robot.get_hitbox();
         robot_hitbox_y.translate({0.f, translation});
-        const auto &robot_head_hitbox_y = m_robot.get_head_hitbox({0.f, translation_head });
+        Hitbox robot_head_hitbox_y = m_robot.get_head_hitbox();
+        robot_head_hitbox_y.translate({0.f, translation_head });
         if (m_brick_map.find(pos) == m_brick_map.end()) {
             // pos was not in the brick map. Therefore, there is no brick at pos, so no collision possible
             continue;

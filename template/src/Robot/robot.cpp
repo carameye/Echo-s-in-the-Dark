@@ -236,9 +236,9 @@ void Robot::calculate_hitbox()
 	m_hitbox = hitbox;
 }
 
-Hitbox Robot::get_head_hitbox(vec2 translation) const
+Hitbox Robot::get_head_hitbox()
 {
-    return m_head.get_hitbox(translation);
+    return m_head.get_hitbox();
 }
 
 void Robot::start_flying()
