@@ -43,6 +43,7 @@ void Level::destroy()
 	m_backgrounds.clear();
     m_rendering_system.destroy();
 	m_light.destroy();
+	m_robot.destroy();
 }
 
 void Level::draw_entities(const mat3 &projection, const vec2 &camera_shift) {
