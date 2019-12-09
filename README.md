@@ -6,12 +6,14 @@ For this milestone, we:
 
 Fixed the following from ideas from crossplay/previous bugs:
 - Added the ability to change light colors to the mouse so that player can always have one hand on mouse to direct light, and one on keyboard
-- Fixed lag and memory issues by refactoring the way we were storing bricks 
+- Fixed lag and memory issues by refactoring the way we were storing bricks
+- Fixed a memory leak caused by not releasing all of the smoke sprites
+- Fixed lag by improving our hitbox calculation/maintenance so that hitboxes were not being calculated hundreds of times per update
 
 Have completed the following parts of our plan:
 - Added story element that tie together the game play, and give players a concrete goal while playing the game
 - Added intro story and information about background
-- Added cut scene for successfull completion of the game
+- Added cut scene for successful completion of the game
 - Added more sound effects
 - Made a new sound system for better sound management
 - Added invisible blocks which react the way that normal ones do, but are invisible. (Mainly for menu screens and level select)
@@ -21,6 +23,7 @@ Have completed the following parts of our plan:
 
 Have made changes that were not in the plan but were small extra features we thought were good ideas:
 - Pushable Blocks
+- Added a settings menu so that players can adjust the scroll speed (usefull when testing on a laptop)
 - Level Editor for continued playability (Not actually very small at all! Go Harlan!)
 
 ## Playable Game Report:
