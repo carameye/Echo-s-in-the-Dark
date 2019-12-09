@@ -7,14 +7,17 @@ For this milestone, we:
 Fixed the following from ideas from crossplay/previous bugs:
 - Added the ability to change light colors to the mouse so that player can always have one hand on mouse to direct light, and one on keyboard
 - Fixed lag and memory issues by refactoring the way we were storing bricks
-- Fixed a memory leak caused by not releasing all of the smoke sprites
+- Fixed a memory leaks caused by not releasing all of the smoke sprites and sound resources
 - Fixed lag by improving our hitbox calculation/maintenance so that hitboxes were not being calculated hundreds of times per update
+- Fixed a bug where the robot would keep moving, if the player brought up the menu while the robot was moving on the ground
+- Made it so that collision sounds would not continously play if the player kept trying to move forward after colliding with a block
+- Fixed a bug where the rocket sound would keep playing as long as the player held down the spacebar (this would happen even when the robot could no longer fly)
 
 Have completed the following parts of our plan:
 - Added story element that tie together the game play, and give players a concrete goal while playing the game
 - Added intro story and information about background
 - Added cut scene for successful completion of the game
-- Added more sound effects
+- Added more sound effects (new menu music, level-editor music, sounds that play when the robot lands)
 - Made a new sound system for better sound management
 - Added invisible blocks which react the way that normal ones do, but are invisible. (Mainly for menu screens and level select)
 - Added new sprites for level selection
