@@ -69,6 +69,8 @@ bool Robot::init(int id, bool use_parts)
 	m_is_accelerating_left = false;
 	m_is_flying = false;
 
+	calculate_hitbox();
+
 	return valid;
 }
 
@@ -137,6 +139,7 @@ void Robot::update(float ms)
 	}
 
 	m_energy_bar.set_status(MAX_FLIGHT_DURATION != m_available_flight_time);
+
 }
 
 vec2 Robot::get_position() const
@@ -157,7 +160,8 @@ vec2 Robot::get_acceleration() const
 vec2 Robot::get_next_position(float elapsed_ms)
 {
     float step = elapsed_ms / 100.f;
-    return {mc.position.x + mc.velocity.x * step, mc.position.y + mc.velocity.y * step};
+    vec2 translation = {mc.velocity.x * step, mc.velocity.y * step};
+    return {mc.position.x + translation.x, mc.position.y + translation.y};
 }
 
 bool Robot::is_grounded() const
@@ -167,7 +171,14 @@ bool Robot::is_grounded() const
 
 void Robot::set_position(vec2 position)
 {
+    vec2 translation;
+
+    translation.x = position.x - mc.position.x;
+    translation.y = position.y - mc.position.y;
+
 	mc.position = position;
+
+    m_hitbox.translate(translation);
 }
 
 void Robot::set_velocity(vec2 velocity)
@@ -206,28 +217,28 @@ void Robot::set_energy_bar_position(vec2 position) {
     m_energy_bar.set_position(position);
 }
 
-Hitbox Robot::get_hitbox(vec2 translation) const
+Hitbox Robot::get_hitbox()
 {
-	std::vector<Circle> circles(1);
-
-	vec2 position = mc.position;
-
-	position.x += translation.x;
-	position.y += translation.y;
-
-	int radius = (int)brick_size / 2;
-	Circle circle(position, radius);
-	circles[0] = circle;
-
-	Hitbox hitbox(circles, {});
-	// TODO: figure out why this line is not working
-	// hitbox.translate(translation);
-	return hitbox;
+    return m_hitbox;
 }
 
-Hitbox Robot::get_head_hitbox(vec2 translation) const
+void Robot::calculate_hitbox()
 {
-    return m_head.get_hitbox(translation);
+    std::vector<Circle> circles(1);
+
+    vec2 position = mc.position;
+
+    int radius = (int)brick_size / 2;
+    Circle circle(position, radius);
+    circles[0] = circle;
+
+    Hitbox hitbox(circles, {});
+	m_hitbox = hitbox;
+}
+
+Hitbox Robot::get_head_hitbox()
+{
+    return m_head.get_hitbox();
 }
 
 void Robot::start_flying()

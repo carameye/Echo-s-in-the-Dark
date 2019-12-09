@@ -23,4 +23,7 @@ public:
 
 private:
 	Text m_text;
+	Hitbox m_hitbox;
+
+	void calculate_hitbox();
 };

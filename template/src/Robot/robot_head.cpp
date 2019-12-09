@@ -30,6 +30,8 @@ bool RobotHead::init(int id)
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;
 
+	calculate_hitbox();
+
     return true;
 }
 
@@ -45,21 +47,9 @@ void RobotHead::update(float ms, vec2 goal)
 	}
 }
 
-Hitbox RobotHead::get_hitbox(vec2 translation) const
+Hitbox RobotHead::get_hitbox()
 {
-    std::vector<Circle> circles(1);
-
-    vec2 position = mc.position;
-
-    position.x += translation.x;
-    position.y += translation.y;
-
-    int radius = rc.texture->height/2;
-    Circle circle(position, radius);
-    circles[0] = circle;
-
-    Hitbox hitbox(circles, {});
-    return hitbox;
+    return m_hitbox;
 }
 
 vec2 RobotHead::get_position() const
@@ -69,7 +59,14 @@ vec2 RobotHead::get_position() const
 
 void RobotHead::set_position(vec2 position)
 {
+    vec2 translation;
+
+    translation.x = position.x - mc.position.x;
+    translation.y = position.y - mc.position.y;
+
     mc.position = position;
+
+    m_hitbox.translate(translation);
 }
 
 void RobotHead::set_scaling(vec2 scaling)
@@ -98,4 +95,17 @@ vec2 RobotHead::get_velocity() {
 
 void RobotHead::set_velocity(vec2 velocity) {
     mc.velocity = velocity;
+}
+
+void RobotHead::calculate_hitbox() {
+    std::vector<Circle> circles(1);
+
+    vec2 position = mc.position;
+
+    int radius = rc.texture->height/2;
+    Circle circle(position, radius);
+    circles[0] = circle;
+
+    Hitbox hitbox(circles, {});
+    m_hitbox = hitbox;
 }

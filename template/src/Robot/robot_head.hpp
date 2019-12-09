@@ -23,7 +23,7 @@ public:
     void update(float ms, vec2 goal);
 
     // Returns the robots hitbox for collision detection
-    Hitbox get_hitbox(vec2 translation) const;
+    Hitbox get_hitbox();
 
     // Returns the current robot position
     vec2 get_position() const;
@@ -44,4 +44,9 @@ public:
     vec2 get_velocity();
 
     void set_velocity(vec2 vec2);
+
+private:
+    Hitbox m_hitbox;
+
+    void calculate_hitbox();
 };

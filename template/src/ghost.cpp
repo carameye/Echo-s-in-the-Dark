@@ -4,9 +4,6 @@
 #include <cmath>
 
 Texture Ghost::s_ghost_texture;
-Texture Ghost::s_red_ghost_texture;
-Texture Ghost::s_green_ghost_texture;
-Texture Ghost::s_blue_ghost_texture;
 
 bool Ghost::init(int id, vec3 colour, vec3 headlight_colour)
 {
@@ -43,6 +40,8 @@ bool Ghost::init(int id, vec3 colour, vec3 headlight_colour)
 	s_render_components[id] = &rc;
 	s_motion_components[id] = &mc;
 
+	calculate_hitbox();
+
 	return true;
 }
 
@@ -74,11 +73,13 @@ void Ghost::update(float ms)
 			{
 				vec2 dir = normalize(disp);
 				mc.position = add(mc.position, mul(dir, allowed_move));
+				m_hitbox.translate(mul(dir, allowed_move));
 				allowed_move = 0.f;
 			}
 			else
 			{
 				mc.position = next_pos;
+				m_hitbox.translate(disp);
 				allowed_move -= dist;
 				m_path.erase(m_path.begin() + 0);
 
@@ -98,7 +99,15 @@ vec2 Ghost::get_position()const
 
 void Ghost::set_position(vec2 position)
 {
-	mc.position = position;
+    vec2 translation;
+
+    translation.x = position.x - mc.position.x;
+    translation.y = position.y - mc.position.y;
+
+    mc.position = position;
+
+    m_hitbox.translate(translation);
+
 	m_path.clear();
 }
 
@@ -109,17 +118,7 @@ vec3 Ghost::get_colour()
 
 Hitbox Ghost::get_hitbox() const
 {
-	std::vector<Square> squares(1);
-
-	float width = brick_size;
-	vec2 position = mc.position;
-	position.x -= width / 2;
-	position.y += width / 2;
-	Square square(position, (int)width);
-	squares[0] = square;
-
-	Hitbox hitbox({}, squares);
-	return hitbox;
+    return m_hitbox;
 }
 
 void Ghost::set_goal(vec2 position)
@@ -154,4 +153,18 @@ bool Ghost::colour_is_white(vec3 colour) {
 
 float Ghost::dist_from_goal() {
 	return len(sub(mc.position, m_goal));
+}
+
+void Ghost::calculate_hitbox() {
+    std::vector<Square> squares(1);
+
+    float width = brick_size;
+    vec2 position = mc.position;
+    position.x -= width / 2;
+    position.y += width / 2;
+    Square square(position, (int)width);
+    squares[0] = square;
+
+    Hitbox hitbox({}, squares);
+    m_hitbox = hitbox;
 }
