@@ -243,6 +243,9 @@ Hitbox Robot::get_head_hitbox()
 
 void Robot::start_flying()
 {
+    if (m_available_flight_time == 0) {
+        return;
+    }
     m_is_flying = true;
     set_acceleration({mc.acceleration.x, FLIGHT_ACCELERATION});
 	m_smoke_system.start_smoke();
