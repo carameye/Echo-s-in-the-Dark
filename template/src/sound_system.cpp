@@ -60,17 +60,17 @@ void SoundSystem::free_sounds()
 		if (effect.second != nullptr) {
 			Mix_FreeChunk(effect.second);
 			effect.second = nullptr;
-			m_sound_effects.erase(effect.first);
 		}
 	}
+	m_sound_effects.clear();
 	// free background music
 	for (auto& bgm : m_background_music) {
 		if (bgm.second != nullptr) {
 			Mix_FreeMusic(bgm.second);
 			bgm.second = nullptr;
-			m_background_music.erase(bgm.first);
 		}
 	}
+	m_background_music.clear();
 
 	Mix_CloseAudio();
 }
