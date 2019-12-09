@@ -51,6 +51,8 @@ public:
 private:
     vec3 m_colour;
     bool m_is_chasing;
+    Hitbox m_hitbox;
 
+    void calculate_hitbox();
 	bool colour_is_white(vec3 colour);
 };
