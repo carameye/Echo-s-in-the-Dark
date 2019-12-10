@@ -18,6 +18,7 @@ SoundSystem::SoundSystem() {
 	m_sound_effects[Sound_Effects::door_locked] = Mix_LoadWAV(audio_path("locked.wav"));
 	m_sound_effects[Sound_Effects::rocket] = Mix_LoadWAV(audio_path("rocket.wav"));
 	m_sound_effects[Sound_Effects::collision] = Mix_LoadWAV(audio_path("metal_bang.wav"));
+	m_sound_effects[Sound_Effects::button_click] = Mix_LoadWAV(audio_path("click.wav"));
 
 	// set the volume for the music and sound effects
 	Mix_VolumeMusic((int)(MIX_MAX_VOLUME / 5));
