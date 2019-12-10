@@ -111,6 +111,9 @@ bool GameManager::init(vec2 screen)
 	m_settings_menu.init(m_window, screen);
 	load_settings_menu();
 
+	m_maker_instructions_menu.init(m_window, screen);
+	load_maker_instructions_menu();
+
 	m_in_menu = true;
 	m_menu = &m_title_menu;
 
@@ -186,6 +189,7 @@ void GameManager::destroy()
 	m_world_pause_menu.destroy();
 	m_maker_pause_menu.destroy();
 	m_maker_help_menu.destroy();
+	m_maker_instructions_menu.destroy();
 	m_load_menu.destroy();
 	m_world.destroy();
 	m_maker.destroy();
@@ -244,6 +248,7 @@ void GameManager::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	m_maker_help_menu.handle_mouse_move(window, xpos, ypos);
 	m_load_menu.handle_mouse_move(window, xpos, ypos);
 	m_settings_menu.handle_mouse_move(window, xpos, ypos);
+	m_maker_instructions_menu.handle_mouse_move(window, xpos, ypos);
 
 	if (m_in_maker)
 	{
@@ -414,6 +419,8 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 				scroll_sensitivity /= 2.f;
 			}
 			break;
+		case Status::maker_instructions:
+			m_menu = &m_maker_instructions_menu;
 		default:
 			break;
 		}
@@ -513,7 +520,7 @@ void GameManager::load_maker_menu()
 {
 	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
 	std::vector<std::tuple<std::string, Status, vec2>> buttons;
-	buttons.push_back(std::make_tuple("make_level.png", Status::make_level, button_size));
+	buttons.push_back(std::make_tuple("make_level.png", Status::maker_instructions, button_size));
 	buttons.push_back(std::make_tuple("load_level.png", Status::load_level, button_size));
 	buttons.push_back(std::make_tuple("main_menu.png", Status::main_menu, button_size));
 	m_maker_menu.setup(buttons);
@@ -549,6 +556,14 @@ void GameManager::load_maker_help_menu()
 	std::vector<std::tuple<std::string, Status, vec2>> buttons;
 	buttons.push_back(std::make_tuple("maker_help_screen.png", Status::ret_pause, button_size));
 	m_maker_help_menu.setup(buttons);
+}
+
+void GameManager::load_maker_instructions_menu()
+{
+	vec2 button_size = { 1200.f, 800.f };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("maker_instructions.png", Status::make_level, button_size));
+	m_maker_instructions_menu.setup(buttons);
 }
 
 void GameManager::load_loading_menu()
