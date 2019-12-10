@@ -15,6 +15,8 @@ Fixed the following from ideas from crossplay/previous bugs:
 - Fixed some lag that was coming from shadows by making far away pixels be less accurate
 - Fixed a menu bug that meant if you didn't move your mouse after going to a new menu and clicked the click would happen in the wrong spot
 - Made the camera not pan off to the left or right of the level since it's just darkness anyway
+- Fixed a bug where some sound effects would fail to play/play very quietly. Not 100% sure that this is fixed, but it happens less frequently now
+- Fixed a bug where sound effects would keep playing, even when the paused menu was opened. Now, sound effects pause when opening the menu and resume upon closing the menu
 
 Have completed the following parts of our plan:
 - Added story element that tie together the game play, and give players a concrete goal while playing the game
@@ -28,15 +30,15 @@ Have completed the following parts of our plan:
 - Added more refined clues for player about where there are 'hidden' bricks
 
 Have made changes that were not in the plan but were small extra features we thought were good ideas:
-- Pushable Blocks
 - Added a settings menu so that players can adjust the scroll speed (usefull when testing on a laptop)
 - Level Editor for continued playability (Not actually very small at all! Go Harlan!)
 
+
+
 ## Playable Game Report:
 
-
-
 For this milestone, we:
+
 Fixed the following from ideas from crossplay/previous bugs:
 - Made the headlamp turn all the way around with the mouse
 - Added tutorials for how to use the mouse to shine the light
