@@ -15,6 +15,8 @@ Fixed the following from ideas from crossplay/previous bugs:
 - Fixed some lag that was coming from shadows by making far away pixels be less accurate
 - Fixed a menu bug that meant if you didn't move your mouse after going to a new menu and clicked the click would happen in the wrong spot
 - Made the camera not pan off to the left or right of the level since it's just darkness anyway
+- Possibly fixed a bug where some sound effects would fail to play/play very quietly. Not 100% sure that this is fixed, but it happens less frequently now
+- Fixed a bug where sound effects would keep playing, even when the paused menu was opened. Now, sound effects pause when opening the menu and resume upon closing the menu
 
 Have completed the following parts of our plan:
 - Added story element that tie together the game play, and give players a concrete goal while playing the game
