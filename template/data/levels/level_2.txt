@@ -3,26 +3,29 @@ level_3
 level_select
 enddoors
 color
-colored_bricks
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                       T  B
-B                       D  B
+B                          B
+B                          B
+B                          B
+B                          B
+B                          B
+B                          B
+B                          B
+B                          B
+B                       DT B
 B                          B
 B                     BBBBBB
 B                          B
 B                          B
-B                          B
-B                          B
-B                     MMMMMB
-B                     M    B
-B                     M    B
-B                     M    B
-B                     M    B
-B                     MMMMMB
-B                          B
-B                          B
-BCCCCCCC   CCCCCC          B
+B          MMMMMMMMMMMMMMMMB
+B          M               B
+B          M               B
+B          M               B
+B          M               B
+B          M               B
+B          M               B
+B          MMMMMMMMMMMMMMMMB
 B                          B
 B                          B
 BMMMMM                     B
@@ -33,7 +36,7 @@ B                          B
 B                          B
 B                     CCCCCB
 B                          B
-B          R               B
-B       D     T            B
-B          S     S         B
+B          R   M           B
+B       D     TN           B
+B          S   C           B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB

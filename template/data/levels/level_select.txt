@@ -11,19 +11,25 @@ pan
 mouse
 interact
 endsigns
-IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-I                                                                         I
-I                                                                         I
-I                                                                         I
-I                                                                         I
-I                                                                         I
-I                                                                         I
-I                                                                         I
-I                                                                         I
-I                                                                         I
-I                                                                         I
-I                                                                         I
-I      R                                                                  I
-I         T     T     T     T  D     D  T  D     D  T  D     D  T         I
-I      S     S     S     S                                                I
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I                                                                 I
+I      R                                                          I
+I         T     T     T     T  D     D  T  D     D  T  D     D  T I
+I      S     S     S     S                                        I
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
