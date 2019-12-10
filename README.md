@@ -27,7 +27,6 @@ Have completed the following parts of our plan:
 - Added invisible blocks which react the way that normal ones do, but are invisible. (Mainly for menu screens and level select)
 - Added new sprites for level selection
 - Added new ghost sprites (we were worried that the first draft didn't completely fit with our overall theme)
-- Added more refined clues for player about where there are 'hidden' bricks
 
 Have made changes that were not in the plan but were small extra features we thought were good ideas:
 - Added a settings menu so that players can adjust the scroll speed (usefull when testing on a laptop)
