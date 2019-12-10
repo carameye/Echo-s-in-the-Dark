@@ -1,5 +1,5 @@
 0.2
-success
+level_2
 level_select
 enddoors
 fly
