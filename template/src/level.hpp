@@ -30,6 +30,9 @@ class Level
     // Update level entites, returns name of audio file to be played if something happens on update
     void update(float elapsed_ms);
 
+	// Updates the background
+	void update_background(float elapsed_ms, vec2 pos_diff);
+
     // Gets the camera position when the level first starts
     vec2 get_starting_camera_position() const;
 
@@ -57,6 +60,8 @@ class Level
 
 	// Get the proper music to play for the level
 	Music get_level_music();
+
+	vec2 get_size();
 
 private:
     // Spawn entities
