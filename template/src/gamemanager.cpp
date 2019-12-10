@@ -249,6 +249,8 @@ void GameManager::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	m_introduction_2_menu.handle_mouse_move(window, xpos, ypos);
 	m_introduction_3_menu.handle_mouse_move(window, xpos, ypos);
 	m_introduction_4_menu.handle_mouse_move(window, xpos, ypos);
+    m_success_menu.handle_mouse_move(window, xpos, ypos);
+    m_credits_menu.handle_mouse_move(window, xpos, ypos);
 	m_maker_menu.handle_mouse_move(window, xpos, ypos);
 	m_world_pause_menu.handle_mouse_move(window, xpos, ypos);
 	m_maker_pause_menu.handle_mouse_move(window, xpos, ypos);
@@ -615,6 +617,7 @@ void GameManager::back_to_maker_menu()
 
 void GameManager::to_success_menu()
 {
+    m_world.destroy();
     m_in_maker = false;
     m_in_menu = true;
     m_menu = &m_success_menu;
