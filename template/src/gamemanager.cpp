@@ -72,6 +72,9 @@ bool GameManager::init(vec2 screen)
 
 	m_sound_system = SoundSystem::get_system();
 
+	m_title_menu.init(m_window, screen);
+	load_title_menu();
+
 	m_main_menu.init(m_window, screen);
 	load_main_menu();
 
@@ -109,7 +112,7 @@ bool GameManager::init(vec2 screen)
 	load_settings_menu();
 
 	m_in_menu = true;
-	m_menu = &m_main_menu;
+	m_menu = &m_title_menu;
 
 	// Setting window title
 	std::stringstream title_ss;
@@ -178,6 +181,7 @@ bool GameManager::game_over()
 
 void GameManager::destroy()
 {
+	m_title_menu.destroy();
 	m_main_menu.destroy();
 	m_world_pause_menu.destroy();
 	m_maker_pause_menu.destroy();
@@ -297,6 +301,9 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_world.start_level(false);
 			m_sound_system->play_bgm(m_world.get_background_music());
 			m_sound_system->resume_all_sound_effects();
+			break;
+		case Status::title_menu:
+			m_menu = &m_title_menu;
 			break;
 		case Status::main_menu:
 			m_menu = &m_main_menu;
@@ -438,6 +445,14 @@ void GameManager::on_scroll(GLFWwindow *window, double xoffset, double yoffset) 
     {
         m_world.handle_mouse_scroll(yoffset);
     }
+}
+
+void GameManager::load_title_menu()
+{
+	vec2 button_size = { 1200.f, 800.f };
+	std::vector<std::tuple<std::string, Status, vec2>> buttons;
+	buttons.push_back(std::make_tuple("title.png", Status::main_menu, button_size));
+	m_title_menu.setup(buttons);
 }
 
 void GameManager::load_main_menu()

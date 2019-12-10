@@ -32,6 +32,7 @@ public:
     void on_scroll(GLFWwindow* window, double xoffset, double yoffset);
 
 	// Load menus
+	void load_title_menu();
 	void load_main_menu();
 	void load_story_menu();
     void load_introduction_1_menu();
@@ -64,6 +65,7 @@ private:
 	World m_world;
 	Maker m_maker;
 	Menu* m_menu;
+	Menu m_title_menu;
 	Menu m_main_menu;
 	Menu m_story_menu;
 	Menu m_introduction_1_menu;
