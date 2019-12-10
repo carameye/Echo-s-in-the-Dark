@@ -57,10 +57,11 @@ bool World::init(GLFWwindow* window, vec2 screen)
 	return true;
 }
 
-void World::set_pl_functions(void (*l)(), void (*e)())
+void World::set_pl_functions(void (*l)(), void (*e)(), void (*s)())
 {
 	m_load = l;
 	m_exit = e;
+	m_success = s;
 }
 
 // Releases all the associated resources
@@ -204,6 +205,11 @@ bool World::handle_key_press(GLFWwindow* window, int key, int action)
 		m_exit();
 		return true;
 	}
+    if (action_dest == "success")
+    {
+        m_success();
+        return true;
+    }
 	else if (action_dest.length() > 0 && action_dest != "locked")
 	{
 		if (find(m_unlocked.begin(), m_unlocked.end(), action_dest) == m_unlocked.end())

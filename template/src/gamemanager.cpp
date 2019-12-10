@@ -24,6 +24,11 @@ static void exit()
 	gm->back_to_maker_menu();
 }
 
+static void success()
+{
+    gm->to_success_menu();
+}
+
 bool GameManager::init(vec2 screen)
 {
 	gm = this;
@@ -92,6 +97,12 @@ bool GameManager::init(vec2 screen)
 
     m_introduction_4_menu.init(m_window, screen);
     load_introduction_4_menu();
+
+    m_success_menu.init(m_window, screen);
+    load_success_menu();
+
+    m_credits_menu.init(m_window, screen);
+    load_credits_menu();
 
 	m_maker_menu.init(m_window, screen);
 	load_maker_menu();
@@ -288,7 +299,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_in_maker = false;
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
-			m_world.set_pl_functions(load, exit);
+			m_world.set_pl_functions(load, exit, success);
 			m_world.start_level(true);
 			m_sound_system->play_bgm(m_world.get_background_music());
 			m_sound_system->resume_all_sound_effects();
@@ -298,7 +309,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_in_maker = false;
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
-			m_world.set_pl_functions(load, exit);
+			m_world.set_pl_functions(load, exit, success);
 			m_world.start_level(false);
 			m_sound_system->play_bgm(m_world.get_background_music());
 			m_sound_system->resume_all_sound_effects();
@@ -360,6 +371,9 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
         case Status::go_to_intro_4:
             m_menu = &m_introduction_4_menu;
             break;
+	    case Status::go_to_credits:
+	        m_menu = &m_credits_menu;
+	        break;
 		case Status::make_level:
 			fprintf(stderr, "making level\n");
 			m_in_menu = false;
@@ -376,7 +390,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_in_maker = false;
 			m_world.destroy();
 			m_world.init(m_window, m_screen);
-			m_world.set_pl_functions(load, exit);
+			m_world.set_pl_functions(load, exit, success);
 			if (!m_world.start_maker_level()) {
 				m_world.destroy();
 				m_in_menu = true;
@@ -509,6 +523,22 @@ void GameManager::load_introduction_4_menu()
     m_introduction_4_menu.setup(buttons);
 }
 
+void GameManager::load_success_menu()
+{
+    vec2 button_size = { 1200.f, 800.f };
+    std::vector<std::tuple<std::string, Status, vec2>> buttons;
+    buttons.push_back(std::make_tuple("ending_1.png", Status::go_to_credits, button_size));
+    m_success_menu.setup(buttons);
+}
+
+void GameManager::load_credits_menu()
+{
+    vec2 button_size = { 1200.f, 800.f };
+    std::vector<std::tuple<std::string, Status, vec2>> buttons;
+    buttons.push_back(std::make_tuple("ending_2.png", Status::main_menu, button_size));
+    m_credits_menu.setup(buttons);
+}
+
 void GameManager::load_maker_menu()
 {
 	vec2 button_size = { 8.f * brick_size, 2.f * brick_size };
@@ -583,3 +613,10 @@ void GameManager::back_to_maker_menu()
 	m_sound_system->play_bgm(Music::menu);
 }
 
+void GameManager::to_success_menu()
+{
+    m_in_maker = false;
+    m_in_menu = true;
+    m_menu = &m_success_menu;
+    m_sound_system->play_bgm(Music::menu);
+}
