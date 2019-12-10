@@ -34,6 +34,7 @@ bool Ghost::init(int id, vec3 colour, vec3 headlight_colour)
 
 	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
 	mc.physics.scale.x *= 47.f / 41.f;
+	mc.physics.scale.y *= 47.f / 41.f;
 
 	rc.colour = m_colour;
 
