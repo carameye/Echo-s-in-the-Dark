@@ -181,6 +181,7 @@ bool GameManager::game_over()
 
 void GameManager::destroy()
 {
+	m_title_menu.destroy();
 	m_main_menu.destroy();
 	m_world_pause_menu.destroy();
 	m_maker_pause_menu.destroy();
@@ -285,6 +286,9 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_world.set_pl_functions(load, exit);
 			m_world.start_level(false);
 			m_sound_system->play_bgm(m_world.get_background_music());
+			break;
+		case Status::title_menu:
+			m_menu = &m_title_menu;
 			break;
 		case Status::main_menu:
 			m_menu = &m_main_menu;

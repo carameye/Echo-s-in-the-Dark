@@ -27,7 +27,7 @@
 #define maker_file level_path "maker_level.json"
 #define maker_shadow shadow_path "maker_level_brickmap.bmp"
 
-enum class Status { nothing, main_menu, new_game, load_game, resume, reset, save_game, exit,
+enum class Status { nothing, title_menu, main_menu, new_game, load_game, resume, reset, save_game, exit,
 					story_mode, maker_mode, play_level, make_level, load_level,
 					go_to_intro_1, go_to_intro_2, go_to_intro_3, go_to_intro_4, help, ret_pause,
 					settings, inc_sens, dec_sens };
