@@ -200,6 +200,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 			if (!m_in_maker)
 			{
 				m_sound_system->play_bgm(m_world.get_background_music());
+				m_sound_system->resume_all_sound_effects();
 			}
 		}
 	}
@@ -218,6 +219,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			m_in_menu = true;
 			m_menu = &m_world_pause_menu;
+			m_sound_system->pause_all_sound_effects();
 			m_sound_system->play_bgm(Music::menu);
 		}
 	}
@@ -259,6 +261,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			if (!m_in_maker)
 			{
 				m_sound_system->play_bgm(m_world.get_background_music());
+				m_sound_system->resume_all_sound_effects();
 				m_world.poll_keys(window);
 			} else {
 				m_sound_system->play_bgm(Music::level_builder);
@@ -273,6 +276,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_world.set_pl_functions(load, exit);
 			m_world.start_level(true);
 			m_sound_system->play_bgm(m_world.get_background_music());
+			m_sound_system->resume_all_sound_effects();
 			break;
 		case Status::load_game:
 			m_in_menu = false;
@@ -282,6 +286,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			m_world.set_pl_functions(load, exit);
 			m_world.start_level(false);
 			m_sound_system->play_bgm(m_world.get_background_music());
+			m_sound_system->resume_all_sound_effects();
 			break;
 		case Status::main_menu:
 			m_menu = &m_main_menu;
@@ -311,6 +316,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 			{
 				m_world.reset();
 				m_sound_system->play_bgm(m_world.get_background_music());
+				m_sound_system->resume_all_sound_effects();
 				m_world.poll_keys(window);
 			}
 			break;
@@ -358,6 +364,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 				m_in_menu = true;
 			}
 			m_sound_system->play_bgm(m_world.get_background_music());
+			m_sound_system->resume_all_sound_effects();
 			break;
 		case Status::load_level:
 			m_in_menu = false;

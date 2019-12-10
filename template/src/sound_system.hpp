@@ -26,6 +26,13 @@ class SoundSystem {
 	// removes the sound effect from m_effect_channels, if the sound effect is in the map
 	void stop_sound_effect(Sound_Effects sound_effect, int fade_out_ms);
 
+	// pause all sound effects, used when opening the menu during a sound effect
+	void pause_all_sound_effects();
+
+	// resume playing all sound effects from where originally paused, used when closing the menu
+	// after pausing the game on a sound effect
+	void resume_all_sound_effects();
+
 	// since the SoundSystem is a singleton, make sure that you cannot create copies of the SoundSystem
 	// delete any implementation for the copy constructor and the copy assignment operator
 	SoundSystem(const SoundSystem&) = delete;
@@ -41,4 +48,6 @@ class SoundSystem {
 
 	// a map of all the channels on which a sound_effect is being played
 	std::map<Sound_Effects, std::vector<int>> m_effect_channels;
+
+	int m_channels_allocated = 0;
 };

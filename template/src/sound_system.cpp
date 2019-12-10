@@ -7,7 +7,7 @@ SoundSystem::SoundSystem() {
 		return;
 	}
 	// allocate more channels so can play more sounds at once
-	Mix_AllocateChannels(MIX_CHANNELS * 2);
+	m_channels_allocated = Mix_AllocateChannels(MIX_CHANNELS * 2);
 
 	m_background_music[Music::standard] =  Mix_LoadMUS(audio_path("background.wav"));
 	m_background_music[Music::menu] = Mix_LoadMUS(audio_path("dreams.wav"));
@@ -102,4 +102,17 @@ void SoundSystem::stop_sound_effect(Sound_Effects sound_effect, int fade_out_ms)
 		Mix_FadeOutChannel(channel, fade_out_ms);
 	}
 	m_effect_channels.erase(sound_effect);
+}
+
+void SoundSystem::pause_all_sound_effects()
+{
+	for (int channel = 0; channel < m_channels_allocated; channel++) {
+		Mix_Pause(channel);
+	}
+}
+
+void SoundSystem::resume_all_sound_effects() {
+	for (int channel = 0; channel < m_channels_allocated; channel++) {
+		Mix_Resume(channel);
+	}
 }
