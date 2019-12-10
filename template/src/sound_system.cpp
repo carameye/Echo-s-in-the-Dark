@@ -83,13 +83,21 @@ void SoundSystem::play_bgm(Music bgm)
 
 void SoundSystem::play_sound_effect(Sound_Effects effect, int loops, int fade_in_ms, int channel)
 {
-	if (loops == -1) {
-		// if playing the sound infefinately, track it's channel.
-		m_effect_channels[effect].push_back(channel);
+	if (m_effect_channels.find(effect) != m_effect_channels.end()) {
+		// sound effect is already being played. Stop this effect from playing, so we can play a new one
+		stop_sound_effect(effect, 0);
 	}
-	if (Mix_FadeInChannel(channel, m_sound_effects[effect], 0, fade_in_ms) == -1) {
+
+	int sound_effect_channel = Mix_FadeInChannel(channel, m_sound_effects[effect], 0, fade_in_ms);
+
+	if (sound_effect_channel == -1) {
 		fprintf(stderr, "SoundSystem play_sound_effect error %s\n", Mix_GetError());
+		return;
 	};
+
+	// if successfully played sound, track it's channel.
+	m_effect_channels[effect] = sound_effect_channel;
+	Mix_ChannelFinished(on_effect_done);
 }
 
 void SoundSystem::stop_sound_effect(Sound_Effects sound_effect, int fade_out_ms)
@@ -98,10 +106,8 @@ void SoundSystem::stop_sound_effect(Sound_Effects sound_effect, int fade_out_ms)
 		// sound effect isn't being played
 		return;
 	}
-	for(auto& channel : m_effect_channels[sound_effect]) {
-		Mix_FadeOutChannel(channel, fade_out_ms);
-	}
-	m_effect_channels.erase(sound_effect);
+	Mix_FadeOutChannel(m_effect_channels[sound_effect], fade_out_ms);
+	Mix_ChannelFinished(on_effect_done);
 }
 
 void SoundSystem::pause_all_sound_effects()
@@ -114,5 +120,24 @@ void SoundSystem::pause_all_sound_effects()
 void SoundSystem::resume_all_sound_effects() {
 	for (int channel = 0; channel < m_channels_allocated; channel++) {
 		Mix_Resume(channel);
+	}
+}
+
+SoundSystem::EffectChannelMap* SoundSystem::get_effect_channels()
+{
+	return &m_effect_channels;
+}
+
+void on_effect_done(int channel)
+{
+	// once the sound effect stops playing, stop tracking the channel for that sound effect
+	SoundSystem::EffectChannelMap* effect_channels = SoundSystem::get_system()->get_effect_channels();
+	SoundSystem::EffectChannelMap::iterator itr = effect_channels->begin();
+	while (itr != effect_channels->end()) {
+		if (itr->second == channel) {
+			effect_channels->erase(itr++);
+		} else {
+			++itr;
+		}
 	}
 }
