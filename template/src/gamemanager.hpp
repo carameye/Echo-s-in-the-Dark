@@ -49,6 +49,7 @@ public:
 	void load_settings_menu();
 	void draw_loading_screen();
 	void back_to_maker_menu();
+	void load_maker_instructions_menu();
     void to_success_menu();
 
 private:
@@ -83,6 +84,7 @@ private:
 	Menu m_maker_help_menu;
 	Menu m_load_menu;
 	Menu m_settings_menu;
+	Menu m_maker_instructions_menu;
 
 	// Should end game
 	bool m_is_over = false;
