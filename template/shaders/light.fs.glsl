@@ -80,8 +80,8 @@ float find_light_space(vec2 p1, vec2 p2)
     vec2 d = vec2(p2.x - p1.x, p2.y - p1.y);
 
     float hit_count = 0;
-    float max_hits = 16;
-    float step_size = 4;
+    float step_size = min(max(4, 4 * sqrt(dist(p1, p2) / 200)), 64);
+    float max_hits = 64 / step_size;
 
     d = normalize(d);
 
