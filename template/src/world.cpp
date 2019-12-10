@@ -99,7 +99,6 @@ void World::update(float elapsed_ms)
 	vec2 size = m_level.get_size();
 
 	new_camera_pos.x = fmin(size.x * 64.f - 600.f, fmax(540.f, new_camera_pos.x));
-	new_camera_pos.y = fmin(size.y * 64.f - 400.f, fmax(352.f, new_camera_pos.y));
 
 	m_level.update_background(elapsed_ms, sub(new_camera_pos, camera_pos));
 	camera_pos = new_camera_pos;
