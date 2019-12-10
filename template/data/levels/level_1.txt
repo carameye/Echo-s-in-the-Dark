@@ -5,8 +5,15 @@ enddoors
 fly
 endsigns
 BBBBBBBBBBBBBBBBBBBBBBBBBBBB
-B                       T  B
-B                       D  B
+B                          B
+B                          B
+B                          B
+B                          B
+B                          B
+B                          B
+B                          B
+B                          B
+B                       DT B
 B                          B
 B                     BBBBBB
 B                          B
@@ -14,11 +21,6 @@ B                          B
 B                          B
 B                          B
 B                     BBBBBB
-B                          B
-B                          B
-B          BBBBBB          B
-B                          B
-B                          B
 B                          B
 B                          B
 B          BBBBBB          B
