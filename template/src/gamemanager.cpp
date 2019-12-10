@@ -225,11 +225,20 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 
 void GameManager::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
-	if (m_in_menu)
-	{
-		m_menu->handle_mouse_move(window, xpos, ypos);
-	}
-	else if (m_in_maker)
+	m_main_menu.handle_mouse_move(window, xpos, ypos);
+	m_story_menu.handle_mouse_move(window, xpos, ypos);
+	m_introduction_1_menu.handle_mouse_move(window, xpos, ypos);
+	m_introduction_2_menu.handle_mouse_move(window, xpos, ypos);
+	m_introduction_3_menu.handle_mouse_move(window, xpos, ypos);
+	m_introduction_4_menu.handle_mouse_move(window, xpos, ypos);
+	m_maker_menu.handle_mouse_move(window, xpos, ypos);
+	m_world_pause_menu.handle_mouse_move(window, xpos, ypos);
+	m_maker_pause_menu.handle_mouse_move(window, xpos, ypos);
+	m_maker_help_menu.handle_mouse_move(window, xpos, ypos);
+	m_load_menu.handle_mouse_move(window, xpos, ypos);
+	m_settings_menu.handle_mouse_move(window, xpos, ypos);
+
+	if (m_in_maker)
 	{
 		m_maker.handle_mouse_move(window, xpos, ypos);
 	}
@@ -248,6 +257,7 @@ void GameManager::on_click(GLFWwindow* window, int button, int action, int mods)
 		}
 
 		Status s = m_menu->handle_mouse_button(button, action);
+		fprintf(stderr, "%d\n", s);
 
 		switch (s)
 		{
