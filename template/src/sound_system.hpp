@@ -9,7 +9,9 @@
 // a singleton implementation of the SoundSystem
 class SoundSystem {
 
-    public:
+	public:
+	typedef std::map<Sound_Effects, int> EffectChannelMap;
+
 	static SoundSystem* get_system();
 
 	// free all the sound and music resources.
@@ -33,6 +35,8 @@ class SoundSystem {
 	// after pausing the game on a sound effect
 	void resume_all_sound_effects();
 
+	EffectChannelMap* get_effect_channels();
+
 	// since the SoundSystem is a singleton, make sure that you cannot create copies of the SoundSystem
 	// delete any implementation for the copy constructor and the copy assignment operator
 	SoundSystem(const SoundSystem&) = delete;
@@ -47,7 +51,9 @@ class SoundSystem {
 	std::map<Sound_Effects, Mix_Chunk*> m_sound_effects;
 
 	// a map of all the channels on which a sound_effect is being played
-	std::map<Sound_Effects, std::vector<int>> m_effect_channels;
+	EffectChannelMap m_effect_channels;
 
 	int m_channels_allocated = 0;
 };
+
+void on_effect_done(int channel);
