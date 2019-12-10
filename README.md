@@ -12,6 +12,9 @@ Fixed the following from ideas from crossplay/previous bugs:
 - Fixed a bug where the robot would keep moving, if the player brought up the menu while the robot was moving on the ground
 - Made it so that collision sounds would not continously play if the player kept trying to move forward after colliding with a block
 - Fixed a bug where the rocket sound would keep playing as long as the player held down the spacebar (this would happen even when the robot could no longer fly)
+- Fixed some lag that was coming from shadows by making far away pixels be less accurate
+- Fixed a menu bug that meant if you didn't move your mouse after going to a new menu and clicked the click would happen in the wrong spot
+- Made the camera not pan off to the left or right of the level since it's just darkness anyway
 
 Have completed the following parts of our plan:
 - Added story element that tie together the game play, and give players a concrete goal while playing the game
