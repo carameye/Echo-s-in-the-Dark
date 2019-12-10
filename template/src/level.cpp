@@ -261,10 +261,13 @@ void Level::update(float elapsed_ms) {
             }
         }
     }
+}
 
+void Level::update_background(float elapsed_ms, vec2 pos_diff)
+{
 	// Update background
 	for (auto& background : m_backgrounds) {
-		background->update(elapsed_ms, m_robot.get_velocity());
+		background->update(elapsed_ms, pos_diff);
 	}
 }
 
@@ -653,12 +656,6 @@ bool Level::spawn_sign(vec2 position, std::string text)
 }
 
 bool Level::spawn_brick(vec2 position, vec3 colour) {
-    bool r = colour.x == 1.f;
-    bool g = colour.y == 1.f;
-    bool b = colour.z == 1.f;
-    if (!r || !g || !b)
-        fprintf(stderr, "	brick at (%f, %f)is coloured\n", position.x, position.y); // remove once real code is done
-
     Brick *brick = new Brick();
     if (brick->init(next_id++, colour))
     {
@@ -706,4 +703,9 @@ Music Level::get_level_music()
         return Music::ghost_approach;
     }
     return Music::standard;
+}
+
+vec2 Level::get_size()
+{
+	return { width, height };
 }

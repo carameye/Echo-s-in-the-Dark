@@ -94,7 +94,15 @@ void World::update(float elapsed_ms)
 		follow_speed = 0.f;
 		on_load_delay -= elapsed_ms;
 	}
-	camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
+	vec2 new_camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
+
+	vec2 size = m_level.get_size();
+
+	new_camera_pos.x = fmin(size.x * 64.f - 600.f, fmax(540.f, new_camera_pos.x));
+	new_camera_pos.y = fmin(size.y * 64.f - 400.f, fmax(352.f, new_camera_pos.y));
+
+	m_level.update_background(elapsed_ms, sub(new_camera_pos, camera_pos));
+	camera_pos = new_camera_pos;
 
 	if (m_level.get_current_level() == "level_select")
 	{
