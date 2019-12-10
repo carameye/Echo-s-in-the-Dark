@@ -1,19 +1,29 @@
 #include "door.hpp"
 
-Texture Door::s_door_texture;
+Texture Door::s_door_closed_texture;
+Texture Door::s_door_open_texture;
 
 bool Door::init(int id, vec2 position)
 {
-    if (!s_door_texture.is_valid())
+    if (!s_door_closed_texture.is_valid())
 	{
-        if (!s_door_texture.load_from_file(textures_path("door.png")))
+        if (!s_door_closed_texture.load_from_file(textures_path("door_closed.png")))
 		{
-			std::fprintf(stderr, "Failed to load door texture!");
+			std::fprintf(stderr, "Failed to load door closed texture!");
 			return false;
 		}
 	}
 
-    rc.texture = &s_door_texture;
+	if (!s_door_open_texture.is_valid())
+	{
+		if (!s_door_open_texture.load_from_file(textures_path("door_open.png")))
+		{
+			std::fprintf(stderr, "Failed to load door open texture!");
+			return false;
+		}
+	}
+
+    rc.texture = &s_door_open_texture;
 
     if (!rc.init_sprite())
         return false;
@@ -23,6 +33,8 @@ bool Door::init(int id, vec2 position)
 
     calculate_hitbox();
 	mc.physics.scale = { 1.5f, 1.5f };
+
+	mc.position.y -= s_door_closed_texture.height - 150;
 
 	action = "";
     m_locked = false;
@@ -55,7 +67,7 @@ void Door::calculate_hitbox()
 
     float width = brick_size;
     vec2 position = mc.position;
-    position.x -= width / 2;
+    position.x -= width / 2 + 60;
     position.y += width / 2;
     Square top(position, (int)width);
     Square bot(add(position, {0.f, width}), (int)width);
@@ -87,4 +99,5 @@ std::string Door::perform_action()
 void Door::lock()
 {
 	m_locked = true;
+	rc.texture = &s_door_closed_texture;
 }

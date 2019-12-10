@@ -4,7 +4,8 @@
 
 class Door: public Interactable
 {
-    static Texture s_door_texture;
+    static Texture s_door_closed_texture;
+	static Texture s_door_open_texture;
 
     public:
         // Creates all the associated render resources and default transform
