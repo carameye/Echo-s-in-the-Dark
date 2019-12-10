@@ -1,4 +1,5 @@
 #include "menu.hpp"
+#include "sound_system.hpp"
 
 bool Menu::init(GLFWwindow* window, vec2 screen)
 {
@@ -132,6 +133,7 @@ Status Menu::handle_mouse_button(int button, int action)
 		{
 			if (e->is_click())
 			{
+				SoundSystem::get_system()->play_sound_effect(Sound_Effects::button_click);
 				return e->click();
 			}
 		}

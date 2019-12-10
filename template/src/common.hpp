@@ -36,7 +36,7 @@ enum class Status { nothing, main_menu, new_game, load_game, resume, reset, save
 enum class Music { standard, menu, level_builder, ghost_approach };
 
 // please add to this enum whenever you add a sound effect
-enum class Sound_Effects { robot_hurt, open_door, door_locked, collision, rocket };
+enum class Sound_Effects { robot_hurt, open_door, door_locked, collision, rocket, button_click };
 
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..
