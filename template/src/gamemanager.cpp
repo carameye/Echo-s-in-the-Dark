@@ -231,6 +231,7 @@ void GameManager::on_key(GLFWwindow* window, int key, int scancode, int action, 
 
 void GameManager::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
+	m_title_menu.handle_mouse_move(window, xpos, ypos);
 	m_main_menu.handle_mouse_move(window, xpos, ypos);
 	m_story_menu.handle_mouse_move(window, xpos, ypos);
 	m_introduction_1_menu.handle_mouse_move(window, xpos, ypos);
