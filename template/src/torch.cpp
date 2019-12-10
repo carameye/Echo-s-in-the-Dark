@@ -25,8 +25,7 @@ bool Torch::init(int id)
     mc.velocity = { 0.f, 0.f };
     mc.acceleration = { 0.f , 0.f };
     mc.radians = 0.f;
-    // torches size = 16.f
-    mc.physics.scale = { 16.f / rc.texture->width, 16.f / rc.texture->height };
+    mc.physics.scale = { 1.5f, 1.5f };
 
     s_render_components[id] = &rc;
     s_motion_components[id] = &mc;
@@ -47,4 +46,5 @@ vec2 Torch::get_position()const
 void Torch::set_position(vec2 position)
 {
     mc.position = position;
+	mc.position.y += 40;
 }
