@@ -7,6 +7,11 @@ Hitbox::Hitbox(std::vector<Circle> circles, std::vector<Square> squares)
 	this->squares = squares;
 }
 
+Hitbox::Hitbox()
+{
+
+}
+
 bool Hitbox::collides_with(Hitbox hb)
 {
 	for (Circle c : this->circles)
@@ -22,12 +27,12 @@ bool Hitbox::collides_with(Hitbox hb)
 
 void Hitbox::translate(vec2 translation)
 {
-	for (Circle c : this->circles)
+	for (Circle& c : this->circles)
 	{
 		c.translate(translation);
 	}
 
-	for (Square s : this->squares)
+	for (Square& s : this->squares)
 	{
 		s.translate(translation);
 	}
@@ -102,7 +107,8 @@ bool Circle::collides_with(Square &square)
 
 void Circle::translate(vec2 translation)
 {
-	this->centre = add(this->centre, translation);
+    vec2 new_centre = add(this->centre, translation);
+	this->centre = new_centre;
 }
 
 Square::Square(vec2 bottomLeft, int width)

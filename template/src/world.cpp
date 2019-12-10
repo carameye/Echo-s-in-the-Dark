@@ -52,6 +52,8 @@ bool World::init(GLFWwindow* window, vec2 screen)
 	// Initialize the screen texture
 	m_screen_tex.create_from_screen(m_window);
 
+	poll_keys(window);
+
 	return true;
 }
 
@@ -65,9 +67,6 @@ void World::set_pl_functions(void (*l)(), void (*e)())
 void World::destroy()
 {
 	glDeleteFramebuffers(1, &m_frame_buffer);
-
-	// free all sound resources
-	stop_sounds();
 
 	m_level.destroy();
 }
@@ -90,19 +89,20 @@ void World::update(float elapsed_ms)
 	if (!is_level_load_pan) {
 		follow_speed = 0.1f;
 		follow_point = add(player_pos, { 0.f, camera_offset });
-		std::string sound_effect = m_level.update(elapsed_ms);
-		if (sound_effect.length() > 0) {
-			if (sound_effect == "collision") {
-				Mix_PlayChannel(-1, m_collision_effect, 0);
-			} else {
-				Mix_PlayChannel(-1, m_robot_hurt_effect, 0);
-			}
-		}
+		m_level.update(elapsed_ms);
 	} else if (on_load_delay > 0) {
 		follow_speed = 0.f;
 		on_load_delay -= elapsed_ms;
 	}
-	camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
+	vec2 new_camera_pos = add(camera_pos, { follow_speed * (follow_point.x - camera_pos.x), follow_speed * (follow_point.y - camera_pos.y) });
+
+	vec2 size = m_level.get_size();
+
+	new_camera_pos.x = fmin(size.x * 64.f - 600.f, fmax(540.f, new_camera_pos.x));
+	new_camera_pos.y = fmin(size.y * 64.f - 400.f, fmax(352.f, new_camera_pos.y));
+
+	m_level.update_background(elapsed_ms, sub(new_camera_pos, camera_pos));
+	camera_pos = new_camera_pos;
 
 	if (m_level.get_current_level() == "level_select")
 	{
@@ -180,7 +180,7 @@ bool World::is_over() const
 }
 
 // On key callback
-bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
+bool World::handle_key_press(GLFWwindow* window, int key, int action)
 {
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
 		return false;
@@ -198,33 +198,34 @@ bool World::handle_key_press(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_RELEASE && (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)) {
 		camera_offset -= CAMERA_PAN_OFFSET;
 	}
-	std::string r = m_level.handle_key_press(key, action);
-	if (r.length() > 0) {
-		if (r == "flying") {
-			int channel = Mix_PlayChannel(-1, m_rocket_effect, -1);
-			Mix_GroupChannel(channel, 1);
-		} else if (r == "falling") {
-			int channel = Mix_FadeOutGroup(1, 1050);
-		} else if (r == "door locked") {
-			int channel = Mix_PlayChannel(-1, m_locked_door_effect, 0);
-		} else {
-			if (r == "quit" || r == "complete")
-			{
-				m_exit();
-				return true;
-			}
-			else
-			{
-				if (find(m_unlocked.begin(), m_unlocked.end(), r) == m_unlocked.end())
-				{
-					m_unlocked.push_back(r);
-				}
-				Mix_PlayChannel(-1, m_open_door_effect, 0);
-				load_level(r);
-			}
+	std::string action_dest = m_level.handle_key_press(key, action, key_input_states);
+
+	if (action_dest == "quit" || action_dest == "complete")
+	{
+		m_exit();
+		return true;
+	}
+	else if (action_dest.length() > 0 && action_dest != "locked")
+	{
+		if (find(m_unlocked.begin(), m_unlocked.end(), action_dest) == m_unlocked.end())
+		{
+			m_unlocked.push_back(action_dest);
 		}
+		load_level(action_dest);
 	}
 	return true;
+}
+
+void World::poll_keys(GLFWwindow* window)
+{
+	for (auto& input_state : key_input_states) {
+		int key = input_state.first;
+		int old_key_state = input_state.second;
+		int key_state = glfwGetKey(window, key);
+		if (key_state != old_key_state) {
+			handle_key_press(window, key, key_state);
+		}
+	}
 }
 
 void World::handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
@@ -250,79 +251,6 @@ void World::handle_mouse_scroll(double yoffset) {
     m_level.handle_mouse_scroll(yoffset);
 }
 
-void World::start_sounds()
-{
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return;
-	}
-
-	const int numGhosts = m_level.get_num_ghosts();
-
-	m_background_music =  Mix_LoadMUS(numGhosts > 0 ? audio_path("ghosts.wav") : audio_path("background.wav"));
-	m_robot_hurt_effect = Mix_LoadWAV(audio_path("salmon_dead.wav"));
-	m_open_door_effect = Mix_LoadWAV(audio_path("open_door.wav"));
-	m_locked_door_effect = Mix_LoadWAV(audio_path("locked.wav"));
-	m_rocket_effect = Mix_LoadWAV(audio_path("rocket.wav"));
-	m_collision_effect = Mix_LoadWAV(audio_path("collision.wav"));
-
-	// set the volume for the music and sound effects
-	Mix_VolumeMusic((int)(MIX_MAX_VOLUME / 2.5));
-	Mix_VolumeChunk(m_robot_hurt_effect, MIX_MAX_VOLUME/2);
-	Mix_VolumeChunk(m_open_door_effect, MIX_MAX_VOLUME/4);
-	Mix_VolumeChunk(m_locked_door_effect, MIX_MAX_VOLUME); // locked door effect kind of quiet, so make it louder
-	Mix_VolumeChunk(m_rocket_effect, MIX_MAX_VOLUME/3);
-	Mix_VolumeChunk(m_collision_effect, MIX_MAX_VOLUME/9);
-
-	if (
-		m_background_music == nullptr || m_open_door_effect == nullptr || m_robot_hurt_effect == nullptr ||
-		m_locked_door_effect == nullptr || m_rocket_effect == nullptr
-	)
-	{
-		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n %s\n %s\n %s\n make sure the data directory is present",
-			audio_path("background.wav"),
-			audio_path("salmon_dead.wav"),
-			audio_path("open_door.wav"),
-			audio_path("locked.wav"),
-			audio_path("rocket.wav"),
-			audio_path("collision.wav"));
-		return;
-	}
-
-	// Playing background music indefinitely
-	Mix_FadeInMusic(m_background_music, -1, 1500);
-}
-
-void World::stop_sounds()
-{
-	// free sound effects
-	if (m_robot_hurt_effect != nullptr) {
-		Mix_FreeChunk(m_robot_hurt_effect);
-		m_robot_hurt_effect = nullptr;
-	}
-	if (m_open_door_effect != nullptr) {
-		Mix_FreeChunk(m_open_door_effect);
-		m_open_door_effect = nullptr;
-	}
-	if (m_locked_door_effect != nullptr) {
-		Mix_FreeChunk(m_locked_door_effect);
-		m_locked_door_effect = nullptr;
-	}
-	// free background music
-	stop_music();
-}
-
-void World::stop_music()
-{
-	if (m_background_music != nullptr) {
-		Mix_FreeMusic(m_background_music);
-		m_background_music = nullptr;
-	}
-
-	Mix_CloseAudio();
-}
-
 void World::start_level(bool new_game)
 {
 	if (new_game)
@@ -343,6 +271,7 @@ bool World::start_maker_level()
 	if (f.good())
 	{
 		load_level("maker_level");
+		m_load();
 		return true;
 	}
 
@@ -356,10 +285,8 @@ void World::reset()
 
 void World::load_level(std::string level)
 {
-	stop_music();
 	m_load();
 	bool valid = m_level.parse_level(level, m_unlocked, m_robot_ls_pos);
-	start_sounds();
 
 	if (valid)
 	{
@@ -402,4 +329,9 @@ void World::save()
 		o << j.dump() << std::endl;
 		o.close();
 	}
+}
+
+Music World::get_background_music()
+{
+	return m_level.get_level_music();
 }

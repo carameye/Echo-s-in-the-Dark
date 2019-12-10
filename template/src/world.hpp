@@ -7,10 +7,10 @@
 // stlib
 #include <vector>
 #include <random>
+#include <unordered_map>
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
-#include <SDL_mixer.h>
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
@@ -39,15 +39,10 @@ public:
 	bool is_over() const;
 
 	// Handle input
-	bool handle_key_press(GLFWwindow*, int key, int, int action, int mod);
+	bool handle_key_press(GLFWwindow* window, int key, int action);
 	void handle_mouse_move(GLFWwindow* window, double xpos, double ypos);
     void handle_mouse_click(int button, int action);
     void handle_mouse_scroll(double yoffset);
-
-	// Manage sounds and background music
-	void start_sounds();
-	void stop_sounds();
-	void stop_music();
 
 	// Begin level
 	void start_level(bool new_game);
@@ -61,14 +56,22 @@ public:
 	// Save the game to save file
 	void save();
 
+	// Poll the state of the world's input keys
+	void poll_keys(GLFWwindow* window);
+
+	// Gets the proper music to play
+	Music get_background_music();
+
 private:
 	// Draw loading screen, parse level, set camera pos
 	void load_level(std::string level);
 
+	// Plays game introduction. Should only be called if player selects new game
+    void play_intro();
+
 	// Load state from save file
 	void load();
 
-private:
 	// Load menu access
 	void (*m_load)();
 	void (*m_exit)();
@@ -92,18 +95,13 @@ private:
 	Level m_level;
 	vec2 m_robot_ls_pos;
 
-	// game sounds
-	Mix_Music* m_background_music;
-	Mix_Chunk* m_robot_hurt_effect;
-	Mix_Chunk* m_open_door_effect;
-	Mix_Chunk* m_locked_door_effect;
-	Mix_Chunk* m_rocket_effect;
-	Mix_Chunk* m_collision_effect;
-
 	// C++ rng
 	std::default_random_engine m_rng;
 	std::uniform_real_distribution<float> m_dist; // default 0..1
 
 	// Saved level data
 	std::vector<std::string> m_unlocked;
+
+	// used track the input states of keys
+	std::unordered_map<int, int> key_input_states;
 };

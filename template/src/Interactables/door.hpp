@@ -25,4 +25,7 @@ class Door: public Interactable
 
     private:
         bool m_locked;
+        Hitbox m_hitbox;
+
+        void calculate_hitbox();
 };

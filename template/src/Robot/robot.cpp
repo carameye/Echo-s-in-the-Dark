@@ -69,6 +69,8 @@ bool Robot::init(int id, bool use_parts)
 	m_is_accelerating_left = false;
 	m_is_flying = false;
 
+	calculate_hitbox();
+
 	return valid;
 }
 
@@ -113,12 +115,12 @@ void Robot::update(float ms)
         }
     }
 
-	m_grounded = false;
 	m_head.update(ms, add(mc.position, { 0.f, -48.f }));
     m_hat.update(ms, add(m_head.get_position(), { 0.f, -8.f }));
     m_shoulders.update(ms, add(mc.position, { 0.f, 0.f }));
 
     if (m_is_flying) {
+        m_grounded = false;
         m_available_flight_time = (float)fmax(m_available_flight_time -= ms, 0);
         if (m_available_flight_time == 0) {
             stop_flying();
@@ -137,6 +139,7 @@ void Robot::update(float ms)
 	}
 
 	m_energy_bar.set_status(MAX_FLIGHT_DURATION != m_available_flight_time);
+
 }
 
 vec2 Robot::get_position() const
@@ -157,12 +160,25 @@ vec2 Robot::get_acceleration() const
 vec2 Robot::get_next_position(float elapsed_ms)
 {
     float step = elapsed_ms / 100.f;
-    return {mc.position.x + mc.velocity.x * step, mc.position.y + mc.velocity.y * step};
+    vec2 translation = {mc.velocity.x * step, mc.velocity.y * step};
+    return {mc.position.x + translation.x, mc.position.y + translation.y};
+}
+
+bool Robot::is_grounded() const
+{
+    return m_grounded;
 }
 
 void Robot::set_position(vec2 position)
 {
+    vec2 translation;
+
+    translation.x = position.x - mc.position.x;
+    translation.y = position.y - mc.position.y;
+
 	mc.position = position;
+
+    m_hitbox.translate(translation);
 }
 
 void Robot::set_velocity(vec2 velocity)
@@ -201,32 +217,35 @@ void Robot::set_energy_bar_position(vec2 position) {
     m_energy_bar.set_position(position);
 }
 
-Hitbox Robot::get_hitbox(vec2 translation) const
+Hitbox Robot::get_hitbox()
 {
-	std::vector<Circle> circles(1);
-
-	vec2 position = mc.position;
-
-	position.x += translation.x;
-	position.y += translation.y;
-
-	int radius = (int)brick_size / 2;
-	Circle circle(position, radius);
-	circles[0] = circle;
-
-	Hitbox hitbox(circles, {});
-	// TODO: figure out why this line is not working
-	// hitbox.translate(translation);
-	return hitbox;
+    return m_hitbox;
 }
 
-Hitbox Robot::get_head_hitbox(vec2 translation) const
+void Robot::calculate_hitbox()
 {
-    return m_head.get_hitbox(translation);
+    std::vector<Circle> circles(1);
+
+    vec2 position = mc.position;
+
+    int radius = (int)brick_size / 2;
+    Circle circle(position, radius);
+    circles[0] = circle;
+
+    Hitbox hitbox(circles, {});
+	m_hitbox = hitbox;
+}
+
+Hitbox Robot::get_head_hitbox()
+{
+    return m_head.get_hitbox();
 }
 
 void Robot::start_flying()
 {
+    if (m_available_flight_time == 0) {
+        return;
+    }
     m_is_flying = true;
     set_acceleration({mc.acceleration.x, FLIGHT_ACCELERATION});
 	m_smoke_system.start_smoke();
@@ -234,6 +253,8 @@ void Robot::start_flying()
 	rc.texture = &robot_body_flying_texture;
 	mc.physics.scale.x *= 53.f / 45.f;
 	mc.radians = 0.f;
+    // start the rocket sound effect
+    SoundSystem::get_system()->play_sound_effect(Sound_Effects::rocket, -1);
     // If we want made robot fall faster, reset vertical acceleration here.
 }
 
@@ -245,6 +266,8 @@ void Robot::stop_flying()
 	m_should_stop_smoke = true;
 	rc.texture = &robot_body_texture;
 	mc.physics.scale = { brick_size / rc.texture->width, brick_size / rc.texture->height };
+    // stop the rocket sound effect
+    SoundSystem::get_system()->stop_sound_effect(Sound_Effects::rocket, 1500);
 	// If we want the robot to fall a bit faster, set vertical acceleration here. Positive number, make it a const
 }
 
@@ -289,6 +312,11 @@ void Robot::set_head_velocity(vec2 velocity) {
 void Robot::set_head_direction(bool b) {
     m_head.set_direction(b);
     m_hat.set_direction(b);
+}
+
+void Robot::destroy()
+{
+	m_smoke_system.destroy();
 }
 
 

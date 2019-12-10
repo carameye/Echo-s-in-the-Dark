@@ -1,4 +1,5 @@
 #include "menu.hpp"
+#include "sound_system.hpp"
 
 bool Menu::init(GLFWwindow* window, vec2 screen)
 {
@@ -16,47 +17,36 @@ bool Menu::init(GLFWwindow* window, vec2 screen)
 	// Initialize the screen texture
 	m_screen_tex.create_from_screen(m_window);
 
-	//-------------------------------------------------------------------------
-	// Loading music and sounds
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	{
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return false;
-	}
-
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return false;
-	}
-
-	m_background_music = Mix_LoadMUS(audio_path("menu.wav"));
-	int vol = Mix_VolumeMusic(MIX_MAX_VOLUME/3);
-
-	if (m_background_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds\n %s\n make sure the data directory is present",
-			audio_path("menu.wav"));
-		return false;
-	}
-
 	return true;
 }
 
-bool Menu::setup(std::vector<std::pair<std::string, Status>> buttons)
+bool Menu::setup(std::vector<std::tuple<std::string, Status, vec2>> buttons)
 {
-	float start = 400.f - (buttons.size() * 2.f * brick_size + (buttons.size() - 1) * brick_size) / 2.f;
+	float size = 0.f;
+	for (auto& s : buttons)
+	{
+		size += std::get<2>(s).y;
+	}
+
+	if (buttons.size() > 0)
+	{
+		size += (buttons.size() - 1) * brick_size;
+	}
+
+	float start = 400.f - size / 2.f;
 
 	int first = next_id;
 
 	for (auto& s : buttons)
 	{
 		Button* b = new Button();
-		b->set_texture_name(s.first);
-		b->set_status(s.second);
-		b->init(next_id++, { 600.f, start + brick_size });
+		b->set_texture_name(std::get<0>(s));
+		b->set_status(std::get<1>(s));
+		vec2 size = std::get<2>(s);
+		b->set_size(size);
+		b->init(next_id++, { 600.f, start + size.y / 2 });
 		m_entities.push_back(b);
-		start += brick_size * 3.f;
+		start += size.y + brick_size;
 	}
 
 	m_rs.process(first, next_id);
@@ -143,42 +133,11 @@ Status Menu::handle_mouse_button(int button, int action)
 		{
 			if (e->is_click())
 			{
+				SoundSystem::get_system()->play_sound_effect(Sound_Effects::button_click);
 				return e->click();
 			}
 		}
 	}
 
 	return Status::nothing;
-}
-
-void Menu::start_music()
-{
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return;
-	}
-
-	m_background_music = Mix_LoadMUS(audio_path("menu.wav"));
-	Mix_VolumeMusic(MIX_MAX_VOLUME/3);
-
-	if (m_background_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds\n %s\n make sure the data directory is present",
-			audio_path("menu.wav"));
-		return;
-	}
-
-	// Playing background music indefinitely
-	Mix_PlayMusic(m_background_music, -1);
-}
-
-void Menu::stop_music()
-{
-	if (m_background_music != nullptr) {
-		Mix_FreeMusic(m_background_music);
-		m_background_music = nullptr;
-	}
-
-	Mix_CloseAudio();
 }

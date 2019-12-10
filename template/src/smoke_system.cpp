@@ -26,20 +26,6 @@ bool SmokeSystem::init(int id)
 	return true;
 }
 
-SmokeSystem::~SmokeSystem()
-{
-	for (auto& smoke : m_active_smokes)
-	{
-		delete smoke;
-	}
-	for (auto& smoke : m_inactive_smokes)
-	{
-		delete smoke;
-	}
-	m_active_smokes.clear();
-	m_inactive_smokes.clear();
-}
-
 void SmokeSystem::update(float ms, vec2 robot_position, vec2 robot_velocity)
 {
 	m_next_spawn -= ms;
@@ -72,4 +58,18 @@ void SmokeSystem::start_smoke()
 void SmokeSystem::stop_smoke()
 {
 	m_started = false;
+}
+
+void SmokeSystem::destroy()
+{
+	for (auto& smoke : m_active_smokes)
+	{
+		delete smoke;
+	}
+	for (auto& smoke : m_inactive_smokes)
+	{
+		delete smoke;
+	}
+	m_active_smokes.clear();
+	m_inactive_smokes.clear();
 }

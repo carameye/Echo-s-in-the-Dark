@@ -7,6 +7,7 @@
 #include "robot_head.hpp"
 #include "robot_shoulders.hpp"
 #include "flight_energy_bar.hpp"
+#include "sound_system.hpp"
 
 class Robot : public Entity
 {
@@ -39,6 +40,8 @@ public:
     // Calculates and return next position with out updating robot
     vec2 get_next_position(float elapsed_ms);
 
+	bool is_grounded() const;
+
 	// Sets the new robot position
 	void set_position(vec2 position);
 
@@ -69,10 +72,10 @@ public:
     void set_energy_bar_position(vec2 position);
 
 	// Returns the robots hitbox for collision detection
-	Hitbox get_hitbox(vec2 translation) const;
+	Hitbox get_hitbox();
 
     // Returns the robots head hitbox for collision detection
-    Hitbox get_head_hitbox(vec2 translation) const;
+    Hitbox get_head_hitbox();
 
 	// Starts smoke system and changes to flying sprite
 	void start_flying();
@@ -90,16 +93,21 @@ public:
 
     void set_head_direction(bool b);
 
+	void destroy();
+
 private:
 	RobotHead m_head;
 	RobotShoulders m_shoulders;
 	SmokeSystem m_smoke_system;
 	FlightEnergyBar m_energy_bar;
     RobotHat m_hat;
+    Hitbox m_hitbox;
 	bool m_grounded;
 	bool m_should_stop_smoke;
 	bool m_is_accelerating_right;
 	bool m_is_accelerating_left;
 	bool m_is_flying;
 	float m_available_flight_time;
+
+    void calculate_hitbox();
 };

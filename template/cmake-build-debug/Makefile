@@ -797,6 +797,33 @@ src/smoke_system.cpp.s:
 	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/smoke_system.cpp.s
 .PHONY : src/smoke_system.cpp.s
 
+src/sound_system.obj: src/sound_system.cpp.obj
+
+.PHONY : src/sound_system.obj
+
+# target to build an object file
+src/sound_system.cpp.obj:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/sound_system.cpp.obj
+.PHONY : src/sound_system.cpp.obj
+
+src/sound_system.i: src/sound_system.cpp.i
+
+.PHONY : src/sound_system.i
+
+# target to preprocess a source file
+src/sound_system.cpp.i:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/sound_system.cpp.i
+.PHONY : src/sound_system.cpp.i
+
+src/sound_system.s: src/sound_system.cpp.s
+
+.PHONY : src/sound_system.s
+
+# target to generate assembly for a file
+src/sound_system.cpp.s:
+	$(MAKE) -f CMakeFiles\EITD.dir\build.make CMakeFiles/EITD.dir/src/sound_system.cpp.s
+.PHONY : src/sound_system.cpp.s
+
 src/systems.obj: src/systems.cpp.obj
 
 .PHONY : src/systems.obj
@@ -989,6 +1016,9 @@ help:
 	@echo ... src/smoke_system.obj
 	@echo ... src/smoke_system.i
 	@echo ... src/smoke_system.s
+	@echo ... src/sound_system.obj
+	@echo ... src/sound_system.i
+	@echo ... src/sound_system.s
 	@echo ... src/systems.obj
 	@echo ... src/systems.i
 	@echo ... src/systems.s

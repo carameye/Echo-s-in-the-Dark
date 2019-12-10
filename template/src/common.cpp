@@ -59,6 +59,8 @@ float dot(vec3 l, vec3 r)
 	return l.x * r.x + l.y * r.y + l.z * r.z;
 }
 
+double scroll_sensitivity = 1.f;
+
 vec2 add(vec2 a, vec2 b) { return { a.x+b.x, a.y+b.y }; }
 vec2 sub(vec2 a, vec2 b) { return { a.x-b.x, a.y-b.y }; }
 vec2 mul(vec2 a, float b) { return { a.x*b, a.y*b }; }

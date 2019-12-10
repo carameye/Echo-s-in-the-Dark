@@ -67,11 +67,8 @@ void Background::set_position(vec2 position)
 	mc_third.position.y += add_y;
 }
 
-void Background::update(float elapsed_ms, vec2 robot_velocity)
+void Background::update(float elapsed_ms, vec2 robot_movement)
 {
-	float step = elapsed_ms / 100.f;
-	vec2 robot_movement = { robot_velocity.x * step, robot_velocity.y * step };
-
 	float factor = 1.25f - mc_first.physics.scale.x;
 	vec2 texture_movement = { robot_movement.x * factor, robot_movement.y * factor / 5.f };
 	mc_first.position = add(mc_first.position, texture_movement);

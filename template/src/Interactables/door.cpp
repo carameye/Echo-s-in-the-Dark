@@ -21,6 +21,7 @@ bool Door::init(int id, vec2 position)
     if (!Interactable::init(id, position))
         return false;
 
+    calculate_hitbox();
 	mc.physics.scale = { 1.5f, 1.5f };
 
 	action = "";
@@ -45,29 +46,38 @@ vec2 Door::get_position()
 
 Hitbox Door::get_hitbox() const
 {
-	std::vector<Square> squares(2);
-	
-	float width = brick_size;
-	vec2 position = mc.position;
-	position.x -= width / 2;
-	position.y += width / 2;
+    return m_hitbox;
+}
+
+void Door::calculate_hitbox()
+{
+    std::vector<Square> squares(2);
+
+    float width = brick_size;
+    vec2 position = mc.position;
+    position.x -= width / 2;
+    position.y += width / 2;
     Square top(position, (int)width);
-	Square bot(add(position, {0.f, width}), (int)width);
-	squares[0] = top;
-	squares[1] = bot;
+    Square bot(add(position, {0.f, width}), (int)width);
+    squares[0] = top;
+    squares[1] = bot;
 
     Hitbox hitbox({}, squares);
-    return hitbox;
+    m_hitbox = hitbox;
 }
 
 std::string Door::perform_action()
 {
+    SoundSystem* sound_system = SoundSystem::get_system();
+
     if (!m_locked && action.length() > 0) {
         // go to destination
+        sound_system->play_sound_effect(Sound_Effects::open_door);
         return action;
     }
     if (m_locked) {
-        return "door locked";
+        sound_system->play_sound_effect(Sound_Effects::door_locked);
+        return "locked";
     }
     // otherwise, no destination specified
     // so, stay at current location

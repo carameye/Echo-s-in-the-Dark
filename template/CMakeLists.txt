@@ -62,6 +62,7 @@ set(SOURCE_FILES
         src/torch.cpp 
         src/maker.cpp
         src/maker_level.cpp
+        src/sound_system.cpp
         src/project_path.hpp
 	    src/common.hpp
 		src/background.hpp
@@ -92,7 +93,8 @@ set(SOURCE_FILES
         src/world.hpp
         src/torch.hpp
         src/maker.hpp
-        src/maker_level.hpp)
+        src/maker_level.hpp
+        src/sound_system.hpp)
 
 if (IS_OS_MAC)
     include_directories(/usr/local/include)
